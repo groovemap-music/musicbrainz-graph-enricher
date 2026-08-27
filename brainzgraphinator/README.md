@@ -1,4 +1,4 @@
-# Brainzgraphinator Service
+# GrooveMap MusicBrainz graph enricher
 
 Consumes MusicBrainz data from AMQP queues and enriches existing Neo4j knowledge graph nodes with MusicBrainz metadata and relationship edges.
 
@@ -160,17 +160,17 @@ Each data type has its own consumer queue with dead letter exchange (DLX) and de
 
 ```bash
 # Install dependencies
-uv sync --extra brainzgraphinator
+uv sync --dev --frozen
 
 # Run the brainzgraphinator
-uv run python brainzgraphinator/brainzgraphinator.py
+uv run musicbrainz-graph-enricher
 ```
 
 ### Running Tests
 
 ```bash
 # Run brainzgraphinator tests
-just test-brainzgraphinator
+just test
 
 # Run with coverage
 uv run pytest tests/brainzgraphinator/ --cov=brainzgraphinator --cov-report=term-missing
@@ -182,7 +182,7 @@ Build and run with Docker:
 
 ```bash
 # Build
-docker build -f brainzgraphinator/Dockerfile .
+just image
 
 # Run with docker-compose
 docker-compose up brainzgraphinator

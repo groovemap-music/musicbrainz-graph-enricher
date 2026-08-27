@@ -6,10 +6,10 @@ import signal
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
 from aio_pika.abc import AbstractIncomingMessage
 from neo4j.exceptions import ServiceUnavailable, SessionExpired
 from orjson import dumps
-import pytest
 
 import brainzgraphinator.brainzgraphinator as bgmod
 from brainzgraphinator.brainzgraphinator import (

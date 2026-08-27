@@ -41,6 +41,7 @@ from brainzgraphinator.catalog_contract import (
 )
 from brainzgraphinator.config import BrainzgraphinatorConfig
 
+
 logger = structlog.get_logger(__name__)
 
 # Config will be initialized in main
@@ -64,29 +65,19 @@ outage_backoff = OutageBackoff("brainzgraphinator")
 
 # Consumer management
 consumer_tags: dict[str, str] = {}  # {"artists": "consumer-tag-123", ...}
-consumer_cancel_tasks: dict[
-    str, asyncio.Task[None]
-] = {}  # {"artists": asyncio.Task, ...}
+consumer_cancel_tasks: dict[str, asyncio.Task[None]] = {}  # {"artists": asyncio.Task, ...}
 queues: dict[str, Any] = {}  # {"artists": queue_object, ...}
-CONSUMER_CANCEL_DELAY = int(
-    os.environ.get("CONSUMER_CANCEL_DELAY", "300")
-)  # Default 5 minutes
+CONSUMER_CANCEL_DELAY = int(os.environ.get("CONSUMER_CANCEL_DELAY", "300"))  # Default 5 minutes
 
 # Periodic queue checking settings
-QUEUE_CHECK_INTERVAL = int(
-    os.environ.get("QUEUE_CHECK_INTERVAL", "3600")
-)  # Default 1 hour
+QUEUE_CHECK_INTERVAL = int(os.environ.get("QUEUE_CHECK_INTERVAL", "3600"))  # Default 1 hour
 
 # Interval for checking stuck state (consumers died unexpectedly)
-STUCK_CHECK_INTERVAL = int(
-    os.environ.get("STUCK_CHECK_INTERVAL", "30")
-)  # Default 30 seconds
+STUCK_CHECK_INTERVAL = int(os.environ.get("STUCK_CHECK_INTERVAL", "30"))  # Default 30 seconds
 
 # Idle mode settings
 STARTUP_IDLE_TIMEOUT = int(os.environ.get("STARTUP_IDLE_TIMEOUT", "30"))
-IDLE_LOG_INTERVAL = int(
-    os.environ.get("IDLE_LOG_INTERVAL", "300")
-)  # 5 min between idle status logs
+IDLE_LOG_INTERVAL = int(os.environ.get("IDLE_LOG_INTERVAL", "300"))  # 5 min between idle status logs
 
 # Idle mode state
 idle_mode = False
@@ -207,9 +198,7 @@ async def schedule_consumer_cancellation(data_type: str, queue: Any) -> None:
 
             if data_type in consumer_tags:
                 consumer_tag = consumer_tags[data_type]
-                logger.info(
-                    f"🔧 Canceling consumer for {data_type} after {CONSUMER_CANCEL_DELAY}s grace period"
-                )
+                logger.info(f"🔧 Canceling consumer for {data_type} after {CONSUMER_CANCEL_DELAY}s grace period")
                 await queue.cancel(consumer_tag, nowait=True)
                 del consumer_tags[data_type]
 
@@ -221,7 +210,7 @@ async def schedule_consumer_cancellation(data_type: str, queue: Any) -> None:
                 if await check_all_consumers_idle():
                     logger.info("🔧 All consumers idle, closing RabbitMQ connection")
                     await close_rabbitmq_connection()
-        except Exception as e:  # noqa: BLE001 - consumer cancellation is best-effort
+        except Exception as e:
             logger.error(
                 "❌ Failed to cancel consumer",
                 data_type=data_type,
@@ -254,7 +243,7 @@ async def cancel_all_consumers() -> None:
         try:
             await queue.cancel(consumer_tag, nowait=True)
             consumer_tags.pop(data_type, None)
-        except Exception as e:  # noqa: BLE001 - best-effort teardown; the connection is being discarded regardless
+        except Exception as e:
             logger.warning(
                 "⚠️ Failed to cancel consumer during shutdown",
                 data_type=data_type,
@@ -272,7 +261,7 @@ async def close_rabbitmq_connection() -> None:
             try:
                 await active_channel.close()
                 logger.info("🔧 Closed RabbitMQ channel - all consumers idle")
-            except Exception as e:  # noqa: BLE001 - best-effort teardown; the connection is being discarded regardless
+            except Exception as e:
                 logger.warning("⚠️ Error closing channel", error=str(e))
             active_channel = None
 
@@ -280,34 +269,25 @@ async def close_rabbitmq_connection() -> None:
             try:
                 await active_connection.close()
                 logger.info("🔧 Closed RabbitMQ connection - all consumers idle")
-            except Exception as e:  # noqa: BLE001 - best-effort teardown; the connection is being discarded regardless
+            except Exception as e:
                 logger.warning("⚠️ Error closing connection", error=str(e))
             active_connection = None
 
-        logger.info(
-            "✅ RabbitMQ connection closed", check_interval=f"{QUEUE_CHECK_INTERVAL}s"
-        )
-    except Exception as e:  # noqa: BLE001 - best-effort teardown; the connection is being discarded regardless
+        logger.info("✅ RabbitMQ connection closed", check_interval=f"{QUEUE_CHECK_INTERVAL}s")
+    except Exception as e:
         logger.error("❌ Error closing RabbitMQ connection", error=str(e))
 
 
 async def check_all_consumers_idle() -> bool:
     """Check if all consumers are cancelled (idle) AND all files completed."""
-    return len(consumer_tags) == 0 and len(MUSICBRAINZ_DATA_TYPES) == len(
-        completed_files
-    )
+    return len(consumer_tags) == 0 and len(MUSICBRAINZ_DATA_TYPES) == len(completed_files)
 
 
-async def check_file_completion(
-    data: dict[str, Any], data_type: str, message: AbstractIncomingMessage
-) -> bool:
+async def check_file_completion(data: dict[str, Any], data_type: str, message: AbstractIncomingMessage) -> bool:
     """Check if message is a file completion or extraction completion message."""
     if data.get("type") == "file_complete":
         total_processed = data.get("total_processed", 0)
-        logger.info(
-            f"✅ File processing complete for {data_type}! "
-            f"Total records processed: {total_processed}"
-        )
+        logger.info(f"✅ File processing complete for {data_type}! Total records processed: {total_processed}")
 
         if CONSUMER_CANCEL_DELAY > 0 and data_type in queues:
             await schedule_consumer_cancellation(data_type, queues[data_type])
@@ -345,9 +325,7 @@ async def check_file_completion(
     return False
 
 
-async def enrich_artist(
-    tx: Any, record: dict[str, Any], stats: dict[str, int] | None = None
-) -> bool:
+async def enrich_artist(tx: Any, record: dict[str, Any], stats: dict[str, int] | None = None) -> bool:
     """Enrich an existing Artist node with MusicBrainz metadata.
 
     If discogs_artist_id is None, skip — entity has no Discogs match.
@@ -381,9 +359,7 @@ async def enrich_artist(
         mbid=record.get("mbid", record.get("id")),
         mb_type=record.get("mb_type", record.get("type")),
         mb_gender=record.get("gender"),
-        mb_begin_date=record.get(
-            "begin_date", (record.get("life_span") or {}).get("begin")
-        ),
+        mb_begin_date=record.get("begin_date", (record.get("life_span") or {}).get("begin")),
         mb_end_date=record.get("end_date", (record.get("life_span") or {}).get("end")),
         mb_area=record.get("area"),
         mb_begin_area=record.get("begin_area"),
@@ -405,9 +381,7 @@ async def enrich_artist(
     return True
 
 
-async def enrich_label(
-    tx: Any, record: dict[str, Any], stats: dict[str, int] | None = None
-) -> bool:
+async def enrich_label(tx: Any, record: dict[str, Any], stats: dict[str, int] | None = None) -> bool:
     """Enrich an existing Label node with MusicBrainz metadata.
 
     If discogs_label_id is None, skip — entity has no Discogs match.
@@ -435,9 +409,7 @@ async def enrich_label(
         mbid=record.get("mbid", record.get("id")),
         mb_type=record.get("mb_type", record.get("type")),
         mb_label_code=record.get("label_code"),
-        mb_begin_date=record.get(
-            "begin_date", (record.get("life_span") or {}).get("begin")
-        ),
+        mb_begin_date=record.get("begin_date", (record.get("life_span") or {}).get("begin")),
         mb_end_date=record.get("end_date", (record.get("life_span") or {}).get("end")),
         mb_area=record.get("area"),
         mb_updated_at=datetime.now(UTC).isoformat(),
@@ -451,9 +423,7 @@ async def enrich_label(
     return True
 
 
-async def enrich_release(
-    tx: Any, record: dict[str, Any], stats: dict[str, int] | None = None
-) -> bool:
+async def enrich_release(tx: Any, record: dict[str, Any], stats: dict[str, int] | None = None) -> bool:
     """Enrich an existing Release node with MusicBrainz metadata.
 
     If discogs_release_id is None, skip — entity has no Discogs match.
@@ -539,10 +509,7 @@ async def create_relationship_edges(
 
         # Safe: edge_type comes from MB_RELATIONSHIP_MAP, not user input
         result = await tx.run(
-            f"MATCH (a:Artist {{id: $source_id}}) "
-            f"MATCH (b:Artist {{id: $target_id}}) "
-            f"MERGE (a)-[r:{edge_type}]->(b) "
-            f"SET r.source = 'musicbrainz'",
+            f"MATCH (a:Artist {{id: $source_id}}) MATCH (b:Artist {{id: $target_id}}) MERGE (a)-[r:{edge_type}]->(b) SET r.source = 'musicbrainz'",
             source_id=edge_source_id,
             target_id=edge_target_id,
         )
@@ -557,9 +524,7 @@ async def create_relationship_edges(
             s["relationships_skipped_missing_side"] += 1
 
 
-async def enrich_release_group(
-    tx: Any, record: dict[str, Any], stats: dict[str, int] | None = None
-) -> bool:
+async def enrich_release_group(tx: Any, record: dict[str, Any], stats: dict[str, int] | None = None) -> bool:
     """Enrich an existing Master node with MusicBrainz release-group metadata.
 
     If discogs_master_id is None, skip — entity has no Discogs match.
@@ -620,9 +585,7 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
             # are dead-lettered within a second of a routine restart. Returning
             # without settling lets the connection close requeue them exactly
             # once. See discogsography-lnn4.
-            logger.debug(
-                "🛑 Shutdown requested, leaving message unacked for redelivery"
-            )
+            logger.debug("🛑 Shutdown requested, leaving message unacked for redelivery")
             return
 
         try:
@@ -641,9 +604,7 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
 
             data_id: str = body["id"]
             if not data_id:
-                logger.warning(
-                    "⚠️ Nacking record with empty mbid/id", data_type=data_type
-                )
+                logger.warning("⚠️ Nacking record with empty mbid/id", data_type=data_type)
                 await message.nack(requeue=False)
                 return
 
@@ -711,16 +672,16 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
             await outage_backoff.wait()
             try:
                 await message.nack(requeue=True)
-            except Exception as nack_error:  # noqa: BLE001 - the nack path itself is best-effort; the broker will redeliver
+            except Exception as nack_error:
                 logger.warning("⚠️ Failed to nack message", error=str(nack_error))
-        except Exception as e:  # noqa: BLE001 - per-message fault must nack rather than kill the consumer
+        except Exception as e:
             logger.error(
                 f"❌ Failed to process {data_type} MusicBrainz message",
                 error=str(e),
             )
             try:
                 await message.nack(requeue=True)
-            except Exception as nack_error:  # noqa: BLE001 - the nack path itself is best-effort; the broker will redeliver
+            except Exception as nack_error:
                 logger.warning("⚠️ Failed to nack message", error=str(nack_error))
 
     return handler
@@ -761,11 +722,7 @@ async def progress_reporter() -> None:
         total = sum(message_counts.values())
         current_time = time.time()
 
-        if (
-            not idle_mode
-            and total == 0
-            and (current_time - startup_time) >= STARTUP_IDLE_TIMEOUT
-        ):
+        if not idle_mode and total == 0 and (current_time - startup_time) >= STARTUP_IDLE_TIMEOUT:
             idle_mode = True
             last_idle_log = current_time
             logger.info(
@@ -814,8 +771,7 @@ async def periodic_queue_checker() -> None:
 
             if no_active_consumers and files_incomplete and has_processed_messages:
                 logger.warning(
-                    "⚠️ Detected stuck state: consumers died but files not completed. "
-                    "Attempting recovery...",
+                    "⚠️ Detected stuck state: consumers died but files not completed. Attempting recovery...",
                     active_consumers=len(consumer_tags),
                     completed_files=list(completed_files),
                     message_counts=message_counts,
@@ -838,7 +794,7 @@ async def periodic_queue_checker() -> None:
         except asyncio.CancelledError:
             logger.info("🛑 Queue checker task cancelled")
             break
-        except Exception as e:  # noqa: BLE001 - long-running loop must survive per-iteration faults
+        except Exception as e:
             logger.error("❌ Error in periodic queue checker", error=str(e))
 
 
@@ -849,17 +805,15 @@ async def _recover_consumers() -> None:
     if active_connection:
         try:
             await active_connection.close()
-        except Exception as e:  # noqa: BLE001 - the connection is already broken; recovery must proceed regardless
-            logger.warning(
-                "⚠️ Error closing broken connection during recovery", error=str(e)
-            )
+        except Exception as e:
+            logger.warning("⚠️ Error closing broken connection during recovery", error=str(e))
         active_connection = None
         active_channel = None
 
     try:
         temp_connection = await rabbitmq_manager.connect()
         temp_channel = await temp_connection.channel()
-    except Exception as e:  # noqa: BLE001 - recovery must not raise into its caller
+    except Exception as e:
         logger.error("❌ Failed to connect to RabbitMQ for recovery", error=str(e))
         return
 
@@ -868,21 +822,14 @@ async def _recover_consumers() -> None:
         for data_type in MUSICBRAINZ_DATA_TYPES:
             queue_name = catalog_queue_name("brainzgraphinator", data_type)
 
-            declared_queue = await temp_channel.declare_queue(
-                name=queue_name, passive=True
-            )
+            declared_queue = await temp_channel.declare_queue(name=queue_name, passive=True)
 
             if declared_queue.declaration_result.message_count > 0:
-                queues_with_messages.append(
-                    (data_type, declared_queue.declaration_result.message_count)
-                )
+                queues_with_messages.append((data_type, declared_queue.declaration_result.message_count))
 
         if queues_with_messages:
             total_messages = sum(count for _, count in queues_with_messages)
-            logger.info(
-                f"📬 Found messages in queues, restarting consumers: {queues_with_messages} "
-                f"(total: {total_messages})"
-            )
+            logger.info(f"📬 Found messages in queues, restarting consumers: {queues_with_messages} (total: {total_messages})")
 
             active_connection = temp_connection
             active_channel = temp_channel
@@ -893,12 +840,8 @@ async def _recover_consumers() -> None:
             for data_type in MUSICBRAINZ_DATA_TYPES:
                 exchange_name = catalog_exchange_name("musicbrainz", data_type)
                 queue_name = catalog_queue_name("brainzgraphinator", data_type)
-                dlx_name = catalog_dead_letter_exchange_name(
-                    "brainzgraphinator", data_type
-                )
-                dlq_name = catalog_dead_letter_queue_name(
-                    "brainzgraphinator", data_type
-                )
+                dlx_name = catalog_dead_letter_exchange_name("brainzgraphinator", data_type)
+                dlq_name = catalog_dead_letter_queue_name("brainzgraphinator", data_type)
 
                 exchange = await active_channel.declare_exchange(
                     exchange_name,
@@ -947,35 +890,28 @@ async def _recover_consumers() -> None:
                 if data_type in queues and data_type not in consumer_tags:
                     handler = HANDLERS.get(data_type)
                     if handler:
-                        consumer_tag = await queues[data_type].consume(
-                            handler, consumer_tag=f"brainzgraphinator-{data_type}"
-                        )
+                        consumer_tag = await queues[data_type].consume(handler, consumer_tag=f"brainzgraphinator-{data_type}")
                         consumer_tags[data_type] = consumer_tag
                         # Only un-complete a type that actually has a backlog, so
                         # genuinely-finished types stay marked complete.
                         if data_type in pending_counts:
                             completed_files.discard(data_type)
                         last_message_time[data_type] = time.time()
-                        logger.info(
-                            f"✅ Started consumer for {data_type} "
-                            f"(pending: {pending_counts.get(data_type, 0)})"
-                        )
+                        logger.info(f"✅ Started consumer for {data_type} (pending: {pending_counts.get(data_type, 0)})")
 
-            logger.info(
-                f"✅ Recovery complete - consumers restarted: {list(consumer_tags.keys())}"
-            )
+            logger.info(f"✅ Recovery complete - consumers restarted: {list(consumer_tags.keys())}")
             idle_mode = False
         else:
             logger.info("⏳ No messages in any queue, connection remains closed")
             await temp_channel.close()
             await temp_connection.close()
 
-    except Exception as e:  # noqa: BLE001 - recovery must not raise into its caller
+    except Exception as e:
         logger.error("❌ Error during consumer recovery", error=str(e))
         try:
             await temp_channel.close()
             await temp_connection.close()
-        except Exception as close_error:  # noqa: BLE001 - best-effort cleanup inside an error path
+        except Exception as close_error:
             logger.warning(
                 "⚠️ Error closing temporary connection after recovery failure",
                 error=str(close_error),
@@ -991,14 +927,7 @@ async def _recover_consumers() -> None:
 
 
 async def main() -> None:
-    global \
-        config, \
-        graph, \
-        queues, \
-        rabbitmq_manager, \
-        active_connection, \
-        active_channel, \
-        connection_check_task
+    global config, graph, queues, rabbitmq_manager, active_connection, active_channel, connection_check_task
 
     # Set up signal handlers for graceful shutdown
     signal.signal(signal.SIGINT, signal_handler)
@@ -1010,9 +939,7 @@ async def main() -> None:
     # Add startup delay for dependent services
     startup_delay = int(os.environ.get("STARTUP_DELAY", "5"))
     if startup_delay > 0:
-        logger.info(
-            f"⏳ Waiting {startup_delay} seconds for dependent services to start..."
-        )
+        logger.info(f"⏳ Waiting {startup_delay} seconds for dependent services to start...")
         await asyncio.sleep(startup_delay)
 
     # Start health server
@@ -1041,7 +968,7 @@ async def main() -> None:
             result = await session.run("RETURN 1 as test")
             await result.single()
             logger.info("✅ Neo4j connectivity verified (async)")
-    except Exception as e:  # noqa: BLE001 - top-level guard: log and exit cleanly instead of a traceback
+    except Exception as e:
         logger.error("❌ Failed to connect to Neo4j", error=str(e))
         return
 
@@ -1078,24 +1005,18 @@ async def main() -> None:
 
     while startup_retry < max_startup_retries and not shutdown_requested:
         try:
-            logger.info(
-                f"🐰 Attempting to connect to RabbitMQ (attempt {startup_retry + 1}/{max_startup_retries})"
-            )
+            logger.info(f"🐰 Attempting to connect to RabbitMQ (attempt {startup_retry + 1}/{max_startup_retries})")
             amqp_connection = await rabbitmq_manager.connect()
             active_connection = amqp_connection
             break
-        except Exception as e:  # noqa: BLE001 - top-level guard: log and exit cleanly instead of a traceback
+        except Exception as e:
             startup_retry += 1
             if startup_retry < max_startup_retries:
                 wait_time = min(30, 5 * startup_retry)
-                logger.warning(
-                    f"⚠️ RabbitMQ connection failed: {e}. Retrying in {wait_time} seconds..."
-                )
+                logger.warning(f"⚠️ RabbitMQ connection failed: {e}. Retrying in {wait_time} seconds...")
                 await asyncio.sleep(wait_time)
             else:
-                logger.error(
-                    f"❌ Failed to connect to AMQP broker after {max_startup_retries} attempts: {e}"
-                )
+                logger.error(f"❌ Failed to connect to AMQP broker after {max_startup_retries} attempts: {e}")
                 return
 
     if amqp_connection is None:
@@ -1160,9 +1081,7 @@ async def main() -> None:
         # Start consuming from each queue
         for data_type in MUSICBRAINZ_DATA_TYPES:
             handler = HANDLERS[data_type]
-            consumer_tag = await queues[data_type].consume(
-                handler, consumer_tag=f"brainzgraphinator-{data_type}"
-            )
+            consumer_tag = await queues[data_type].consume(handler, consumer_tag=f"brainzgraphinator-{data_type}")
             consumer_tags[data_type] = consumer_tag
             logger.info(f"✅ Started consuming {data_type} MusicBrainz messages")
 
@@ -1206,5 +1125,10 @@ async def main() -> None:
             )
 
 
-if __name__ == "__main__":
+def cli() -> None:
+    """Run the async service from a console-script entry point."""
     run(main())
+
+
+if __name__ == "__main__":
+    cli()
