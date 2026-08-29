@@ -1,5 +1,8 @@
 # GrooveMap MusicBrainz graph enricher
 
+See the repository [documentation index](../docs/README.md) for synchronization,
+resilience, and completion guidance.
+
 Consumes MusicBrainz data from AMQP queues and enriches existing Neo4j knowledge graph nodes with MusicBrainz metadata and relationship edges.
 
 ## Overview
@@ -28,11 +31,11 @@ Environment variables:
 # Neo4j connection
 NEO4J_HOST=neo4j
 NEO4J_USERNAME=neo4j
-NEO4J_PASSWORD=discogsography
+NEO4J_PASSWORD=groovemap
 
 # RabbitMQ (individual vars; also supports _FILE variants for Docker secrets)
-RABBITMQ_USERNAME=discogsography
-RABBITMQ_PASSWORD=discogsography
+RABBITMQ_USERNAME=groovemap
+RABBITMQ_PASSWORD=groovemap
 RABBITMQ_HOST=rabbitmq              # Default: rabbitmq
 RABBITMQ_PORT=5672                  # Default: 5672
 
@@ -147,10 +150,10 @@ MUSICBRAINZ_DATA_TYPES = ["artists", "labels", "release-groups", "releases"]
 
 Subscribes to four fanout exchanges:
 
-- `discogsography-musicbrainz-artists`
-- `discogsography-musicbrainz-labels`
-- `discogsography-musicbrainz-release-groups`
-- `discogsography-musicbrainz-releases`
+- `groovemap-musicbrainz-artists`
+- `groovemap-musicbrainz-labels`
+- `groovemap-musicbrainz-release-groups`
+- `groovemap-musicbrainz-releases`
 
 Each data type has its own consumer queue with dead letter exchange (DLX) and dead letter queue (DLQ).
 

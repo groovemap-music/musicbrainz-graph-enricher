@@ -2,17 +2,17 @@
 
 ## Overview
 
-The MusicBrainz integration imports data from MusicBrainz JSONL database dumps into the Discogsography platform. Data flows through the extractor (Rust) → RabbitMQ → brainzgraphinator (Neo4j) + brainztableinator (PostgreSQL).
+The MusicBrainz integration imports data from MusicBrainz JSONL database dumps into the GrooveMap platform. Data flows through the extractor (Rust) → RabbitMQ → brainzgraphinator (Neo4j) + brainztableinator (PostgreSQL).
 
 ## Data Flow
 
 ```mermaid
 graph TD
     MB[MusicBrainz JSONL Dumps] --> EXT[Extractor --source musicbrainz]
-    EXT -->|fanout| EA[discogsography-musicbrainz-artists]
-    EXT -->|fanout| EL[discogsography-musicbrainz-labels]
-    EXT -->|fanout| ERG[discogsography-musicbrainz-release-groups]
-    EXT -->|fanout| ER[discogsography-musicbrainz-releases]
+    EXT -->|fanout| EA[groovemap-musicbrainz-artists]
+    EXT -->|fanout| EL[groovemap-musicbrainz-labels]
+    EXT -->|fanout| ERG[groovemap-musicbrainz-release-groups]
+    EXT -->|fanout| ER[groovemap-musicbrainz-releases]
     EA --> BG[brainzgraphinator]
     EA --> BT[brainztableinator]
     EL --> BG
