@@ -1,3 +1,3 @@
-"""Brainzgraphinator — enriches Neo4j knowledge graph with MusicBrainz data."""
+"""GrooveMap musicbrainz-graph-enricher package."""
 
 __version__ = "0.1.0"
