@@ -3,7 +3,7 @@
 import asyncio
 import contextlib
 import signal
-from typing import Any
+from typing import Any, get_type_hints
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -509,6 +509,21 @@ class TestRelationshipEdges:
 
 class TestMessageHandling:
     """Tests for message handlers."""
+
+    def test_file_completion_annotations_resolve_at_runtime(self) -> None:
+        """Public completion-handler annotations remain available to introspection."""
+        hints = get_type_hints(bgmod.check_file_completion)
+
+        assert hints["message"] is AbstractIncomingMessage
+        assert hints["return"] is bool
+
+    def test_generated_handler_annotations_resolve_at_runtime(self) -> None:
+        """Nested message-handler annotations remain available to introspection."""
+        handler = bgmod.make_message_handler("artists", AsyncMock())
+        hints = get_type_hints(handler)
+
+        assert hints["message"] is AbstractIncomingMessage
+        assert hints["return"] is type(None)
 
     @pytest.mark.asyncio
     @patch("brainzgraphinator.brainzgraphinator.shutdown_requested", False)
