@@ -1,162 +1,52 @@
-# Consumer Cancellation Feature
+# Consumer cancellation and draining
 
-<div align="center">
+`musicbrainz-graph-enricher` manages one RabbitMQ consumer for each MusicBrainz entity stream.
+Consumers stop after completed streams and before process teardown, preventing unnecessary broker
+activity and preserving deliveries during routine restarts.
 
-**Automatic consumer lifecycle management for completed file processing**
-
-Last Updated: March 2026
-
-</div>
-
-## Overview
-
-The consumer cancellation feature automatically closes RabbitMQ queue consumers after files have completed processing.
-This helps free up resources and provides clearer monitoring of active vs. completed file processing.
-
-## How It Works
-
-### Consumer Cancellation Lifecycle
+## Completion lifecycle
 
 ```mermaid
 sequenceDiagram
-    participant EXT as Extractor
-    participant RMQ as RabbitMQ
-    participant CONS as Consumer<br/>(Graphinator/Tableinator/<br/>Brainzgraphinator/Brainztableinator)
-    participant TIMER as Cancellation Timer
+    participant Producer as Catalog producer
+    participant Broker as RabbitMQ
+    participant Enricher as musicbrainz-graph-enricher
+    participant Neo4j
 
-    EXT->>RMQ: Publish file_complete to fanout exchange
-    RMQ->>CONS: Deliver file_complete via consumer queue
-    CONS->>CONS: Mark file as complete (🎉)
-    CONS->>TIMER: Schedule cancellation (300s grace period)
-
-    Note over CONS,TIMER: Grace period (5 minutes)
-
-    TIMER-->>CONS: Grace period expired
-    CONS->>RMQ: Cancel consumer for queue
-    CONS->>CONS: Update active consumers list
-    CONS->>CONS: Log consumer status
-
-    Note over CONS: Connection remains open<br/>for other queues
-
-    style EXT fill:#fff9c4
-    style RMQ fill:#fff3e0
-    style CONS fill:#e0f2f1
-    style TIMER fill:#ffebee
+    Producer->>Broker: Publish catalog records
+    Broker->>Enricher: Deliver records
+    Enricher->>Neo4j: Commit each matched enrichment
+    Enricher->>Broker: Acknowledge successful records
+    Producer->>Broker: Publish file_complete or extraction_complete
+    Broker->>Enricher: Deliver terminal event
+    Enricher->>Broker: Acknowledge terminal event
+    Note over Enricher: Wait CONSUMER_CANCEL_DELAY
+    Enricher->>Broker: Cancel this stream's consumer
+    Note over Enricher,Broker: Close connection after all four streams are complete and idle
 ```
 
-### Process Steps
+`CONSUMER_CANCEL_DELAY` defaults to 300 seconds. A new terminal event replaces an existing
+cancellation timer for the same stream. Setting the value to `0` disables completion-driven
+cancellation while leaving shutdown cancellation intact.
 
-1. When the Python/Rust extractor sends a "file_complete" message, all consumers (graphinator, tableinator, brainzgraphinator, brainztableinator):
+After every stream is complete and its consumer has been cancelled, the service closes its
+RabbitMQ channel and connection. The periodic queue checker reconnects at
+`QUEUE_CHECK_INTERVAL`, checks for pending messages, and restores all required consumers when
+new work appears.
 
-   - Mark the file as complete (shows 🎉 in progress reports)
-   - Schedule the consumer for that queue to be canceled after a grace period
-   - The default grace period is 5 minutes (300 seconds)
+## Stuck-state recovery
 
-1. After the grace period expires:
+Every `STUCK_CHECK_INTERVAL`, the service detects the state where messages have been processed,
+some streams remain incomplete, and no consumers are registered. It marks health unhealthy while
+recovering the broker connection and consumer set. A recovery failure clears stale consumer tags
+so a later check can retry instead of reporting false health.
 
-   - The consumer for that specific queue is canceled
-   - The connection and channel remain open for other queues
-   - Progress reports show which consumers are active vs. canceled
+## Process shutdown
 
-1. Benefits:
+Signal handling sets the shutdown flag. The main teardown path then cancels every registered
+consumer before stopping background work and closing Neo4j. A delivery observed after shutdown
+has begun is left unacknowledged; closing the connection returns it to RabbitMQ once.
 
-   - Frees up RabbitMQ resources (connections, channels, memory)
-   - Clearer monitoring - easy to see which files are still being processed
-   - Prevents unnecessary network traffic for completed queues
-
-## Configuration
-
-### Environment Variable
-
-- `CONSUMER_CANCEL_DELAY`: Number of seconds to wait before canceling a consumer after file completion
-  - Default: 300 (5 minutes)
-  - Set to 0 to disable consumer cancellation
-  - Can be set per service or globally
-
-### Examples
-
-```bash
-# Use default 5-minute delay
-docker-compose up
-
-# Use 30-second delay for faster testing
-CONSUMER_CANCEL_DELAY=30 docker-compose up
-
-# Disable consumer cancellation
-CONSUMER_CANCEL_DELAY=0 docker-compose up
-
-# Different delays per service
-CONSUMER_CANCEL_DELAY=60 docker-compose up tableinator
-CONSUMER_CANCEL_DELAY=120 docker-compose up graphinator
-```
-
-## Monitoring
-
-### Progress Reports
-
-The periodic progress reports now include consumer status:
-
-```
-📊 Progress: 1000 total messages processed (🎉 Artists: 500, Labels: 500, Masters: 0, Releases: 0)
-🔧 Canceled consumers: ['artists']
-✅ Active consumers: ['labels', 'masters', 'releases']
-```
-
-### Log Messages
-
-Watch for these log messages:
-
-- `🎉 File processing complete for {type}!` - File marked as complete
-- `🔧 Canceling consumer for {type} after {delay}s grace period` - Consumer cancellation scheduled
-- `✅ Consumer for {type} successfully canceled` - Consumer successfully canceled
-- `❌ Failed to cancel consumer for {type}` - Cancellation failed (non-fatal)
-
-## Testing
-
-Use the provided test scripts:
-
-1. **test_file_completion.py** - Tests the file completion message handling
-
-```bash
-# Run with short delay for testing
-CONSUMER_CANCEL_DELAY=10 docker-compose up -d tableinator graphinator
-
-# Watch the logs
-docker-compose logs -f tableinator graphinator
-```
-
-## Edge Cases Handled
-
-1. **Multiple Completion Messages**: If multiple completion messages are received, only one cancellation is scheduled
-1. **Service Restart**: Consumer tags are lost on restart, but the feature continues to work for new messages
-1. **Cancellation Failure**: Failures are logged but don't crash the service
-1. **Grace Period**: Ensures all in-flight messages are processed before cancellation
-
-## Technical Details
-
-- Uses aio_pika's `queue.cancel(consumer_tag, nowait=True)` to cancel consumers
-- Consumer tags are stored when consumers are created
-- Cancellation tasks are tracked to allow proper cleanup on shutdown
-- The `nowait=True` parameter prevents hanging if RabbitMQ is slow to respond
-
-## Extractor Integration
-
-The Rust extractor integrates with consumer cancellation by:
-
-1. **Sending File Completion Messages**: When a file finishes processing, the extractor sends a
-   "file_complete" message
-1. **Tracking Completed Files**: The extractor maintains a `completed_files` set to avoid false stalled warnings
-1. **Progress Monitoring**: Completed files are excluded from stalled detection logic
-
-This prevents the extractors from incorrectly reporting files as "stalled" when they have actually completed processing
-and their consumers have been canceled.
-
-### Extraction Completion Signal (March 2026)
-
-After all files finish, the extractor sends an `extraction_complete` message to all fanout exchanges for the active source. Consumers use this signal to:
-
-- **Flush remaining batches** before cleanup
-- **Graphinator**: Delete stub Neo4j nodes (no `sha256` property) created by cross-type MERGE operations
-- **Tableinator**: Purge stale PostgreSQL rows where `updated_at < started_at`
-
-This ensures database record counts match extractor counts after each run. See [File Completion Tracking](file-completion-tracking.md) and [Database Schema — Post-Extraction Cleanup](https://github.com/groovemap-music/database-schema) for details.
+This order protects the quorum queue's 20-delivery budget. Repeatedly nacking while a consumer is
+still subscribed can immediately redeliver the same message and exhaust that budget. The
+shutdown-delivery-churn regression test preserves this behavior.

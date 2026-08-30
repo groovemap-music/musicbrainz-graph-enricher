@@ -44,13 +44,16 @@ from brainzgraphinator.config import BrainzgraphinatorConfig
 
 logger = structlog.get_logger(__name__)
 
+SERVICE_NAME = "musicbrainz-graph-enricher"
+# This value is part of the v1 catalog-event wire contract. Renaming it would
+# create a second set of durable queues and strand messages in the existing set.
+WIRE_CONSUMER_NAME = "brainzgraphinator"
+
 STARTUP_BANNER = r"""
-              _    _             _                                _                    _    _
- _ __ _  _ __(_)__| |__ _ _ __ _(_)_ _  ______ __ _ _ _ __ _ _ __| |_ ___ ___ _ _  _ _(_)__| |_  ___ _ _
-| '  \ || (_-< / _| '_ \ '_/ _` | | ' \|_ /___/ _` | '_/ _` | '_ \ ' \___/ -_) ' \| '_| / _| ' \/ -_) '_|
-|_|_|_\_,_/__/_\__|_.__/_| \__,_|_|_||_/__|   \__, |_| \__,_| .__/_||_|  \___|_||_|_| |_\__|_||_\___|_|
-                                              |___/         |_|
-                              musicbrainz-graph-enricher
++-----------------------------------+
+| GrooveMap                         |
+| musicbrainz-graph-enricher        |
++-----------------------------------+
 """.strip("\n")
 
 # Config will be initialized in main
@@ -68,9 +71,8 @@ last_message_time = {
 completed_files: set[str] = set()  # Track which files have completed processing
 
 # Throttles requeues while Neo4j is unavailable, so an outage cannot burn the
-# quorum queue's x-delivery-limit budget and dead-letter valid records
-# (discogsography-rb05).
-outage_backoff = OutageBackoff("brainzgraphinator")
+# quorum queue's x-delivery-limit budget and dead-letter valid records.
+outage_backoff = OutageBackoff(SERVICE_NAME)
 
 # Consumer management
 consumer_tags: dict[str, str] = {}  # {"artists": "consumer-tag-123", ...}
@@ -94,7 +96,8 @@ idle_mode = False
 # Driver will be initialized in main
 graph: AsyncResilientNeo4jDriver | None = None
 
-# Batch mode (disabled for brainzgraphinator — enrichment is simpler than ingestion)
+# Legacy batch knobs remain readable for environment compatibility. Processing
+# is deliberately per delivery; these values do not currently change behavior.
 BATCH_MODE = os.environ.get("NEO4J_BATCH_MODE", "true").lower() == "true"
 BATCH_SIZE = int(os.environ.get("NEO4J_BATCH_SIZE", "100"))
 BATCH_FLUSH_INTERVAL = float(os.environ.get("NEO4J_BATCH_FLUSH_INTERVAL", "5.0"))
@@ -174,7 +177,7 @@ def get_health_data() -> dict[str, Any]:
 
     return {
         "status": status,
-        "service": "brainzgraphinator",
+        "service": SERVICE_NAME,
         "current_task": active_task,
         "message_counts": message_counts.copy(),
         "last_message_time": last_message_time.copy(),
@@ -322,8 +325,8 @@ async def check_file_completion(data: dict[str, Any], data_type: str, message: A
         # nothing ever restored the flag: the stall check then logged at ERROR
         # every 30s forever and check_all_consumers_idle() could never return True,
         # so the connection and idle consumers were held open until restart. A
-        # plain restart between the file_complete ack and this delivery reaches the
-        # same terminal state (discogsography-ewvh).
+        # plain restart between the file_complete ack and this delivery must reach
+        # the same terminal state.
         completed_files.add(data_type)
         if CONSUMER_CANCEL_DELAY > 0 and data_type in queues:
             await schedule_consumer_cancellation(data_type, queues[data_type])
@@ -592,8 +595,7 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
             # redelivered within milliseconds and nacked again, burning a quorum
             # x-delivery-count per cycle; at x-delivery-limit=20 valid records
             # are dead-lettered within a second of a routine restart. Returning
-            # without settling lets the connection close requeue them exactly
-            # once. See discogsography-lnn4.
+            # without settling lets the connection close requeue them exactly once.
             logger.debug("🛑 Shutdown requested, leaving message unacked for redelivery")
             return
 
@@ -677,7 +679,7 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
             # immediately burns all 20 redeliveries in ~3 minutes and RabbitMQ
             # dead-letters a perfectly valid record mid-outage. Prefetch here is
             # 200, so an unthrottled Neo4j outage puts 200 messages on that
-            # treadmill at once (discogsography-rb05).
+            # treadmill at once.
             await outage_backoff.wait()
             try:
                 await message.nack(requeue=True)
@@ -829,7 +831,7 @@ async def _recover_consumers() -> None:
     try:
         queues_with_messages = []
         for data_type in MUSICBRAINZ_DATA_TYPES:
-            queue_name = catalog_queue_name("brainzgraphinator", data_type)
+            queue_name = catalog_queue_name(WIRE_CONSUMER_NAME, data_type)
 
             declared_queue = await temp_channel.declare_queue(name=queue_name, passive=True)
 
@@ -848,9 +850,9 @@ async def _recover_consumers() -> None:
             queues = {}
             for data_type in MUSICBRAINZ_DATA_TYPES:
                 exchange_name = catalog_exchange_name("musicbrainz", data_type)
-                queue_name = catalog_queue_name("brainzgraphinator", data_type)
-                dlx_name = catalog_dead_letter_exchange_name("brainzgraphinator", data_type)
-                dlq_name = catalog_dead_letter_queue_name("brainzgraphinator", data_type)
+                queue_name = catalog_queue_name(WIRE_CONSUMER_NAME, data_type)
+                dlx_name = catalog_dead_letter_exchange_name(WIRE_CONSUMER_NAME, data_type)
+                dlq_name = catalog_dead_letter_queue_name(WIRE_CONSUMER_NAME, data_type)
 
                 exchange = await active_channel.declare_exchange(
                     exchange_name,
@@ -899,7 +901,7 @@ async def _recover_consumers() -> None:
                 if data_type in queues and data_type not in consumer_tags:
                     handler = HANDLERS.get(data_type)
                     if handler:
-                        consumer_tag = await queues[data_type].consume(handler, consumer_tag=f"brainzgraphinator-{data_type}")
+                        consumer_tag = await queues[data_type].consume(handler, consumer_tag=f"{SERVICE_NAME}-{data_type}")
                         consumer_tags[data_type] = consumer_tag
                         # Only un-complete a type that actually has a backlog, so
                         # genuinely-finished types stay marked complete.
@@ -942,8 +944,8 @@ async def main() -> None:
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    setup_logging("brainzgraphinator", log_file=Path("/logs/brainzgraphinator.log"))
-    logger.info("🚀 Starting MusicBrainz brainzgraphinator service")
+    setup_logging(SERVICE_NAME, log_file=Path(f"/logs/{SERVICE_NAME}.log"))
+    logger.info("🚀 Starting GrooveMap musicbrainz-graph-enricher service")
 
     # Add startup delay for dependent services
     startup_delay = int(os.environ.get("STARTUP_DELAY", "5"))
@@ -1028,9 +1030,9 @@ async def main() -> None:
         queues = {}
         for data_type in MUSICBRAINZ_DATA_TYPES:
             exchange_name = catalog_exchange_name("musicbrainz", data_type)
-            queue_name = catalog_queue_name("brainzgraphinator", data_type)
-            dlx_name = catalog_dead_letter_exchange_name("brainzgraphinator", data_type)
-            dlq_name = catalog_dead_letter_queue_name("brainzgraphinator", data_type)
+            queue_name = catalog_queue_name(WIRE_CONSUMER_NAME, data_type)
+            dlx_name = catalog_dead_letter_exchange_name(WIRE_CONSUMER_NAME, data_type)
+            dlq_name = catalog_dead_letter_queue_name(WIRE_CONSUMER_NAME, data_type)
 
             # Declare fanout exchange
             exchange = await channel.declare_exchange(
@@ -1075,12 +1077,12 @@ async def main() -> None:
         # Start consuming from each queue
         for data_type in MUSICBRAINZ_DATA_TYPES:
             handler = HANDLERS[data_type]
-            consumer_tag = await queues[data_type].consume(handler, consumer_tag=f"brainzgraphinator-{data_type}")
+            consumer_tag = await queues[data_type].consume(handler, consumer_tag=f"{SERVICE_NAME}-{data_type}")
             consumer_tags[data_type] = consumer_tag
             logger.info(f"✅ Started consuming {data_type} MusicBrainz messages")
 
         logger.info(
-            "🚀 Brainzgraphinator is ready and consuming MusicBrainz messages",
+            "🚀 musicbrainz-graph-enricher is ready and consuming MusicBrainz messages",
             data_types=MUSICBRAINZ_DATA_TYPES,
         )
 
@@ -1096,7 +1098,7 @@ async def main() -> None:
         finally:
             # Stop new deliveries FIRST, before the multi-second flush/teardown
             # below: a still-subscribed consumer keeps being handed messages it
-            # can only leave unacked (discogsography-lnn4).
+            # can only leave unacked.
             await cancel_all_consumers()
 
             progress_task.cancel()
@@ -1114,7 +1116,7 @@ async def main() -> None:
             health_server.stop()
 
             logger.info(
-                "✅ Brainzgraphinator shutdown complete",
+                "✅ musicbrainz-graph-enricher shutdown complete",
                 enrichment_stats=enrichment_stats,
             )
 
