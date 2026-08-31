@@ -51,7 +51,7 @@ class TestHealthData:
         """Health status is 'starting' when graph is None and no consumers registered."""
         data = get_health_data()
         assert data["status"] == "starting"
-        assert data["service"] == "brainzgraphinator"
+        assert data["service"] == "musicbrainz-graph-enricher"
         assert data["current_task"] == "Initializing Neo4j connection"
 
     @patch("brainzgraphinator.brainzgraphinator.graph", MagicMock())
@@ -152,8 +152,7 @@ class TestEnrichArtist:
     @pytest.mark.asyncio
     async def test_enrich_artist_coerces_discogs_id_to_string(self, mock_tx: AsyncMock) -> None:
         """discogs_artist_id (a JSON int from the extractor) is coerced to str before
-        matching, since graphinator always writes Discogs node `id` as a String.
-        Regression test for discogsography-cu2.10.
+        matching, since GrooveMap graph nodes store Discogs `id` values as strings.
         """
         record = {"mbid": "abc", "discogs_artist_id": 12345}
         with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
@@ -208,9 +207,7 @@ class TestEnrichLabel:
 
     @pytest.mark.asyncio
     async def test_enrich_label_coerces_discogs_id_to_string(self, mock_tx: AsyncMock) -> None:
-        """discogs_label_id is coerced to str before matching. Regression test for
-        discogsography-cu2.10.
-        """
+        """discogs_label_id is coerced to str before matching GrooveMap graph nodes."""
         record = {"mbid": "abc", "discogs_label_id": 54321}
         with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
             await enrich_label(mock_tx, record)
@@ -263,9 +260,7 @@ class TestEnrichRelease:
 
     @pytest.mark.asyncio
     async def test_enrich_release_coerces_discogs_id_to_string(self, mock_tx: AsyncMock) -> None:
-        """discogs_release_id is coerced to str before matching. Regression test for
-        discogsography-cu2.10.
-        """
+        """discogs_release_id is coerced to str before matching GrooveMap graph nodes."""
         record = {"mbid": "abc", "discogs_release_id": 99999}
         with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
             await enrich_release(mock_tx, record)
@@ -318,9 +313,7 @@ class TestEnrichReleaseGroup:
 
     @pytest.mark.asyncio
     async def test_enrich_release_group_coerces_discogs_id_to_string(self, mock_tx: AsyncMock) -> None:
-        """discogs_master_id is coerced to str before matching. Regression test for
-        discogsography-cu2.10.
-        """
+        """discogs_master_id is coerced to str before matching GrooveMap graph nodes."""
         record = {"mbid": "abc", "discogs_master_id": 23853}
         with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
             await enrich_release_group(mock_tx, record)
@@ -447,9 +440,7 @@ class TestRelationshipEdges:
 
     @pytest.mark.asyncio
     async def test_create_edge_coerces_ids_to_string(self, mock_tx: AsyncMock) -> None:
-        """source_id/target_id are coerced to str to match the graph's String `id`
-        convention on Discogs nodes. Regression test for discogsography-cu2.10.
-        """
+        """source_id/target_id are coerced to str for GrooveMap graph identifiers."""
         relations = [{"type": "member of band", "target_discogs_artist_id": 67890}]
         with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
             await create_relationship_edges(mock_tx, 12345, relations)
@@ -462,9 +453,7 @@ class TestRelationshipEdges:
 
     @pytest.mark.asyncio
     async def test_create_edge_forward_direction_keeps_source_target(self, mock_tx: AsyncMock) -> None:
-        """direction == 'forward' (or absent) keeps the processed record as the
-        relationship source. Regression test for discogsography-cu2.20.
-        """
+        """direction == 'forward' (or absent) keeps the record as relationship source."""
         relations = [
             {
                 "type": "member of band",
@@ -484,8 +473,7 @@ class TestRelationshipEdges:
         """direction == 'backward' means the processed record is the relationship's
         TARGET, not its source — source/target must be swapped so e.g. a band's own
         record (direction=backward, target=member) still creates
-        (member)-[:MEMBER_OF]->(band), not the inverse. Regression test for
-        discogsography-cu2.20.
+        (member)-[:MEMBER_OF]->(band), not the inverse.
         """
         relations = [
             {
@@ -586,8 +574,8 @@ class TestMessageHandling:
             await on_artist_message(mock_message)
 
         mock_message.ack.assert_called_once()
-        # discogsography-ewvh: the terminal signal must also (re-)mark the type
-        # complete — completed_files is otherwise erased by the recovery path for any
+        # The terminal signal must also (re-)mark the type complete — completed_files
+        # is otherwise erased by the recovery path for any
         # type whose queue still holds messages, and this signal is often the only one
         # left, so nothing ever restored the flag.
         assert completed == {"artists"}
@@ -635,8 +623,8 @@ class TestMessageHandling:
     async def test_on_data_message_shutdown_nacks(self) -> None:
         """Message received during shutdown is left UNSETTLED, not nacked.
 
-        discogsography-lnn4: a still-subscribed consumer would be redelivered a
-        nacked message within milliseconds, burning one quorum x-delivery-count
+        A still-subscribed consumer would be redelivered a nacked message within
+        milliseconds, burning one quorum x-delivery-count
         per cycle until x-delivery-limit=20 dead-letters a perfectly valid record.
         Leaving it unsettled defers redelivery to connection close.
         """
@@ -2140,7 +2128,7 @@ class TestRecoverConsumersClearsTagsBrainzgraphinator:
 
 
 class TestOutageRequeueBackoff:
-    """Regression tests for discogsography-rb05 (Neo4j outage → dead-lettering)."""
+    """Regression tests for Neo4j outage backoff and delivery preservation."""
 
     @pytest.mark.asyncio
     @patch("brainzgraphinator.brainzgraphinator.shutdown_requested", False)

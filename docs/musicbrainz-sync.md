@@ -1,127 +1,63 @@
-# MusicBrainz Data Sync
+# MusicBrainz event flow
 
-## Overview
+This repository owns the consumer that projects matched MusicBrainz catalog data into the
+GrooveMap Neo4j graph. Downloading and parsing MusicBrainz dumps belongs to the upstream catalog
+producer; storing the full MusicBrainz catalog belongs to a separate persistence service.
 
-The MusicBrainz integration imports data from MusicBrainz JSONL database dumps into the GrooveMap platform. Data flows through the extractor (Rust) → RabbitMQ → brainzgraphinator (Neo4j) + brainztableinator (PostgreSQL).
+## Input streams
 
-## Data Flow
+The promoted v1 catalog-event contract defines four fanout exchanges:
+
+- `groovemap-musicbrainz-artists`
+- `groovemap-musicbrainz-labels`
+- `groovemap-musicbrainz-release-groups`
+- `groovemap-musicbrainz-releases`
+
+`MUSICBRAINZ_EXCHANGE_PREFIX` can replace the default prefix. Each exchange binds one durable
+quorum queue for this consumer and an associated classic dead-letter queue.
 
 ```mermaid
-graph TD
-    MB[MusicBrainz JSONL Dumps] --> EXT[Extractor --source musicbrainz]
-    EXT -->|fanout| EA[groovemap-musicbrainz-artists]
-    EXT -->|fanout| EL[groovemap-musicbrainz-labels]
-    EXT -->|fanout| ERG[groovemap-musicbrainz-release-groups]
-    EXT -->|fanout| ER[groovemap-musicbrainz-releases]
-    EA --> BG[brainzgraphinator]
-    EA --> BT[brainztableinator]
-    EL --> BG
-    EL --> BT
-    ERG --> BG
-    ERG --> BT
-    ER --> BG
-    ER --> BT
-    BG -->|enrich existing nodes| NEO[Neo4j]
-    BT -->|store all MB data| PG[PostgreSQL]
+flowchart LR
+    Artist[artists exchange]
+    Label[labels exchange]
+    Group[release-groups exchange]
+    Release[releases exchange]
+    Enricher[musicbrainz-graph-enricher]
+    Neo4j[(Neo4j)]
+    DeadLetter[Consumer dead-letter queues]
+
+    Artist --> Enricher
+    Label --> Enricher
+    Group --> Enricher
+    Release --> Enricher
+    Enricher -->|matched metadata and edges| Neo4j
+    Enricher -->|rejected or exhausted delivery| DeadLetter
 ```
 
-## Dump Schedule
+Queue names retain `brainzgraphinator` as the v1 consumer token, for example
+`groovemap-musicbrainz-brainzgraphinator-artists`. This is a wire-compatibility identifier,
+not the service's public name. Changing it would create different durable queues and leave the
+existing queues unconsumed.
 
-MusicBrainz publishes new JSONL dumps **twice weekly** (Wednesdays and Saturdays).
+## Record processing
 
-## Import Process
+Data records must have a non-empty `id`. The entity-specific processor matches the relevant
+Discogs identifier to an existing graph node, writes MusicBrainz properties, and acknowledges the
+delivery after the Neo4j transaction succeeds. Artist relations are written only when both graph
+endpoints exist. See [graph enrichment](graph-enrichment.md) for the property and edge mapping.
 
-### Initial Import
+The channel uses a prefetch count of 200. Processing is concurrent but each delivery uses an
+independent Neo4j transaction; the service does not currently aggregate records into a shared
+transaction batch.
 
-1. On startup the extractor **automatically downloads the latest dump**. It reads `MUSICBRAINZ_DUMP_URL` (default `https://data.metabrainz.org/pub/musicbrainz/data/json-dumps/`), selects the newest dated dump (`YYYYMMDD-HHMMSS`), and streams each `.tar.xz` archive directly to a versioned subdirectory as `{version}/{entity}.jsonl.xz`:
+## Control events
 
-   - `artist.jsonl.xz`
-   - `label.jsonl.xz`
-   - `release-group.jsonl.xz`
-   - `release.jsonl.xz`
+`file_complete` and `extraction_complete` are terminal control events for one entity stream.
+They update completion state, acknowledge the event, and may schedule consumer cancellation.
+They do not perform graph cleanup. Details are in [completion signals](file-completion-tracking.md).
 
-   > Manual placement remains an optional override: drop pre-downloaded `.jsonl.xz` files into the `musicbrainz_data` volume and the extractor will use them instead of downloading.
+## Observability
 
-1. Start (or restart) the `extractor-musicbrainz` container:
-
-   ```bash
-   docker-compose up -d extractor-musicbrainz
-   ```
-
-1. The extractor detects the dump files, parses them, and publishes messages to RabbitMQ
-
-1. brainzgraphinator and brainztableinator consume and process all messages
-
-1. Monitor progress via health endpoints:
-
-   - Extractor: `http://localhost:8000/health`
-   - Brainzgraphinator: `http://localhost:8011/health`
-   - Brainztableinator: `http://localhost:8010/health`
-
-### Incremental Updates
-
-1. Download the latest MB JSONL dumps
-1. Replace the files in the data volume
-1. Restart `extractor-musicbrainz` or trigger via the `/trigger` endpoint:
-   ```bash
-   curl -X POST http://localhost:8000/trigger
-   ```
-1. The state marker system detects the new dump version and triggers a full reprocess
-1. All writes are idempotent — existing data is updated, new data is inserted
-
-### Force Reprocess
-
-To force reprocessing of the same dump version:
-
-```bash
-curl -X POST http://localhost:8000/trigger -H "Content-Type: application/json" -d '{"force_reprocess": true}'
-```
-
-Or set the environment variable:
-
-```bash
-FORCE_REPROCESS=true docker-compose up extractor-musicbrainz
-```
-
-## State Markers
-
-The extractor tracks progress using version-specific state markers:
-
-- File: `.mb_extraction_status_{version}.json` in the data directory
-- States: `pending` → `in_progress` → `completed` (or `failed`)
-- A new dump version creates a new marker, triggering reprocessing
-- Completed markers prevent duplicate processing
-
-## Monitoring
-
-### Enrichment Status API
-
-```bash
-curl http://localhost:8004/api/enrichment/status
-```
-
-Returns coverage statistics:
-
-```json
-{
-  "musicbrainz": {
-    "artists": {"total_mb": 2100000, "matched_to_discogs": 950000, "enriched_in_neo4j": 950000},
-    "labels": {"total_mb": 180000, "matched_to_discogs": 85000, "enriched_in_neo4j": 85000},
-    "releases": {"total_mb": 3200000, "matched_to_discogs": 1400000, "enriched_in_neo4j": 1400000},
-    "relationships": {"total_in_mb": 5000000, "created_in_neo4j": 420000}
-  }
-}
-```
-
-### Service Health
-
-| Service           | URL            | Key Metrics                                                |
-| ----------------- | -------------- | ---------------------------------------------------------- |
-| Extractor (MB)    | `:8000/health` | extraction_progress, extraction_status                     |
-| Brainzgraphinator | `:8011/health` | entities_enriched, relationships_created, entities_skipped |
-| Brainztableinator | `:8010/health` | message_counts per data type                               |
-
-## Future Enhancements
-
-- **Hourly replication**: MusicBrainz offers replication packets for near-real-time updates (complex, requires tracking replication sequence numbers)
-- **Delta detection**: Compare record SHA256 hashes to skip unchanged entities during re-import
+`http://localhost:8011/health` reports the service status, current task, per-stream message
+counts and timestamps, active consumers, completed streams, and enrichment counters. Runtime
+logs and health data identify the service as `musicbrainz-graph-enricher`.

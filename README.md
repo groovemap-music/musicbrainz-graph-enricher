@@ -1,12 +1,89 @@
-# GrooveMap MusicBrainz graph enricher
+# musicbrainz-graph-enricher
 
-Consumes versioned MusicBrainz catalog events and enriches Discogs-matched Neo4j entities
-with MusicBrainz metadata and relationship edges.
+`musicbrainz-graph-enricher` consumes versioned MusicBrainz catalog events and enriches
+existing GrooveMap Neo4j entities with MusicBrainz metadata and relationships. It does not
+create unmatched catalog entities: records and relationship endpoints without a resolved
+Discogs identifier are deliberately skipped.
+
+## Data flow
+
+```mermaid
+flowchart LR
+    Producer[MusicBrainz catalog event producer]
+    Exchange[groovemap-musicbrainz-* fanout exchanges]
+    Service[musicbrainz-graph-enricher]
+    Graph[(GrooveMap Neo4j graph)]
+    Health[HTTP health endpoint :8011]
+    DLQ[Per-entity dead-letter queues]
+
+    Producer --> Exchange --> Service
+    Service -->|matched nodes and relationships| Graph
+    Service --> Health
+    Service -->|rejected identifier or exhausted delivery| DLQ
+```
+
+The service consumes `artists`, `labels`, `release-groups`, and `releases`. Successful
+records add `mb_*` properties and MusicBrainz-sourced relationship edges to matched
+`Artist`, `Label`, `Master`, and `Release` nodes. See [graph enrichment](docs/graph-enrichment.md)
+for the exact outputs.
+
+## Processing and shutdown
+
+Each delivery is written in its own Neo4j transaction; RabbitMQ prefetch permits up to 200
+in-flight deliveries. The legacy `NEO4J_BATCH_*` variables are still accepted by the module
+but do not alter the current per-delivery transaction model.
+
+`file_complete` and `extraction_complete` events mark an entity stream complete and schedule
+its consumer for cancellation. On process shutdown, consumers are cancelled before database
+and broker teardown so new deliveries cannot churn through RabbitMQ's delivery limit. Transient
+Neo4j failures are requeued with outage backoff. Records with a missing or empty `id` are
+rejected without requeue; malformed JSON and other processing errors follow the generic requeue
+path.
+
+See [consumer lifecycle](docs/consumer-cancellation.md),
+[completion signals](docs/file-completion-tracking.md), and
+[failure handling](docs/database-resilience.md) for the operational contract.
+
+## Configuration
+
+Connection settings:
+
+| Variable | Purpose |
+| --- | --- |
+| `NEO4J_HOST` | Neo4j host or URI input |
+| `NEO4J_PORT` | Port for a bare `NEO4J_HOST`; defaults to `7687` and is ignored when the host is a full URI |
+| `NEO4J_USERNAME` | Neo4j user |
+| `NEO4J_PASSWORD` | Neo4j password |
+| `RABBITMQ_HOST` | RabbitMQ host; defaults to `rabbitmq` |
+| `RABBITMQ_PORT` | RabbitMQ port; defaults to `5672` |
+| `RABBITMQ_USERNAME` | RabbitMQ user |
+| `RABBITMQ_PASSWORD` | RabbitMQ password |
+
+Only the credential variables (`NEO4J_USERNAME`, `NEO4J_PASSWORD`, `RABBITMQ_USERNAME`, and
+`RABBITMQ_PASSWORD`) support the Docker secret `_FILE` convention. Host and port variables are
+read directly from the environment.
+
+Operational tuning:
+
+| Variable | Default | Purpose |
+| --- | ---: | --- |
+| `CONSUMER_CANCEL_DELAY` | `300` | Grace period before cancelling a completed stream consumer; `0` disables cancellation |
+| `QUEUE_CHECK_INTERVAL` | `3600` | Interval for checking idle queues for new work |
+| `STUCK_CHECK_INTERVAL` | `30` | Interval for detecting and recovering missing consumers |
+| `STARTUP_IDLE_TIMEOUT` | `30` | Time without messages before entering idle mode |
+| `IDLE_LOG_INTERVAL` | `300` | Idle status log interval |
+| `STARTUP_DELAY` | `5` | Delay before dependency initialization |
+| `MUSICBRAINZ_EXCHANGE_PREFIX` | `groovemap-musicbrainz` | Producer-owned exchange prefix |
+
+The health endpoint is served on `http://localhost:8011/health` and identifies the service as
+`musicbrainz-graph-enricher`.
 
 ## Development
 
-This service consumes the private `groovemap-runtime` package. Local setup requires read
-access to `groovemap-music/python-libraries`; the lockfile records the reviewed revision.
+The service depends on the shared `groovemap-runtime` package from
+`groovemap-music/python-libraries`. While that dependency is private, a narrowly installed
+GitHub App provides short-lived read access in CI; a personal access token is not supported for
+cross-repository authentication.
 
 ```bash
 mise install
@@ -15,31 +92,37 @@ just check
 just image
 ```
 
-`just check` is credential-free and uses mocked Neo4j/RabbitMQ boundaries. Live integration,
-load, and deployment checks remain separate. See
-[brainzgraphinator/README.md](brainzgraphinator/README.md) for configuration and behavior.
+`just check` uses mocked RabbitMQ and Neo4j boundaries and does not connect to live services.
+`just image` builds and inspects the local `musicbrainz-graph-enricher:local` image. Publishing,
+tagging, and pushing images are separate release operations.
 
-The source-check workflow can run with the repository-scoped GitHub token. Full dependency
-installation and tests remain operator-local until a narrowly installed GitHub App can mint
-a short-lived token that reads the private Python libraries repository; no cross-repository
-PAT is accepted.
+## Contracts and compatibility
 
-## Contracts
+The v1 catalog-event contract is promoted byte-for-byte from `catalog-ingestion`, and the
+persistence contract is promoted from `database-schema`. `just source-check` verifies the
+promoted artifacts and generated binding.
 
-- Catalog-event contract: v1, promoted byte-for-byte from `catalog-ingestion`.
-- Persistence compatibility: v1, promoted from `database-schema`.
+Some internal names remain intentionally unchanged because they are compatibility boundaries:
 
-`just source-check` verifies both promoted files and the generated Python binding by SHA-256.
-There are no cross-repository relative imports or generated writes.
+- `brainzgraphinator` is the Python package name and the v1 AMQP consumer identifier. Existing
+  durable queue, dead-letter exchange, and dead-letter queue names include this token.
+- `BrainzgraphinatorConfig` is the internal configuration class used by existing imports.
 
-## Release and license
-
-This repository versions one service wheel and container image. Commitizen reads the PEP 621
-version and uses annotated `v$version` tags. Dry runs do not tag, push, publish, or release.
-
-The current tree is MIT licensed. Historical revisions retain their then-applicable license.
+These identifiers are not the public service identity. Runtime logs, health data, image metadata,
+the console command, and documentation use `musicbrainz-graph-enricher`.
 
 ## Documentation
 
-See the [documentation index](docs/README.md) and the
-[brainzgraphinator reference](brainzgraphinator/README.md).
+- [Documentation index](docs/README.md)
+- [Graph enrichment](docs/graph-enrichment.md)
+- [MusicBrainz event flow](docs/musicbrainz-sync.md)
+- [Consumer lifecycle](docs/consumer-cancellation.md)
+- [Completion signals](docs/file-completion-tracking.md)
+- [Database resilience](docs/database-resilience.md)
+- [Release compliance](docs/release-compliance.md)
+- [History rewrite approval gate](docs/history-rewrite-gate.md)
+
+## License
+
+The current tree is available under the [MIT License](LICENSE). Historical revisions retain
+their then-applicable license.
