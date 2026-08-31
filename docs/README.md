@@ -5,7 +5,8 @@
 - [Consumer cancellation and draining](consumer-cancellation.md): completion and shutdown behavior
 - [File completion tracking](file-completion-tracking.md): terminal control events and health state
 - [Database resilience](database-resilience.md): transient failure classification and retries
-- [Source-history provenance](extraction.md)
+- [Release compliance](release-compliance.md): validation and publication boundaries
+- [History rewrite approval gate](history-rewrite-gate.md): private-history sanitation procedure
 
-The documents under `superpowers/` are retained historical implementation plans and design
-records. Current operational guidance is in the pages above.
+Historical implementation plans and migration recipes are preserved in the private
+`planning-archive` repository rather than this future-public repository.
