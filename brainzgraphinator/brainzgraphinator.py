@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import contextlib
 import os
@@ -10,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 import structlog
-from aio_pika.abc import AbstractIncomingMessage
+from aio_pika.abc import AbstractIncomingMessage  # noqa: TC002 - runtime annotation introspection
 from common import (
     AsyncResilientNeo4jDriver,
     AsyncResilientRabbitMQ,

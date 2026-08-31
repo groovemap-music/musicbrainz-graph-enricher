@@ -1,5 +1,7 @@
 """MusicBrainz graph enricher configuration owned by this service."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from os import getenv
 from typing import cast
@@ -17,7 +19,7 @@ class BrainzgraphinatorConfig:
     neo4j_password: str = field(repr=False)
 
     @classmethod
-    def from_env(cls) -> "BrainzgraphinatorConfig":
+    def from_env(cls) -> BrainzgraphinatorConfig:
         """Create configuration from environment variables."""
         neo4j_username = get_secret("NEO4J_USERNAME")
         neo4j_password = get_secret("NEO4J_PASSWORD")
