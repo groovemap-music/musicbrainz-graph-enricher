@@ -30,7 +30,8 @@ def test_catalog_contract_matches_musicbrainz_stream() -> None:
 
 def test_public_docs_exclude_private_planning_material() -> None:
     assert not (ROOT / "docs" / "extraction.md").exists()
-    assert not (ROOT / "docs" / "superpowers").exists()
+    assert not any(item.is_file() for item in (ROOT / "docs" / "superpowers").rglob("*"))
+    assert not any(item.is_file() for item in (ROOT / "docs" / "specs").rglob("*"))
     docs = "\n".join(path.read_text() for path in [ROOT / "README.md", *(ROOT / "docs").glob("*.md")])
     assert "Python 3.14" in docs
     assert "discogsography" not in docs.casefold()
