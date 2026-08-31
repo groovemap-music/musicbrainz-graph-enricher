@@ -2,7 +2,8 @@
 
 History sanitation runs only in separate backup and sanitized clones. It removes raw private
 planning paths from every reachable commit while the private `planning-archive` repository at
-commit `4d0ecef0a798aab2f769cb5eb2e93982236f4f91` preserves the source records.
+commit `daf82a149aaa382b3cebbd4b43d3c82e53d4128e` preserves the source records,
+including the canonical readable `docs/superpowers/` and `docs/specs/` trees.
 
 ```mermaid
 flowchart TD

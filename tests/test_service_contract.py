@@ -40,6 +40,8 @@ def test_release_and_history_docs_keep_remote_mutations_separately_approved() ->
     release = (ROOT / "docs" / "release-compliance.md").read_text()
     history = (ROOT / "docs" / "history-rewrite-gate.md").read_text()
     assert "Dependabot-authored pull requests run the same required" in release
-    assert "explicit operator approval" in release
+    assert "explicit operator" in release
+    assert "approval. Visibility, tags" in release
     assert "Explicit operator approval" in history
     assert "visibility, tags, releases, packages, and container publication" in history
+    assert "daf82a149aaa382b3cebbd4b43d3c82e53d4128e" in history
