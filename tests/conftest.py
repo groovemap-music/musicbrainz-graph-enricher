@@ -5,6 +5,31 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 
+# Every standard OpenTelemetry variable that changes what the SDK records or exports. A test
+# run must not inherit the ambient OpenTelemetry configuration -- OTEL_SDK_DISABLED=true in
+# particular turns every SDK meter into a no-op, which would make in-memory-reader assertions
+# fail with an empty collection and no error anywhere. Mirrors python-libraries' own
+# tests/conftest.py isolation fixture.
+OTEL_ENVIRONMENT = (
+    "OTEL_EXPORTER_OTLP_ENDPOINT",
+    "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT",
+    "OTEL_METRICS_EXEMPLAR_FILTER",
+    "OTEL_METRICS_EXPORTER",
+    "OTEL_METRIC_EXPORT_INTERVAL",
+    "OTEL_RESOURCE_ATTRIBUTES",
+    "OTEL_SDK_DISABLED",
+    "OTEL_SERVICE_NAME",
+)
+
+
+@pytest.fixture(autouse=True)
+def isolated_otel_environment(monkeypatch: pytest.MonkeyPatch):
+    """Run every test against a known-empty OpenTelemetry configuration."""
+    for name in OTEL_ENVIRONMENT:
+        monkeypatch.delenv(name, raising=False)
+    yield
+
+
 @pytest.fixture(autouse=True)
 def disable_batch_mode():
     """Disable batch mode for all brainzgraphinator tests."""
