@@ -21,7 +21,10 @@ from common import (
     OutageBackoff,
     neo4j_security_kwargs,
     setup_logging,
+    setup_telemetry,
+    shutdown_telemetry,
 )
+from common.telemetry import get_meter, provider_generation
 from neo4j.exceptions import ServiceUnavailable, SessionExpired
 from orjson import loads
 
@@ -141,6 +144,144 @@ MB_RELATIONSHIP_MAP: dict[str, str] = {
     "artist rename": "RENAMED_TO",
 }
 
+# ── Telemetry ────────────────────────────────────────────────────────────
+#
+# Instruments follow the GrooveMap OpenTelemetry metrics conventions. `get_meter` and every
+# instrument created from it are safe no-ops when the 'otel' extra is absent or no collector
+# endpoint is configured (see common.telemetry) -- this service behaves identically either way.
+INSTRUMENTATION_SCOPE = "groovemap.brainzgraphinator"
+PIPELINE_SOURCE = "musicbrainz"
+PIPELINE_STORE = "neo4j"
+
+PIPELINE_MESSAGES = "groovemap.pipeline.messages"
+PIPELINE_MESSAGE_DURATION = "groovemap.pipeline.message.duration"
+PIPELINE_BATCH_SIZE = "groovemap.pipeline.batch.size"
+PIPELINE_BATCH_FLUSH_DURATION = "groovemap.pipeline.batch.flush.duration"
+PIPELINE_CONSUMERS_ACTIVE = "groovemap.pipeline.consumers.active"
+# Recorded locally, matching common.runtime_metrics.record_consumed_message exactly: this
+# service registers its handler with aio-pika's queue.consume() directly rather than going
+# through common.process_message_with_retry, so the shared wrapper never sees these deliveries.
+MESSAGING_CONSUMED_MESSAGES = "messaging.client.consumed.messages"
+MESSAGING_OPERATION_DURATION = "messaging.client.operation.duration"
+
+# Instruments are rebuilt whenever the installed MeterProvider changes (tracked by
+# provider_generation()), the same seam common.runtime_metrics uses -- so a cache built
+# against the no-op provider before setup_telemetry() runs is replaced rather than silently
+# discarding every later measurement, and tests can install an in-memory provider mid-run.
+_instruments_lock = threading.Lock()
+_instruments: dict[str, Any] = {}
+_instrument_generation = -1
+
+
+def _build_instruments() -> dict[str, Any]:
+    """Create one instrument per telemetry metric from the current provider."""
+    meter = get_meter(INSTRUMENTATION_SCOPE)
+    return {
+        PIPELINE_MESSAGES: meter.create_counter(
+            PIPELINE_MESSAGES,
+            description="Catalog pipeline messages handled, by entity and outcome.",
+        ),
+        PIPELINE_MESSAGE_DURATION: meter.create_histogram(
+            PIPELINE_MESSAGE_DURATION,
+            unit="s",
+            description="Duration of handling one pipeline message.",
+        ),
+        PIPELINE_BATCH_SIZE: meter.create_histogram(
+            PIPELINE_BATCH_SIZE,
+            unit="{items}",
+            description="Number of records written to the store in one flush.",
+        ),
+        PIPELINE_BATCH_FLUSH_DURATION: meter.create_histogram(
+            PIPELINE_BATCH_FLUSH_DURATION,
+            unit="s",
+            description="Duration of flushing records to the store.",
+        ),
+        PIPELINE_CONSUMERS_ACTIVE: meter.create_up_down_counter(
+            PIPELINE_CONSUMERS_ACTIVE,
+            description="Number of currently active MusicBrainz consumers.",
+        ),
+        MESSAGING_CONSUMED_MESSAGES: meter.create_counter(
+            MESSAGING_CONSUMED_MESSAGES,
+            description="Messages consumed from the broker.",
+        ),
+        MESSAGING_OPERATION_DURATION: meter.create_histogram(
+            MESSAGING_OPERATION_DURATION,
+            unit="s",
+            description="Duration of a messaging client operation.",
+        ),
+    }
+
+
+def _instrument(name: str) -> Any:
+    """Return one cached instrument, rebuilding the cache when the provider changed."""
+    global _instrument_generation
+
+    generation = provider_generation()
+    with _instruments_lock:
+        if _instrument_generation != generation or not _instruments:
+            _instruments.clear()
+            _instruments.update(_build_instruments())
+            _instrument_generation = generation
+        return _instruments[name]
+
+
+def reset_telemetry_instruments() -> None:
+    """Drop the instrument cache. Test seam; production relies on the generation check."""
+    global _instrument_generation
+
+    with _instruments_lock:
+        _instruments.clear()
+        _instrument_generation = -1
+
+
+def _record_pipeline_message(entity: str, outcome: str) -> None:
+    """Count one pipeline message by entity and outcome (processed/skipped/failed)."""
+    try:
+        _instrument(PIPELINE_MESSAGES).add(1, {"source": PIPELINE_SOURCE, "entity": entity, "outcome": outcome})
+    except Exception:  # pragma: no cover - defensive
+        logger.debug("Could not record %s", PIPELINE_MESSAGES, exc_info=True)
+
+
+def _record_message_duration(entity: str, duration_s: float) -> None:
+    """Record how long handling one pipeline message took."""
+    try:
+        _instrument(PIPELINE_MESSAGE_DURATION).record(duration_s, {"source": PIPELINE_SOURCE, "entity": entity})
+    except Exception:  # pragma: no cover - defensive
+        logger.debug("Could not record %s", PIPELINE_MESSAGE_DURATION, exc_info=True)
+
+
+def _record_batch_flush(entity: str, size: int, duration_s: float, outcome: str) -> None:
+    """Record one Neo4j write flush's size and duration."""
+    try:
+        _instrument(PIPELINE_BATCH_SIZE).record(size, {"store": PIPELINE_STORE, "entity": entity})
+        _instrument(PIPELINE_BATCH_FLUSH_DURATION).record(duration_s, {"store": PIPELINE_STORE, "entity": entity, "outcome": outcome})
+    except Exception:  # pragma: no cover - defensive
+        logger.debug("Could not record %s", PIPELINE_BATCH_FLUSH_DURATION, exc_info=True)
+
+
+def _record_consumer_delta(delta: int) -> None:
+    """Adjust the active-consumer gauge by delta (+1 on start, -1 on stop)."""
+    try:
+        _instrument(PIPELINE_CONSUMERS_ACTIVE).add(delta, {"source": PIPELINE_SOURCE})
+    except Exception:  # pragma: no cover - defensive
+        logger.debug("Could not record %s", PIPELINE_CONSUMERS_ACTIVE, exc_info=True)
+
+
+def _record_consumed_message(destination: str, duration_s: float, error_type: str | None) -> None:
+    """Record one consumed delivery, matching common.runtime_metrics' shared wrapper shape."""
+    attributes: dict[str, str] = {
+        "messaging.system": "rabbitmq",
+        "messaging.destination.name": destination,
+        "messaging.operation.name": "process",
+    }
+    if error_type is not None:
+        attributes["error.type"] = error_type
+    try:
+        _instrument(MESSAGING_CONSUMED_MESSAGES).add(1, attributes)
+        _instrument(MESSAGING_OPERATION_DURATION).record(duration_s, attributes)
+    except Exception:  # pragma: no cover - defensive
+        logger.debug("Could not record consumed-message metrics", exc_info=True)
+
 
 def get_health_data() -> dict[str, Any]:
     """Get current health data for monitoring."""
@@ -215,6 +356,7 @@ async def schedule_consumer_cancellation(data_type: str, queue: Any) -> None:
                 logger.info(f"🔧 Canceling consumer for {data_type} after {CONSUMER_CANCEL_DELAY}s grace period")
                 await queue.cancel(consumer_tag, nowait=True)
                 del consumer_tags[data_type]
+                _record_consumer_delta(-1)
 
                 logger.info(
                     "✅ Consumer successfully canceled",
@@ -253,10 +395,12 @@ async def cancel_all_consumers() -> None:
         queue = queues.get(data_type)
         if queue is None:
             consumer_tags.pop(data_type, None)
+            _record_consumer_delta(-1)
             continue
         try:
             await queue.cancel(consumer_tag, nowait=True)
             consumer_tags.pop(data_type, None)
+            _record_consumer_delta(-1)
         except Exception as e:
             logger.warning(
                 "⚠️ Failed to cancel consumer during shutdown",
@@ -590,6 +734,8 @@ PROCESSORS: dict[str, Any] = {
 def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
     """Create a RabbitMQ message handler for the given data type."""
 
+    destination = catalog_queue_name(WIRE_CONSUMER_NAME, data_type)
+
     async def handler(message: AbstractIncomingMessage) -> None:
         if shutdown_requested:
             # Leave the delivery UNACKED — never nack(requeue=True) here. The
@@ -600,6 +746,12 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
             # without settling lets the connection close requeue them exactly once.
             logger.debug("🛑 Shutdown requested, leaving message unacked for redelivery")
             return
+
+        # message.duration / messaging.client.* cover every settled delivery below,
+        # control messages included; groovemap.pipeline.messages (set per-branch) is
+        # domain-scoped to actual enrichment attempts.
+        started = time.perf_counter()
+        messaging_error_type: str | None = None
 
         try:
             logger.debug("🔄 Received MusicBrainz message", data_type=data_type)
@@ -613,12 +765,16 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
             if "id" not in body:
                 logger.error("❌ Message missing 'id' field", data_type=data_type)
                 await message.nack(requeue=False)
+                messaging_error_type = "ValidationError"
+                _record_pipeline_message(data_type, "failed")
                 return
 
             data_id: str = body["id"]
             if not data_id:
                 logger.warning("⚠️ Nacking record with empty mbid/id", data_type=data_type)
                 await message.nack(requeue=False)
+                messaging_error_type = "ValidationError"
+                _record_pipeline_message(data_type, "failed")
                 return
 
             if graph is None:
@@ -646,7 +802,16 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
                         local_stats[key] = 0
                     return bool(await enrich_fn(tx, body, local_stats))
 
-                await session.execute_write(tx_fn)
+                # Each message writes exactly one record, so this is a flush of batch size 1 —
+                # still reported through the shared batch metrics so dashboards built against
+                # batching services (graphinator et al.) read this service the same way.
+                flush_started = time.perf_counter()
+                try:
+                    await session.execute_write(tx_fn)
+                except Exception:
+                    _record_batch_flush(data_type, 1, time.perf_counter() - flush_started, "failed")
+                    raise
+                _record_batch_flush(data_type, 1, time.perf_counter() - flush_started, "committed")
 
             # Merge local counters into global stats under lock to prevent
             # concurrent handlers from corrupting the shared dict
@@ -671,6 +836,12 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
                     f"📊 Enriched {data_type} in Neo4j",
                     message_counts=message_counts[data_type],
                 )
+
+            # entities_enriched vs. entities_skipped_no_discogs_match is exactly the
+            # per-message enrich_fn outcome (see enrich_artist/label/release/release_group):
+            # a record with no Discogs match is deliberately skipped, not an error.
+            outcome = "processed" if local_stats["entities_enriched"] > 0 else "skipped"
+            _record_pipeline_message(data_type, outcome)
         except (ServiceUnavailable, SessionExpired, DatabaseUnavailableError) as e:
             logger.warning(
                 f"⚠️ Neo4j unavailable, will retry {data_type} message",
@@ -687,6 +858,8 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
                 await message.nack(requeue=True)
             except Exception as nack_error:
                 logger.warning("⚠️ Failed to nack message", error=str(nack_error))
+            messaging_error_type = type(e).__name__
+            _record_pipeline_message(data_type, "failed")
         except Exception as e:
             logger.error(
                 f"❌ Failed to process {data_type} MusicBrainz message",
@@ -696,6 +869,12 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
                 await message.nack(requeue=True)
             except Exception as nack_error:
                 logger.warning("⚠️ Failed to nack message", error=str(nack_error))
+            messaging_error_type = type(e).__name__
+            _record_pipeline_message(data_type, "failed")
+        finally:
+            duration_s = time.perf_counter() - started
+            _record_message_duration(data_type, duration_s)
+            _record_consumed_message(destination, duration_s, messaging_error_type)
 
     return handler
 
@@ -905,6 +1084,7 @@ async def _recover_consumers() -> None:
                     if handler:
                         consumer_tag = await queues[data_type].consume(handler, consumer_tag=f"{SERVICE_NAME}-{data_type}")
                         consumer_tags[data_type] = consumer_tag
+                        _record_consumer_delta(1)
                         # Only un-complete a type that actually has a backlog, so
                         # genuinely-finished types stay marked complete.
                         if data_type in pending_counts:
@@ -936,6 +1116,8 @@ async def _recover_consumers() -> None:
         # died with the now-closed connection. Leaving them behind would keep
         # len(consumer_tags) > 0 forever, permanently gating off both recovery
         # routes (stuck-check requires 0 tags) while health still reads healthy.
+        if consumer_tags:
+            _record_consumer_delta(-len(consumer_tags))
         consumer_tags.clear()
 
 
@@ -947,6 +1129,7 @@ async def main() -> None:
     signal.signal(signal.SIGTERM, signal_handler)
 
     setup_logging(SERVICE_NAME, log_file=Path(f"/logs/{SERVICE_NAME}.log"))
+    setup_telemetry("brainzgraphinator")
     logger.info("🚀 Starting GrooveMap musicbrainz-graph-enricher service")
 
     # Add startup delay for dependent services
@@ -965,6 +1148,7 @@ async def main() -> None:
         config = BrainzgraphinatorConfig.from_env()
     except ValueError as e:
         logger.error("❌ Configuration error", error=str(e))
+        shutdown_telemetry()
         return
 
     # Initialize async resilient Neo4j driver
@@ -983,6 +1167,7 @@ async def main() -> None:
             logger.info("✅ Neo4j connectivity verified (async)")
     except Exception as e:
         logger.error("❌ Failed to connect to Neo4j", error=str(e))
+        shutdown_telemetry()
         return
 
     print(STARTUP_BANNER)
@@ -1015,10 +1200,12 @@ async def main() -> None:
                 await asyncio.sleep(wait_time)
             else:
                 logger.error(f"❌ Failed to connect to AMQP broker after {max_startup_retries} attempts: {e}")
+                shutdown_telemetry()
                 return
 
     if amqp_connection is None:
         logger.error("❌ No AMQP connection available")
+        shutdown_telemetry()
         return
 
     async with amqp_connection:
@@ -1081,6 +1268,7 @@ async def main() -> None:
             handler = HANDLERS[data_type]
             consumer_tag = await queues[data_type].consume(handler, consumer_tag=f"{SERVICE_NAME}-{data_type}")
             consumer_tags[data_type] = consumer_tag
+            _record_consumer_delta(1)
             logger.info(f"✅ Started consuming {data_type} MusicBrainz messages")
 
         logger.info(
@@ -1116,6 +1304,7 @@ async def main() -> None:
                 await graph.close()
 
             health_server.stop()
+            shutdown_telemetry()
 
             logger.info(
                 "✅ musicbrainz-graph-enricher shutdown complete",

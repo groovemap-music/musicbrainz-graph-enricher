@@ -76,7 +76,47 @@ Operational tuning:
 | `MUSICBRAINZ_EXCHANGE_PREFIX` | `groovemap-musicbrainz` | Producer-owned exchange prefix |
 
 The health endpoint is served on `http://localhost:8011/health` and identifies the service as
-`musicbrainz-graph-enricher`.
+`musicbrainz-graph-enricher`. It never serves `/metrics`; the endpoint always answers `404`
+regardless of the OpenTelemetry configuration below.
+
+## Observability
+
+The service pushes OpenTelemetry metrics over OTLP/HTTP-protobuf via `groovemap-runtime`'s
+`common.telemetry` module (the `otel` extra). Telemetry is fully optional: with no collector
+endpoint configured, or without the `otel` extra installed, every instrument is a local no-op
+and the service behaves exactly as it does today.
+
+| Variable | Meaning | Default |
+| --- | --- | --- |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Collector base URL, for example `http://otel-collector:4318`; unset disables export | unset |
+| `OTEL_METRICS_EXPORTER` | `otlp` or `none` | `otlp` |
+| `OTEL_METRIC_EXPORT_INTERVAL` | Push interval in milliseconds | SDK default |
+| `OTEL_SERVICE_NAME` | Overrides the `service.name` resource attribute (`brainzgraphinator`) | `brainzgraphinator` |
+| `OTEL_RESOURCE_ATTRIBUTES` | Extra resource attributes, for example `service.namespace=groovemap,deployment.environment.name=dev` | empty |
+
+`brainzgraphinator` records the following instruments, following the GrooveMap OpenTelemetry
+metrics conventions (`source=musicbrainz`, `store=neo4j`):
+
+| Metric | Instrument | Attributes |
+| --- | --- | --- |
+| `groovemap.pipeline.messages` | counter | `source`, `entity`, `outcome` (`processed`\|`skipped`\|`failed`) |
+| `groovemap.pipeline.message.duration` | histogram, s | `source`, `entity` |
+| `groovemap.pipeline.batch.size` | histogram, items | `store`, `entity` |
+| `groovemap.pipeline.batch.flush.duration` | histogram, s | `store`, `entity`, `outcome` |
+| `groovemap.pipeline.consumers.active` | up-down counter | `source` |
+
+`outcome=skipped` is the common case here: a record with no resolved Discogs id is
+deliberately left unenriched rather than treated as an error (see [Data flow](#data-flow)).
+Each delivery writes exactly one record, so every flush reports `groovemap.pipeline.batch.size`
+of `1`.
+
+`db.client.operation.duration` and `groovemap.pipeline.reconnects` come for free from the
+`AsyncResilientNeo4jDriver` and `AsyncResilientRabbitMQ` wrappers this service already uses.
+This service registers its handlers directly with `queue.consume()` rather than through
+`common.process_message_with_retry`, so `messaging.client.consumed.messages` and
+`messaging.client.operation.duration` are recorded locally instead, with the same instrument
+names and attributes (`messaging.system=rabbitmq`, `messaging.destination.name`,
+`messaging.operation.name=process`, `error.type` on failure) the shared wrapper would use.
 
 ## Development
 
