@@ -48,7 +48,10 @@ def release_event(name: str, *, discogs_release_id: int | None = 99999, canonica
 
     A canonical event carries the block the producer computed under `media` alongside the raw
     medium list under `media_raw`, exactly as the promoted contract describes it. A
-    non-canonical event predates the block and carries only `media_raw`.
+    non-canonical event predates the block and carries only `media_raw` and `status` — the
+    promoted v1 contract's release fixture (contracts/catalog-events/v1/contract.json) never
+    puts `packaging` or `release_group` on the envelope, so a real legacy event cannot carry
+    them either.
     """
     fixture = load_fixture(name)
     source = fixture["input"]
@@ -58,8 +61,6 @@ def release_event(name: str, *, discogs_release_id: int | None = 99999, canonica
         "discogs_release_id": discogs_release_id,
         "barcode": "724384952051",
         "status": source.get("status"),
-        "packaging": source.get("packaging"),
-        "release_group": source.get("release_group"),
         "media_raw": source.get("media"),
     }
     if canonical:
@@ -98,10 +99,18 @@ class TestReleaseMediaBlock:
         assert release_media_block(event) is event["media"]
 
     @pytest.mark.parametrize("name", fixture_names())
-    def test_legacy_event_derives_the_expected_block(self, name: str) -> None:
-        """An event predating the block derives it from media_raw, matching the fixture."""
+    def test_legacy_event_derives_the_expected_media(self, name: str) -> None:
+        """An event predating the block derives the same items and families the fixture expects.
+
+        A legacy event carries only `media_raw` and `status` (see contracts/catalog-events/v1)
+        — never `packaging` or `release_group` — so the mapper fields those inputs feed
+        (`release_kind`, `packaging`, `traits`) are unavailable here and legitimately blank.
+        Only `items` and `families`, the fields the writer actually reads, are compared.
+        """
         block = release_media_block(release_event(name, canonical=False))
-        assert block == load_fixture(name)["expected"]
+        expected = load_fixture(name)["expected"]
+        assert block["items"] == expected["items"]
+        assert block["families"] == expected["families"]
 
     def test_event_with_neither_field_has_no_block(self) -> None:
         """No media and no media_raw means the release's media is unknown, not empty."""
@@ -111,7 +120,10 @@ class TestReleaseMediaBlock:
         """A `media` value that is not a block shape falls through to the derive path."""
         event = release_event("musicbrainz-12-inch-vinyl", canonical=False)
         event["media"] = '12" Vinyl'
-        assert release_media_block(event) == load_fixture("musicbrainz-12-inch-vinyl")["expected"]
+        block = release_media_block(event)
+        expected = load_fixture("musicbrainz-12-inch-vinyl")["expected"]
+        assert block["items"] == expected["items"]
+        assert block["families"] == expected["families"]
 
 
 # ── Edge rows ─────────────────────────────────────────────────────────────
