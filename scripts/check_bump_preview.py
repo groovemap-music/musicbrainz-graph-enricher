@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 COMMAND = ("cz", "bump", "--dry-run", "--changelog", "--yes", "--check-consistency")
 NO_COMMITS_EXIT = 3
 NO_COMMITS_MARKERS = ("[NO_COMMITS_FOUND]", "No new commits found.")
+NO_BUMPABLE_COMMITS_EXIT = 21
+NO_BUMPABLE_COMMITS_MARKERS = ("[NO_COMMITS_TO_BUMP]", "The commits found are not eligible to be bumped")
 RELEASE_GAP_EXIT = 16
 RELEASE_GAP_MARKERS = (
     "bump: version ",
@@ -24,10 +26,17 @@ RELEASE_GAP_MARKERS = (
 
 
 def accepted_result(returncode: int, output: str) -> bool:
-    """Return whether Commitizen produced a valid explicit preview state."""
+    """Return whether Commitizen produced a valid explicit preview state.
+
+    A bead whose commits are all non-bumping conventional types (docs, test, chore, style)
+    is a normal, complete unit of work: Commitizen correctly reports it has nothing eligible
+    to bump, the same way it reports having no new commits at all. Both are accepted
+    terminal states, not failures.
+    """
     return (
         returncode == 0
         or (returncode == NO_COMMITS_EXIT and all(marker in output for marker in NO_COMMITS_MARKERS))
+        or (returncode == NO_BUMPABLE_COMMITS_EXIT and all(marker in output for marker in NO_BUMPABLE_COMMITS_MARKERS))
         or (returncode == RELEASE_GAP_EXIT and all(marker in output for marker in RELEASE_GAP_MARKERS))
     )
 
