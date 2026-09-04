@@ -24,6 +24,7 @@ from common import (
     setup_telemetry,
     shutdown_telemetry,
 )
+from common.media import families_of, map_musicbrainz_release, medium_label
 from common.telemetry import get_meter, provider_generation
 from neo4j.exceptions import ServiceUnavailable, SessionExpired
 from orjson import loads
@@ -145,6 +146,54 @@ MB_RELATIONSHIP_MAP: dict[str, str] = {
     "subgroup": "SUBGROUP_OF",
     "artist rename": "RENAMED_TO",
 }
+
+# ── Canonical media (ADR 0007) ───────────────────────────────────────────
+#
+# Every ISSUED_ON edge this service writes carries source: 'musicbrainz'. The value is the
+# only thing separating our edges from the Discogs enricher's on the same release, so it is
+# both the MERGE key (never a property set afterwards) and the filter that scopes the stale
+# sweep. Medium and MediaFamily nodes are shared with the Discogs enricher by design: the
+# node ids come from the shared vocabulary, so both enrichers MERGE the same nodes.
+MEDIA_SOURCE = "musicbrainz"
+
+# Reconciles the release-level media summary and removes this source's stale edges. It runs
+# whenever the event carries (or yields) a media block, including a block with no items —
+# an empty block is an authoritative statement that MusicBrainz knows no media for the
+# release, so it clears both the summary and every musicbrainz-sourced edge.
+#
+# The DELETE is scoped by `source` and by the new medium id set, so a Discogs-sourced edge
+# is never a candidate no matter which media it points at.
+RELEASE_MEDIA_SUMMARY_CYPHER = (
+    "MATCH (r:Release {id: $discogs_id}) "
+    "SET r.mb_media_families = $families, "
+    "    r.mb_medium_count = $medium_count "
+    "WITH r "
+    "MATCH (r)-[stale:ISSUED_ON]->(m:Medium) "
+    "WHERE stale.source = $source AND NOT m.id IN $medium_ids "
+    "DELETE stale"
+)
+
+# Merges one Medium per canonical medium id, files it under its MediaFamily, and attaches it
+# to the release.
+#
+# `source` sits INSIDE the ISSUED_ON pattern rather than in the SET that follows it. A
+# release can hold two edges to the same Medium — one from each catalog — and a bare
+# `MERGE (r)-[e:ISSUED_ON]->(m)` would match the Discogs edge and overwrite its qty and
+# source. Keying the MERGE on the source keeps the two edges distinct and leaves the Discogs
+# edge untouched.
+#
+# Medium properties are ON CREATE only: whichever enricher first sees a medium names it, and
+# neither rewrites the other's node on every event.
+RELEASE_MEDIA_EDGES_CYPHER = (
+    "MATCH (r:Release {id: $discogs_id}) "
+    "UNWIND $items AS item "
+    "MERGE (m:Medium {id: item.medium}) "
+    "    ON CREATE SET m.family = item.family, m.label = item.label "
+    "MERGE (f:MediaFamily {name: item.family}) "
+    "MERGE (m)-[:IN_FAMILY]->(f) "
+    "MERGE (r)-[e:ISSUED_ON {source: $source}]->(m) "
+    "SET e.qty = item.qty"
+)
 
 # ── Telemetry ────────────────────────────────────────────────────────────
 #
@@ -583,10 +632,131 @@ async def enrich_label(tx: Any, record: dict[str, Any], stats: dict[str, int] | 
     return True
 
 
+def release_media_block(record: dict[str, Any]) -> dict[str, Any] | None:
+    """Return the canonical media block for a release event, or None when it has none.
+
+    ADR 0007 has the MusicBrainz producer compute the block in its parser, so a current
+    event carries `media` ready to use. An event published before that field existed carries
+    only the raw medium list in `media_raw`; for those the block is derived here through the
+    shared runtime mapper, the same one the producer runs, so a replayed backlog lands the
+    same media as a fresh event.
+
+    An event with neither field yields None, and the caller leaves the release's media
+    properties and edges exactly as it found them — absence of the field is not evidence that
+    the release has no media.
+    """
+    media = record.get("media")
+    if isinstance(media, dict) and isinstance(media.get("items"), list):
+        return media
+
+    media_raw = record.get("media_raw")
+    if isinstance(media_raw, list):
+        # map_musicbrainz_release reads `media`, `status`, `packaging` and `release_group`
+        # off one mapping; the event carries the raw list under a different key, so hand the
+        # mapper the record with that key restored to the shape it expects.
+        return map_musicbrainz_release({**record, "media": media_raw})
+
+    return None
+
+
+def media_edge_rows(media: dict[str, Any]) -> list[dict[str, Any]]:
+    """Collapse a media block's items into one row per canonical medium.
+
+    A MusicBrainz release lists one entry per physical medium, each with qty 1, so a 2xLP
+    arrives as two `vinyl_unspecified` items. The graph holds at most one musicbrainz-sourced
+    ISSUED_ON edge per (release, medium) pair, so items sharing a medium are summed into one
+    row and the total lands on that edge's `qty`. Rows keep the order the mediums first appear
+    in, which makes the emitted parameters deterministic for a given event.
+
+    Items missing a medium or family id are dropped rather than raising: an item that cannot
+    name its medium cannot become an edge.
+    """
+    rows: dict[str, dict[str, Any]] = {}
+    for item in media.get("items") or []:
+        if not isinstance(item, dict):
+            continue
+        medium_id = item.get("medium")
+        family = item.get("family")
+        if not isinstance(medium_id, str) or not isinstance(family, str):
+            continue
+        quantity = item.get("qty")
+        quantity = quantity if isinstance(quantity, int) and not isinstance(quantity, bool) and quantity >= 1 else 1
+        row = rows.get(medium_id)
+        if row is None:
+            rows[medium_id] = {
+                "medium": medium_id,
+                "family": family,
+                "label": _medium_label(medium_id),
+                "qty": quantity,
+            }
+        else:
+            row["qty"] += quantity
+    return list(rows.values())
+
+
+def _medium_label(medium_id: str) -> str:
+    """Return a medium's vocabulary label, falling back to its id.
+
+    A medium id the vendored vocabulary does not know means this service is older than the
+    event that reached it. Naming the node after its id keeps the edge — and the provenance
+    of an unrecognized medium — rather than failing the delivery over a display string.
+    """
+    try:
+        return medium_label(medium_id)
+    except KeyError:
+        return medium_id
+
+
+async def reconcile_release_media(tx: Any, discogs_id: str, record: dict[str, Any]) -> bool:
+    """Reconcile one matched release's MusicBrainz media onto the graph.
+
+    Writes the `mb_media_families` and `mb_medium_count` summary, merges a Medium per
+    canonical medium id under its MediaFamily, and attaches each to the release with an
+    ISSUED_ON edge tagged source: 'musicbrainz'. Edges this source wrote for media the
+    release no longer has are deleted, so a corrected upstream medium list does not leave a
+    contradiction behind. Discogs-sourced edges are never read, written, or deleted.
+
+    Returns:
+        True when the event carried media to reconcile, False when it carried none and the
+        release's media was left untouched.
+    """
+    media = release_media_block(record)
+    if media is None:
+        return False
+
+    rows = media_edge_rows(media)
+    items = [item for item in (media.get("items") or []) if isinstance(item, dict)]
+
+    await tx.run(
+        RELEASE_MEDIA_SUMMARY_CYPHER,
+        discogs_id=discogs_id,
+        families=families_of(media),
+        # The count of source mediums, not of distinct media: a 2xLP is two mediums behind
+        # one edge of qty 2.
+        medium_count=len(items),
+        medium_ids=[row["medium"] for row in rows],
+        source=MEDIA_SOURCE,
+    )
+
+    if rows:
+        await tx.run(
+            RELEASE_MEDIA_EDGES_CYPHER,
+            discogs_id=discogs_id,
+            items=rows,
+            source=MEDIA_SOURCE,
+        )
+
+    return True
+
+
 async def enrich_release(tx: Any, record: dict[str, Any], stats: dict[str, int] | None = None) -> bool:
     """Enrich an existing Release node with MusicBrainz metadata.
 
     If discogs_release_id is None, skip — entity has no Discogs match.
+
+    A release that matches also has its canonical media (ADR 0007) reconciled onto the graph;
+    see reconcile_release_media. An unmatched release is counted and skipped as before, and
+    creates no Medium, MediaFamily, or ISSUED_ON node or edge.
     """
     s = stats if stats is not None else enrichment_stats
     discogs_id = record.get("discogs_release_id")
@@ -615,6 +785,7 @@ async def enrich_release(tx: Any, record: dict[str, Any], stats: dict[str, int] 
     matched = await result.single()
     if matched:
         s["entities_enriched"] += 1
+        await reconcile_release_media(tx, discogs_id, record)
     else:
         s["entities_skipped_no_discogs_match"] += 1
 

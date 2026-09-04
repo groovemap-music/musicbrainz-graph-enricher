@@ -1,0 +1,58 @@
+{
+  "name": "musicbrainz-missing-format",
+  "provider": "musicbrainz",
+  "description": "A medium with no format is a real but unknown medium, not an unmapped value.",
+  "input": {
+    "media": [
+      {
+        "format": null,
+        "position": 1,
+        "title": "",
+        "track_count": 8
+      }
+    ],
+    "status": "Official",
+    "packaging": null,
+    "release_group": {
+      "primary_type": "Single",
+      "secondary_types": []
+    }
+  },
+  "expected": {
+    "taxonomy_version": "1",
+    "items": [
+      {
+        "family": "other",
+        "medium": "other_unspecified",
+        "qty": 1,
+        "size_inches": null,
+        "speed_rpm": null,
+        "channels": null,
+        "codec": null,
+        "variants": [],
+        "appearance": [],
+        "position": 1,
+        "track_count": 8,
+        "source": {
+          "provider": "musicbrainz",
+          "name": null,
+          "descriptions": [],
+          "text": null
+        }
+      }
+    ],
+    "families": [
+      "other"
+    ],
+    "release_kind": "single",
+    "traits": [],
+    "edition": [],
+    "packaging": null,
+    "container": null,
+    "flags": [],
+    "unmapped": {
+      "formats": [],
+      "descriptions": []
+    }
+  }
+}
