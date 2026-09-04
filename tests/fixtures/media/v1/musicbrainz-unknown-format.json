@@ -1,0 +1,44 @@
+{
+  "name": "musicbrainz-unknown-format",
+  "provider": "musicbrainz",
+  "description": "An unknown MusicBrainz format lands in unmapped and produces no item.",
+  "input": {
+    "media": [
+      {
+        "format": "Quantum Crystal",
+        "position": 1,
+        "title": "",
+        "track_count": 1
+      }
+    ],
+    "status": "Withdrawn",
+    "packaging": "Jewel Case",
+    "release_group": {
+      "primary_type": "Single",
+      "secondary_types": [
+        "Demo"
+      ]
+    }
+  },
+  "expected": {
+    "taxonomy_version": "1",
+    "items": [],
+    "families": [],
+    "release_kind": "single",
+    "traits": [
+      "demo"
+    ],
+    "edition": [
+      "withdrawn"
+    ],
+    "packaging": "jewel_case",
+    "container": null,
+    "flags": [],
+    "unmapped": {
+      "formats": [
+        "Quantum Crystal"
+      ],
+      "descriptions": []
+    }
+  }
+}
