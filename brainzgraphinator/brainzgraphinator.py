@@ -30,21 +30,23 @@ from orjson import loads
 
 from brainzgraphinator.catalog_contract import (
     AMQP_EXCHANGE_TYPE,
-    MUSICBRAINZ_DATA_TYPES,
 )
 from brainzgraphinator.catalog_contract import (
-    dead_letter_exchange_name as catalog_dead_letter_exchange_name,
-)
-from brainzgraphinator.catalog_contract import (
-    dead_letter_queue_name as catalog_dead_letter_queue_name,
-)
-from brainzgraphinator.catalog_contract import (
-    exchange_name as catalog_exchange_name,
-)
-from brainzgraphinator.catalog_contract import (
-    queue_name as catalog_queue_name,
+    ENTITY_TYPES as MUSICBRAINZ_DATA_TYPES,
 )
 from brainzgraphinator.config import BrainzgraphinatorConfig
+from brainzgraphinator.queue_names import (
+    dead_letter_exchange_name as catalog_dead_letter_exchange_name,
+)
+from brainzgraphinator.queue_names import (
+    dead_letter_queue_name as catalog_dead_letter_queue_name,
+)
+from brainzgraphinator.queue_names import (
+    exchange_name as catalog_exchange_name,
+)
+from brainzgraphinator.queue_names import (
+    queue_name as catalog_queue_name,
+)
 
 
 logger = structlog.get_logger(__name__)
@@ -1030,7 +1032,7 @@ async def _recover_consumers() -> None:
 
             queues = {}
             for data_type in MUSICBRAINZ_DATA_TYPES:
-                exchange_name = catalog_exchange_name("musicbrainz", data_type)
+                exchange_name = catalog_exchange_name(data_type)
                 queue_name = catalog_queue_name(WIRE_CONSUMER_NAME, data_type)
                 dlx_name = catalog_dead_letter_exchange_name(WIRE_CONSUMER_NAME, data_type)
                 dlq_name = catalog_dead_letter_queue_name(WIRE_CONSUMER_NAME, data_type)
@@ -1218,7 +1220,7 @@ async def main() -> None:
         # Declare per-data-type fanout exchanges and consumer-owned queues
         queues = {}
         for data_type in MUSICBRAINZ_DATA_TYPES:
-            exchange_name = catalog_exchange_name("musicbrainz", data_type)
+            exchange_name = catalog_exchange_name(data_type)
             queue_name = catalog_queue_name(WIRE_CONSUMER_NAME, data_type)
             dlx_name = catalog_dead_letter_exchange_name(WIRE_CONSUMER_NAME, data_type)
             dlq_name = catalog_dead_letter_queue_name(WIRE_CONSUMER_NAME, data_type)
