@@ -61,7 +61,7 @@ nodes and edges rather than re-deriving it:
 | `(:Medium)-[:IN_FAMILY]->(:MediaFamily)` | Files each medium under its family |
 | `(:Release)-[:ISSUED_ON {qty, source}]->(:Medium)` | Merged with `source: 'musicbrainz'`, `qty` the number of that medium the release has |
 | `Release.mb_media_families` | The block's sorted family ids |
-| `Release.mb_medium_count` | The number of mediums MusicBrainz lists for the release |
+| `Release.mb_medium_count` | The number of items in the canonical media block — see Quantity and counting |
 
 `Medium` and `MediaFamily` nodes are shared with the Discogs graph enricher on purpose. Both
 services key them on the same vocabulary ids, so a medium is one node no matter which catalog
@@ -93,6 +93,13 @@ MusicBrainz lists one entry per physical medium, each of quantity one, so a 2xLP
 and medium, so entries sharing a medium are summed onto that edge: the 2xLP is one edge of
 `qty` 2. `mb_medium_count` counts source mediums rather than edges, so it reads 2 for the same
 release.
+
+`mb_medium_count` is the length of the canonical media block's `items` list, not a raw count of
+what MusicBrainz sent. The shared runtime mapper drops a medium whose MusicBrainz format string
+is not in the vocabulary into the block's `unmapped.formats` list instead of `items`, so that
+medium contributes 0 to `mb_medium_count` and gets no `Medium` node or `ISSUED_ON` edge either —
+an unrecognized format is invisible to the count, not folded into an "other" bucket. A medium
+with no format at all is different: it maps to `other_unspecified` and is counted normally.
 
 ### Events that predate the block
 

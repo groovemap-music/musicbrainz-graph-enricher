@@ -16,6 +16,13 @@ def test_accepts_only_the_explicit_no_commits_result() -> None:
     assert not check_bump_preview.accepted_result(3, "No new commits found.")
 
 
+def test_accepts_only_the_explicit_no_bumpable_commits_result() -> None:
+    output = "bump: version 0.2.0 → 0.2.0\ntag to create: v0.2.0\n\n[NO_COMMITS_TO_BUMP]\nThe commits found are not eligible to be bumped"
+    assert check_bump_preview.accepted_result(21, output)
+    assert not check_bump_preview.accepted_result(20, output)
+    assert not check_bump_preview.accepted_result(21, "The commits found are not eligible to be bumped")
+
+
 def test_accepts_only_the_explicit_release_gap_result() -> None:
     output = """bump: version 0.1.1 → 0.2.0
 tag to create: v0.2.0
