@@ -1,0 +1,90 @@
+{
+  "name": "musicbrainz-multi-medium-cd-dvd",
+  "provider": "musicbrainz",
+  "description": "A CD plus DVD-Video release keeps positions and track counts per medium.",
+  "input": {
+    "media": [
+      {
+        "format": "Hybrid SACD",
+        "position": 1,
+        "title": "Album",
+        "track_count": 11
+      },
+      {
+        "format": "DVD-Video",
+        "position": 2,
+        "title": "Bonus",
+        "track_count": 6
+      }
+    ],
+    "status": "Official",
+    "packaging": "Digipak",
+    "release_group": {
+      "primary_type": "Album",
+      "secondary_types": [
+        "Live"
+      ]
+    }
+  },
+  "expected": {
+    "taxonomy_version": "1",
+    "items": [
+      {
+        "family": "optical",
+        "medium": "optical_sacd",
+        "qty": 1,
+        "size_inches": null,
+        "speed_rpm": null,
+        "channels": null,
+        "codec": null,
+        "variants": [
+          "hybrid_layer"
+        ],
+        "appearance": [],
+        "position": 1,
+        "track_count": 11,
+        "source": {
+          "provider": "musicbrainz",
+          "name": "Hybrid SACD",
+          "descriptions": [],
+          "text": null
+        }
+      },
+      {
+        "family": "video",
+        "medium": "video_dvd",
+        "qty": 1,
+        "size_inches": null,
+        "speed_rpm": null,
+        "channels": null,
+        "codec": null,
+        "variants": [],
+        "appearance": [],
+        "position": 2,
+        "track_count": 6,
+        "source": {
+          "provider": "musicbrainz",
+          "name": "DVD-Video",
+          "descriptions": [],
+          "text": null
+        }
+      }
+    ],
+    "families": [
+      "optical",
+      "video"
+    ],
+    "release_kind": "album",
+    "traits": [
+      "live"
+    ],
+    "edition": [],
+    "packaging": "digipak",
+    "container": null,
+    "flags": [],
+    "unmapped": {
+      "formats": [],
+      "descriptions": []
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "name": "musicbrainz-other-medium",
+  "provider": "musicbrainz",
+  "description": "Other maps to the other family, never to digital.",
+  "input": {
+    "media": [
+      {
+        "format": "Other",
+        "position": 1,
+        "title": "",
+        "track_count": 3
+      }
+    ],
+    "status": "Bootleg",
+    "packaging": "Other",
+    "release_group": {
+      "primary_type": "Other",
+      "secondary_types": []
+    }
+  },
+  "expected": {
+    "taxonomy_version": "1",
+    "items": [
+      {
+        "family": "other",
+        "medium": "other_unspecified",
+        "qty": 1,
+        "size_inches": null,
+        "speed_rpm": null,
+        "channels": null,
+        "codec": null,
+        "variants": [],
+        "appearance": [],
+        "position": 1,
+        "track_count": 3,
+        "source": {
+          "provider": "musicbrainz",
+          "name": "Other",
+          "descriptions": [],
+          "text": null
+        }
+      }
+    ],
+    "families": [
+      "other"
+    ],
+    "release_kind": "other",
+    "traits": [],
+    "edition": [
+      "unofficial"
+    ],
+    "packaging": "other",
+    "container": null,
+    "flags": [],
+    "unmapped": {
+      "formats": [],
+      "descriptions": []
+    }
+  }
+}

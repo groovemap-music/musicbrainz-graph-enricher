@@ -1,0 +1,58 @@
+{
+  "name": "musicbrainz-12-inch-vinyl",
+  "provider": "musicbrainz",
+  "description": "A MusicBrainz 12\" Vinyl medium on an official album.",
+  "input": {
+    "media": [
+      {
+        "format": "12\" Vinyl",
+        "position": 1,
+        "title": "",
+        "track_count": 9
+      }
+    ],
+    "status": "Official",
+    "packaging": "Gatefold Cover",
+    "release_group": {
+      "primary_type": "Album",
+      "secondary_types": []
+    }
+  },
+  "expected": {
+    "taxonomy_version": "1",
+    "items": [
+      {
+        "family": "vinyl",
+        "medium": "vinyl_12",
+        "qty": 1,
+        "size_inches": 12,
+        "speed_rpm": null,
+        "channels": null,
+        "codec": null,
+        "variants": [],
+        "appearance": [],
+        "position": 1,
+        "track_count": 9,
+        "source": {
+          "provider": "musicbrainz",
+          "name": "12\" Vinyl",
+          "descriptions": [],
+          "text": null
+        }
+      }
+    ],
+    "families": [
+      "vinyl"
+    ],
+    "release_kind": "album",
+    "traits": [],
+    "edition": [],
+    "packaging": "gatefold",
+    "container": null,
+    "flags": [],
+    "unmapped": {
+      "formats": [],
+      "descriptions": []
+    }
+  }
+}

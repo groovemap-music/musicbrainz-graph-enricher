@@ -1,0 +1,85 @@
+{
+  "name": "musicbrainz-parent-vinyl-unresolved",
+  "provider": "musicbrainz",
+  "description": "The Vinyl parent format resolves to the unspecified vinyl medium.",
+  "input": {
+    "media": [
+      {
+        "format": "Vinyl",
+        "position": 1,
+        "title": "",
+        "track_count": 4
+      },
+      {
+        "format": "Vinyl",
+        "position": 2,
+        "title": "",
+        "track_count": 5
+      }
+    ],
+    "status": "Promotion",
+    "packaging": "Cardboard/Paper Sleeve",
+    "release_group": {
+      "primary_type": "EP",
+      "secondary_types": []
+    }
+  },
+  "expected": {
+    "taxonomy_version": "1",
+    "items": [
+      {
+        "family": "vinyl",
+        "medium": "vinyl_unspecified",
+        "qty": 1,
+        "size_inches": null,
+        "speed_rpm": null,
+        "channels": null,
+        "codec": null,
+        "variants": [],
+        "appearance": [],
+        "position": 1,
+        "track_count": 4,
+        "source": {
+          "provider": "musicbrainz",
+          "name": "Vinyl",
+          "descriptions": [],
+          "text": null
+        }
+      },
+      {
+        "family": "vinyl",
+        "medium": "vinyl_unspecified",
+        "qty": 1,
+        "size_inches": null,
+        "speed_rpm": null,
+        "channels": null,
+        "codec": null,
+        "variants": [],
+        "appearance": [],
+        "position": 2,
+        "track_count": 5,
+        "source": {
+          "provider": "musicbrainz",
+          "name": "Vinyl",
+          "descriptions": [],
+          "text": null
+        }
+      }
+    ],
+    "families": [
+      "vinyl"
+    ],
+    "release_kind": "ep",
+    "traits": [],
+    "edition": [
+      "promo"
+    ],
+    "packaging": "cardboard_sleeve",
+    "container": null,
+    "flags": [],
+    "unmapped": {
+      "formats": [],
+      "descriptions": []
+    }
+  }
+}

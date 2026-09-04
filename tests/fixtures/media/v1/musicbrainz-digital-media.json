@@ -1,0 +1,64 @@
+{
+  "name": "musicbrainz-digital-media",
+  "provider": "musicbrainz",
+  "description": "Digital Media is the same digital medium as Discogs File.",
+  "input": {
+    "media": [
+      {
+        "format": "Digital Media",
+        "position": 1,
+        "title": "",
+        "track_count": 14
+      }
+    ],
+    "status": "Official",
+    "packaging": "None",
+    "release_group": {
+      "primary_type": "Album",
+      "secondary_types": [
+        "Compilation",
+        "Remix"
+      ]
+    }
+  },
+  "expected": {
+    "taxonomy_version": "1",
+    "items": [
+      {
+        "family": "digital",
+        "medium": "digital_file",
+        "qty": 1,
+        "size_inches": null,
+        "speed_rpm": null,
+        "channels": null,
+        "codec": null,
+        "variants": [],
+        "appearance": [],
+        "position": 1,
+        "track_count": 14,
+        "source": {
+          "provider": "musicbrainz",
+          "name": "Digital Media",
+          "descriptions": [],
+          "text": null
+        }
+      }
+    ],
+    "families": [
+      "digital"
+    ],
+    "release_kind": "album",
+    "traits": [
+      "compilation",
+      "remix"
+    ],
+    "edition": [],
+    "packaging": "none",
+    "container": null,
+    "flags": [],
+    "unmapped": {
+      "formats": [],
+      "descriptions": []
+    }
+  }
+}
