@@ -81,16 +81,20 @@ regardless of the OpenTelemetry configuration below.
 
 ## Observability
 
-The service pushes OpenTelemetry metrics over OTLP/HTTP-protobuf via `groovemap-runtime`'s
-`common.telemetry` module (the `otel` extra). Telemetry is fully optional: with no collector
-endpoint configured, or without the `otel` extra installed, every instrument is a local no-op
-and the service behaves exactly as it does today.
+The service pushes OpenTelemetry metrics and traces over OTLP/HTTP-protobuf via
+`groovemap-runtime`'s `common.telemetry` module (the `otel` extra). Telemetry is fully
+optional: with no collector endpoint configured, or without the `otel` extra installed, every
+instrument and every span is a local no-op and the service behaves exactly as it does today.
+The two signals are independent, so tracing can be turned off while metrics keep flowing.
 
 | Variable | Meaning | Default |
 | --- | --- | --- |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | Collector base URL, for example `http://otel-collector:4318`; unset disables export | unset |
 | `OTEL_METRICS_EXPORTER` | `otlp` or `none` | `otlp` |
 | `OTEL_METRIC_EXPORT_INTERVAL` | Push interval in milliseconds | SDK default |
+| `OTEL_TRACES_EXPORTER` | `otlp` or `none` | `otlp` |
+| `OTEL_TRACES_SAMPLER` | Sampler name the SDK understands | `parentbased_traceidratio` |
+| `OTEL_TRACES_SAMPLER_ARG` | Sampling ratio for the ratio samplers | `1.0` |
 | `OTEL_SERVICE_NAME` | Overrides the `service.name` resource attribute (`brainzgraphinator`) | `brainzgraphinator` |
 | `OTEL_RESOURCE_ATTRIBUTES` | Extra resource attributes, for example `service.namespace=groovemap,deployment.environment.name=dev` | empty |
 
@@ -117,6 +121,39 @@ This service registers its handlers directly with `queue.consume()` rather than 
 `messaging.client.operation.duration` are recorded locally instead, with the same instrument
 names and attributes (`messaging.system=rabbitmq`, `messaging.destination.name`,
 `messaging.operation.name=process`, `error.type` on failure) the shared wrapper would use.
+
+### Runtime metrics
+
+`setup_telemetry` installs the process view for free (`process.cpu.time`,
+`process.cpu.utilization`, `process.memory.usage`, `process.memory.virtual`,
+`process.thread.count`, `process.open_file_descriptor.count`, `process.context_switches`, and
+the CPython garbage-collection counter). No `system.*` host metric is reported; node-exporter
+owns the host.
+
+`groovemap.runtime.event_loop.lag` (histogram, s, no attributes) is sampled once a second by
+`common.start_event_loop_monitor()`, started from the consumer's own running loop right after
+`setup_telemetry`. It measures how long the loop could not run a ready callback, which is the
+signal that separates a slow Neo4j from a saturated consumer. `shutdown_telemetry` cancels it.
+
+### Spans
+
+Trace context travels in the AMQP message headers, so one MusicBrainz record's extraction,
+publish, enrichment, and Neo4j write are a single trace. A delivery whose headers carry no
+readable `traceparent` starts a new trace rather than failing.
+
+| Span | Kind | Attributes | Opened by |
+| --- | --- | --- | --- |
+| `process {queue}` | `CONSUMER` | `messaging.system`, `messaging.destination.name`, `messaging.operation.name`, `error.type` on failure | this service, per delivery, as a child of the publisher's span |
+| `flush neo4j {entity}` | `INTERNAL` | `db.system.name`, `groovemap.entity`, `outcome` (`committed`\|`failed`), `error.type` on failure | this service, around the write, linked to the message spans in the batch |
+| `session neo4j` | `CLIENT` | `db.system.name`, `db.operation.name`, `error.type` on failure | `AsyncResilientNeo4jDriver`, nested inside the flush span |
+
+Because `common.process_message_with_retry` is bypassed (see above), the `process {queue}` span
+is opened here from `common.get_tracer` and `common.extract_context` with the name, kind, and
+attributes the shared wrapper would have used. Each delivery writes exactly one record, so a
+flush links exactly one member message span; `common.flush_span` caps the links at 64 for
+batching consumers. A failure sets span status `ERROR` with `error.type` only: never a message,
+a stack trace, or a span event carrying a payload. Call counts and durations per span name are
+derived by the collector's `spanmetrics` connector, never emitted here.
 
 ## Development
 

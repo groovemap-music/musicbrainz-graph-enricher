@@ -9,7 +9,7 @@ import time
 from asyncio import run
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import structlog
 from aio_pika.abc import AbstractIncomingMessage  # noqa: TC002 - runtime annotation introspection
@@ -19,10 +19,14 @@ from common import (
     DatabaseUnavailableError,
     HealthServer,
     OutageBackoff,
+    extract_context,
+    flush_span,
+    get_tracer,
     neo4j_security_kwargs,
     setup_logging,
     setup_telemetry,
     shutdown_telemetry,
+    start_event_loop_monitor,
 )
 from common.media import families_of, map_musicbrainz_release, medium_label
 from common.telemetry import get_meter, provider_generation
@@ -48,6 +52,10 @@ from brainzgraphinator.queue_names import (
 from brainzgraphinator.queue_names import (
     queue_name as catalog_queue_name,
 )
+
+
+if TYPE_CHECKING:  # pragma: no cover
+    from collections.abc import Iterator
 
 
 logger = structlog.get_logger(__name__)
@@ -332,6 +340,106 @@ def _record_consumed_message(destination: str, duration_s: float, error_type: st
         _instrument(MESSAGING_OPERATION_DURATION).record(duration_s, attributes)
     except Exception:  # pragma: no cover - defensive
         logger.debug("Could not record consumed-message metrics", exc_info=True)
+
+
+# ── Tracing ──────────────────────────────────────────────────────────────
+#
+# Spans follow the same GrooveMap OpenTelemetry conventions as the metrics above, and are the
+# same no-ops when the 'otel' extra is absent or no collector endpoint is configured.
+#
+# common.process_message_with_retry opens the CONSUMER span for services that route their
+# handler through it. This one registers with aio-pika's queue.consume() directly (see the
+# messaging metrics note above), so the identical span is opened here from the library's own
+# helpers -- same name, kind, attributes, and extracted parent context -- rather than
+# reimplementing the wrapper's ack/nack policy, which this service owns.
+MESSAGING_SYSTEM = "rabbitmq"
+
+# A batch flush links the message spans it covers, capped so a large batch cannot carry one
+# link per row into the collector. common.tracing enforces the same bound; this service flushes
+# one delivery at a time, so the cap is never reached in practice.
+MAX_FLUSH_LINKS = 64
+
+
+def _span_kind(name: str) -> Any:
+    """Return a SpanKind member, or None when the OpenTelemetry API is not installed."""
+    try:
+        from opentelemetry.trace import SpanKind  # noqa: PLC0415 - optional, only with the 'otel' extra
+    except ImportError:
+        return None
+    return getattr(SpanKind, name)
+
+
+def _mark_span_failed(span: Any, error_type: str) -> None:
+    """Fail a span with `error.type` only -- never a message, a stack trace, or a payload."""
+    if span is None:
+        return
+    try:
+        from opentelemetry.trace import Status, StatusCode  # noqa: PLC0415 - optional, only with the 'otel' extra
+
+        span.set_attribute("error.type", error_type)
+        span.set_status(Status(StatusCode.ERROR))
+    except Exception:  # pragma: no cover - defensive
+        logger.debug("Could not mark a span as failed", exc_info=True)
+
+
+def _set_span_attribute(span: Any, key: str, value: Any) -> None:
+    """Set one closed-set attribute on a span, ignoring a no-op or absent span."""
+    if span is None:
+        return
+    try:
+        span.set_attribute(key, value)
+    except Exception:  # pragma: no cover - defensive
+        logger.debug("Could not set the %s span attribute", key, exc_info=True)
+
+
+def flush_links(*spans: Any) -> list[Any]:
+    """Return the span contexts of a flush's member message spans, at most MAX_FLUSH_LINKS."""
+    contexts = []
+    for span in spans:
+        if span is None:
+            continue
+        try:
+            context = span.get_span_context()
+        except Exception:  # pragma: no cover - defensive
+            logger.debug("Could not read a member span context for a flush span", exc_info=True)
+            continue
+        if context is not None:
+            contexts.append(context)
+    return contexts[:MAX_FLUSH_LINKS]
+
+
+@contextlib.contextmanager
+def consume_span(destination: str, headers: Any) -> Iterator[Any]:
+    """Open the CONSUMER span `process {destination}` for one delivery.
+
+    The span is a child of the trace context carried in the AMQP headers, which is what puts
+    the MusicBrainz extractor's publish and this service's enrichment in one trace. Headers
+    carrying no readable context simply start a new trace rather than failing the delivery.
+
+    Exception recording and automatic status are both off: the conventions allow a status and
+    an `error.type`, not a stack trace attached as a span event. This handler settles every
+    failure itself, so the caller marks the span through `_mark_span_failed`.
+    """
+    try:
+        manager = get_tracer(INSTRUMENTATION_SCOPE).start_as_current_span(
+            f"process {destination}",
+            context=extract_context(headers) if headers else None,
+            kind=_span_kind("CONSUMER"),
+            attributes={
+                "messaging.system": MESSAGING_SYSTEM,
+                "messaging.destination.name": destination,
+                "messaging.operation.name": "process",
+            },
+            record_exception=False,
+            set_status_on_exception=False,
+        )
+    except Exception:  # pragma: no cover - defensive
+        logger.debug("Could not start the consumer span", exc_info=True)
+        yield None
+        return
+
+    with manager as span:
+        yield span
 
 
 def get_health_data() -> dict[str, Any]:
@@ -926,128 +1034,145 @@ def make_message_handler(data_type: str, enrich_fn: Any) -> Any:
         started = time.perf_counter()
         messaging_error_type: str | None = None
 
-        try:
-            logger.debug("🔄 Received MusicBrainz message", data_type=data_type)
-            body: dict[str, Any] = loads(message.body)
+        # Every delivery this service actually processes runs inside the CONSUMER span,
+        # joined to the extractor's trace through the message's traceparent header.
+        with consume_span(destination, getattr(message, "headers", None)) as consumer_span:
+            try:
+                logger.debug("🔄 Received MusicBrainz message", data_type=data_type)
+                body: dict[str, Any] = loads(message.body)
 
-            if await check_file_completion(body, data_type, message):
-                return
+                if await check_file_completion(body, data_type, message):
+                    return
 
-            # Validate required 'id' field — nack with requeue=False to avoid
-            # infinite requeue loop for malformed messages (matches brainztableinator).
-            if "id" not in body:
-                logger.error("❌ Message missing 'id' field", data_type=data_type)
-                await message.nack(requeue=False)
-                messaging_error_type = "ValidationError"
-                _record_pipeline_message(data_type, "failed")
-                return
+                # Validate required 'id' field — nack with requeue=False to avoid
+                # infinite requeue loop for malformed messages (matches brainztableinator).
+                if "id" not in body:
+                    logger.error("❌ Message missing 'id' field", data_type=data_type)
+                    await message.nack(requeue=False)
+                    messaging_error_type = "ValidationError"
+                    _record_pipeline_message(data_type, "failed")
+                    return
 
-            data_id: str = body["id"]
-            if not data_id:
-                logger.warning("⚠️ Nacking record with empty mbid/id", data_type=data_type)
-                await message.nack(requeue=False)
-                messaging_error_type = "ValidationError"
-                _record_pipeline_message(data_type, "failed")
-                return
+                data_id: str = body["id"]
+                if not data_id:
+                    logger.warning("⚠️ Nacking record with empty mbid/id", data_type=data_type)
+                    await message.nack(requeue=False)
+                    messaging_error_type = "ValidationError"
+                    _record_pipeline_message(data_type, "failed")
+                    return
 
-            if graph is None:
-                raise RuntimeError("Neo4j driver not initialized")
+                if graph is None:
+                    raise RuntimeError("Neo4j driver not initialized")
 
-            # Use local counters inside the transaction to avoid race conditions
-            # with concurrent messages mutating the global enrichment_stats dict.
-            # We pass local_stats to the enrich function so it writes to a
-            # per-message dict instead of the shared global. This avoids the
-            # race condition of swapping/restoring the global reference under
-            # concurrent message delivery (prefetch=200).
-            local_stats: dict[str, int] = {
-                "entities_enriched": 0,
-                "entities_skipped_no_discogs_match": 0,
-                "relationships_created": 0,
-                "relationships_updated": 0,
-                "relationships_skipped_missing_side": 0,
-            }
+                # Use local counters inside the transaction to avoid race conditions
+                # with concurrent messages mutating the global enrichment_stats dict.
+                # We pass local_stats to the enrich function so it writes to a
+                # per-message dict instead of the shared global. This avoids the
+                # race condition of swapping/restoring the global reference under
+                # concurrent message delivery (prefetch=200).
+                local_stats: dict[str, int] = {
+                    "entities_enriched": 0,
+                    "entities_skipped_no_discogs_match": 0,
+                    "relationships_created": 0,
+                    "relationships_updated": 0,
+                    "relationships_skipped_missing_side": 0,
+                }
 
-            async with graph.session(database="neo4j") as session:
+                # `flush neo4j {entity}` opens OUTSIDE graph.session(...) so the driver wrapper's
+                # own `session neo4j` CLIENT span nests inside it rather than around it. The flush
+                # *metric* window is unchanged and still measures only the write itself.
+                #
+                # One delivery is one flush, so the batch has exactly one member span: this
+                # delivery's CONSUMER span. A batching consumer would pass one context per member
+                # here, and both flush_links and common.tracing cap the list at 64.
+                with flush_span(PIPELINE_STORE, data_type, links=flush_links(consumer_span)) as batch_span:
+                    async with graph.session(database="neo4j") as session:
 
-                async def tx_fn(tx: Any) -> bool:
-                    # Reset local counters on each retry attempt
-                    for key in local_stats:
-                        local_stats[key] = 0
-                    return bool(await enrich_fn(tx, body, local_stats))
+                        async def tx_fn(tx: Any) -> bool:
+                            # Reset local counters on each retry attempt
+                            for key in local_stats:
+                                local_stats[key] = 0
+                            return bool(await enrich_fn(tx, body, local_stats))
 
-                # Each message writes exactly one record, so this is a flush of batch size 1 —
-                # still reported through the shared batch metrics so dashboards built against
-                # batching services (graphinator et al.) read this service the same way.
-                flush_started = time.perf_counter()
-                try:
-                    await session.execute_write(tx_fn)
-                except Exception:
-                    _record_batch_flush(data_type, 1, time.perf_counter() - flush_started, "failed")
-                    raise
-                _record_batch_flush(data_type, 1, time.perf_counter() - flush_started, "committed")
+                        # Each message writes exactly one record, so this is a flush of batch size 1 —
+                        # still reported through the shared batch metrics so dashboards built against
+                        # batching services (graphinator et al.) read this service the same way.
+                        flush_started = time.perf_counter()
+                        try:
+                            await session.execute_write(tx_fn)
+                        except Exception:
+                            _set_span_attribute(batch_span, "outcome", "failed")
+                            _record_batch_flush(data_type, 1, time.perf_counter() - flush_started, "failed")
+                            raise
+                        _set_span_attribute(batch_span, "outcome", "committed")
+                        _record_batch_flush(data_type, 1, time.perf_counter() - flush_started, "committed")
 
-            # Merge local counters into global stats under lock to prevent
-            # concurrent handlers from corrupting the shared dict
-            global _stats_lock
-            if _stats_lock is None:
-                _stats_lock = asyncio.Lock()
-            async with _stats_lock:
-                with _stats_thread_lock:
-                    for key, value in local_stats.items():
-                        enrichment_stats[key] += value
+                # Merge local counters into global stats under lock to prevent
+                # concurrent handlers from corrupting the shared dict
+                global _stats_lock
+                if _stats_lock is None:
+                    _stats_lock = asyncio.Lock()
+                async with _stats_lock:
+                    with _stats_thread_lock:
+                        for key, value in local_stats.items():
+                            enrichment_stats[key] += value
 
-            await message.ack()
+                await message.ack()
 
-            # Neo4j answered — clear the outage backoff.
-            outage_backoff.reset()
+                # Neo4j answered — clear the outage backoff.
+                outage_backoff.reset()
 
-            # Increment counts only after successful processing and ack
-            message_counts[data_type] += 1
-            last_message_time[data_type] = time.time()
-            if message_counts[data_type] % progress_interval == 0:
-                logger.info(
-                    f"📊 Enriched {data_type} in Neo4j",
-                    message_counts=message_counts[data_type],
+                # Increment counts only after successful processing and ack
+                message_counts[data_type] += 1
+                last_message_time[data_type] = time.time()
+                if message_counts[data_type] % progress_interval == 0:
+                    logger.info(
+                        f"📊 Enriched {data_type} in Neo4j",
+                        message_counts=message_counts[data_type],
+                    )
+
+                # entities_enriched vs. entities_skipped_no_discogs_match is exactly the
+                # per-message enrich_fn outcome (see enrich_artist/label/release/release_group):
+                # a record with no Discogs match is deliberately skipped, not an error.
+                outcome = "processed" if local_stats["entities_enriched"] > 0 else "skipped"
+                _record_pipeline_message(data_type, outcome)
+            except (ServiceUnavailable, SessionExpired, DatabaseUnavailableError) as e:
+                logger.warning(
+                    f"⚠️ Neo4j unavailable, will retry {data_type} message",
+                    error=str(e),
                 )
-
-            # entities_enriched vs. entities_skipped_no_discogs_match is exactly the
-            # per-message enrich_fn outcome (see enrich_artist/label/release/release_group):
-            # a record with no Discogs match is deliberately skipped, not an error.
-            outcome = "processed" if local_stats["entities_enriched"] > 0 else "skipped"
-            _record_pipeline_message(data_type, outcome)
-        except (ServiceUnavailable, SessionExpired, DatabaseUnavailableError) as e:
-            logger.warning(
-                f"⚠️ Neo4j unavailable, will retry {data_type} message",
-                error=str(e),
-            )
-            # Pause before requeueing. The main queues are quorum queues with
-            # x-delivery-limit=20, a budget with no time dimension: requeueing
-            # immediately burns all 20 redeliveries in ~3 minutes and RabbitMQ
-            # dead-letters a perfectly valid record mid-outage. Prefetch here is
-            # 200, so an unthrottled Neo4j outage puts 200 messages on that
-            # treadmill at once.
-            await outage_backoff.wait()
-            try:
-                await message.nack(requeue=True)
-            except Exception as nack_error:
-                logger.warning("⚠️ Failed to nack message", error=str(nack_error))
-            messaging_error_type = type(e).__name__
-            _record_pipeline_message(data_type, "failed")
-        except Exception as e:
-            logger.error(
-                f"❌ Failed to process {data_type} MusicBrainz message",
-                error=str(e),
-            )
-            try:
-                await message.nack(requeue=True)
-            except Exception as nack_error:
-                logger.warning("⚠️ Failed to nack message", error=str(nack_error))
-            messaging_error_type = type(e).__name__
-            _record_pipeline_message(data_type, "failed")
-        finally:
-            duration_s = time.perf_counter() - started
-            _record_message_duration(data_type, duration_s)
-            _record_consumed_message(destination, duration_s, messaging_error_type)
+                # Pause before requeueing. The main queues are quorum queues with
+                # x-delivery-limit=20, a budget with no time dimension: requeueing
+                # immediately burns all 20 redeliveries in ~3 minutes and RabbitMQ
+                # dead-letters a perfectly valid record mid-outage. Prefetch here is
+                # 200, so an unthrottled Neo4j outage puts 200 messages on that
+                # treadmill at once.
+                await outage_backoff.wait()
+                try:
+                    await message.nack(requeue=True)
+                except Exception as nack_error:
+                    logger.warning("⚠️ Failed to nack message", error=str(nack_error))
+                messaging_error_type = type(e).__name__
+                _record_pipeline_message(data_type, "failed")
+            except Exception as e:
+                logger.error(
+                    f"❌ Failed to process {data_type} MusicBrainz message",
+                    error=str(e),
+                )
+                try:
+                    await message.nack(requeue=True)
+                except Exception as nack_error:
+                    logger.warning("⚠️ Failed to nack message", error=str(nack_error))
+                messaging_error_type = type(e).__name__
+                _record_pipeline_message(data_type, "failed")
+            finally:
+                duration_s = time.perf_counter() - started
+                _record_message_duration(data_type, duration_s)
+                _record_consumed_message(destination, duration_s, messaging_error_type)
+                # The handler settles every failure itself, so nothing propagates out of
+                # the span for it to notice: mark it here instead.
+                if messaging_error_type is not None:
+                    _mark_span_failed(consumer_span, messaging_error_type)
 
     return handler
 
@@ -1303,6 +1428,9 @@ async def main() -> None:
 
     setup_logging(SERVICE_NAME, log_file=Path(f"/logs/{SERVICE_NAME}.log"))
     setup_telemetry("brainzgraphinator")
+    # Sampled from the consumer's own running loop, which is the loop every delivery is
+    # handled on. Returns None with telemetry off, and shutdown_telemetry() cancels it.
+    start_event_loop_monitor()
     logger.info("🚀 Starting GrooveMap musicbrainz-graph-enricher service")
 
     # Add startup delay for dependent services
