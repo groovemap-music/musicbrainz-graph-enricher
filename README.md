@@ -9,7 +9,7 @@ Discogs identifier are deliberately skipped.
 
 ```mermaid
 flowchart LR
-    Producer[MusicBrainz catalog event producer]
+    Producer[musicbrainz-ingestion]
     Exchange[groovemap-musicbrainz-* fanout exchanges]
     Service[musicbrainz-graph-enricher]
     Graph[(GrooveMap Neo4j graph)]
@@ -29,9 +29,10 @@ for the exact outputs.
 
 ## Processing and shutdown
 
-Each delivery is written in its own Neo4j transaction; RabbitMQ prefetch permits up to 200
-in-flight deliveries. The legacy `NEO4J_BATCH_*` variables are still accepted by the module
-but do not alter the current per-delivery transaction model.
+Each data delivery is written in its own Neo4j transaction. RabbitMQ prefetch is 200 per
+consumer, so the four entity consumers can hold up to 800 unacknowledged deliveries on their
+shared channel. The legacy `NEO4J_BATCH_*` variables are still read for environment
+compatibility but do not alter the current per-delivery transaction model.
 
 `file_complete` and `extraction_complete` events mark an entity stream complete and schedule
 its consumer for cancellation. On process shutdown, consumers are cancelled before database
@@ -50,14 +51,14 @@ Connection settings:
 
 | Variable | Purpose |
 | --- | --- |
-| `NEO4J_HOST` | Neo4j host or URI input |
+| `NEO4J_HOST` | Required Neo4j host or complete URI |
 | `NEO4J_PORT` | Port for a bare `NEO4J_HOST`; defaults to `7687` and is ignored when the host is a full URI |
-| `NEO4J_USERNAME` | Neo4j user |
-| `NEO4J_PASSWORD` | Neo4j password |
+| `NEO4J_USERNAME` | Required Neo4j user |
+| `NEO4J_PASSWORD` | Required Neo4j password |
 | `RABBITMQ_HOST` | RabbitMQ host; defaults to `rabbitmq` |
 | `RABBITMQ_PORT` | RabbitMQ port; defaults to `5672` |
-| `RABBITMQ_USERNAME` | RabbitMQ user |
-| `RABBITMQ_PASSWORD` | RabbitMQ password |
+| `RABBITMQ_USERNAME` | RabbitMQ user; defaults to `groovemap` |
+| `RABBITMQ_PASSWORD` | RabbitMQ password; defaults to `groovemap` |
 
 Only the credential variables (`NEO4J_USERNAME`, `NEO4J_PASSWORD`, `RABBITMQ_USERNAME`, and
 `RABBITMQ_PASSWORD`) support the Docker secret `_FILE` convention. Host and port variables are
@@ -75,23 +76,32 @@ Operational tuning:
 | `STARTUP_DELAY` | `5` | Delay before dependency initialization |
 | `MUSICBRAINZ_EXCHANGE_PREFIX` | `groovemap-musicbrainz` | Producer-owned exchange prefix |
 
+The compatibility-only `NEO4J_BATCH_MODE`, `NEO4J_BATCH_SIZE`, and
+`NEO4J_BATCH_FLUSH_INTERVAL` settings are read with defaults of `true`, `100`, and `5.0`.
+They do not enable batching or change transaction size or timing.
+
 The health endpoint is served on `http://localhost:8011/health` and identifies the service as
 `musicbrainz-graph-enricher`. It never serves `/metrics`; the endpoint always answers `404`
 regardless of the OpenTelemetry configuration below.
 
 ## Observability
 
-The service pushes OpenTelemetry metrics and traces over OTLP/HTTP-protobuf via
-`groovemap-runtime`'s `common.telemetry` module (the `otel` extra). Telemetry is fully
-optional: with no collector endpoint configured, or without the `otel` extra installed, every
-instrument and every span is a local no-op and the service behaves exactly as it does today.
-The two signals are independent, so tracing can be turned off while metrics keep flowing.
+The service pushes OpenTelemetry metrics and traces over OTLP/HTTP-protobuf via the pinned
+`groovemap-runtime`. With no collector endpoint configured, its instruments and spans are
+no-ops. Metrics and traces can be disabled independently. The deployment-owned collector
+remote-writes metrics to VictoriaMetrics and spans to VictoriaTraces; it also owns dashboards,
+retention, and backend configuration. See
+[deployment observability](https://github.com/groovemap-music/deployment/blob/main/docs/observability.md)
+and the accepted
+[telemetry decision](https://github.com/groovemap-music/design/blob/main/docs/adr/0008-victoriametrics-tracing-runtime-alerting.md).
 
 | Variable | Meaning | Default |
 | --- | --- | --- |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | Collector base URL, for example `http://otel-collector:4318`; unset disables export | unset |
+| `OTEL_EXPORTER_OTLP_METRICS_ENDPOINT` | Metrics-only endpoint override | base endpoint |
 | `OTEL_METRICS_EXPORTER` | `otlp` or `none` | `otlp` |
 | `OTEL_METRIC_EXPORT_INTERVAL` | Push interval in milliseconds | SDK default |
+| `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` | Traces-only endpoint override | base endpoint |
 | `OTEL_TRACES_EXPORTER` | `otlp` or `none` | `otlp` |
 | `OTEL_TRACES_SAMPLER` | Sampler name the SDK understands | `parentbased_traceidratio` |
 | `OTEL_TRACES_SAMPLER_ARG` | Sampling ratio for the ratio samplers | `1.0` |
@@ -114,26 +124,13 @@ deliberately left unenriched rather than treated as an error (see [Data flow](#d
 Each delivery writes exactly one record, so every flush reports `groovemap.pipeline.batch.size`
 of `1`.
 
-`db.client.operation.duration` and `groovemap.pipeline.reconnects` come for free from the
-`AsyncResilientNeo4jDriver` and `AsyncResilientRabbitMQ` wrappers this service already uses.
-This service registers its handlers directly with `queue.consume()` rather than through
-`common.process_message_with_retry`, so `messaging.client.consumed.messages` and
-`messaging.client.operation.duration` are recorded locally instead, with the same instrument
-names and attributes (`messaging.system=rabbitmq`, `messaging.destination.name`,
-`messaging.operation.name=process`, `error.type` on failure) the shared wrapper would use.
-
-### Runtime metrics
-
-`setup_telemetry` installs the process view for free (`process.cpu.time`,
-`process.cpu.utilization`, `process.memory.usage`, `process.memory.virtual`,
-`process.thread.count`, `process.open_file_descriptor.count`, `process.context_switches`, and
-the CPython garbage-collection counter). No `system.*` host metric is reported; node-exporter
-owns the host.
-
-`groovemap.runtime.event_loop.lag` (histogram, s, no attributes) is sampled once a second by
-`common.start_event_loop_monitor()`, started from the consumer's own running loop right after
-`setup_telemetry`. It measures how long the loop could not run a ready callback, which is the
-signal that separates a slow Neo4j from a saturated consumer. `shutdown_telemetry` cancels it.
+The runtime wrappers add `db.client.operation.duration`,
+`groovemap.pipeline.reconnects`, process metrics, and
+`groovemap.runtime.event_loop.lag`. This service records
+`messaging.client.consumed.messages` and `messaging.client.operation.duration` itself because
+it registers directly with `queue.consume()`. Those shared instruments and their attribute
+contracts are authoritative in `groovemap-runtime` and the deployment metric catalog linked
+above; they are not redefined here.
 
 ### Spans
 
@@ -166,18 +163,23 @@ cross-repository authentication.
 mise install
 just setup
 just check
+just audit
 just image
 ```
 
-`just check` uses mocked RabbitMQ and Neo4j boundaries and does not connect to live services.
-`just image` builds and inspects the local `musicbrainz-graph-enricher:local` image. Publishing,
-tagging, and pushing images are separate release operations.
+`just check` runs the locked format, lint, contract, type, coverage, secret, package,
+installation, license, and version-preview checks against mocked RabbitMQ and Neo4j
+boundaries. `just audit` is the dedicated locked dependency audit. `just image` builds and
+inspects `musicbrainz-graph-enricher:local`. `just release-dry-run` reruns the full check and
+builds local release evidence; publishing, tagging, and pushing remain separate operations.
 
 ## Contracts and compatibility
 
-The v1 catalog-event contract is promoted byte-for-byte from `catalog-ingestion`, and the
-persistence contract is promoted from `database-schema`. `just source-check` verifies the
-promoted artifacts and generated binding.
+The v1 catalog-event contract is promoted byte-for-byte from
+[`musicbrainz-ingestion`](https://github.com/groovemap-music/musicbrainz-ingestion), and the
+persistence contract is promoted from
+[`database-schema`](https://github.com/groovemap-music/database-schema). `just source-check`
+verifies the promoted artifacts and generated binding.
 
 Some internal names remain intentionally unchanged because they are compatibility boundaries:
 

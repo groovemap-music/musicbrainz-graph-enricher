@@ -35,6 +35,16 @@ def test_active_documentation_uses_groovemap_identity() -> None:
         text = path.read_text()
         assert "Discogsography" not in text
         assert "discogsography" not in text
+        assert "catalog-ingestion" not in text
+
+
+def test_active_documentation_names_the_musicbrainz_producer() -> None:
+    readme = (ROOT / "README.md").read_text()
+    event_flow = (ROOT / "docs/musicbrainz-sync.md").read_text()
+    cancellation = (ROOT / "docs/consumer-cancellation.md").read_text()
+    assert "Producer[musicbrainz-ingestion]" in readme
+    assert "Producer[musicbrainz-ingestion]" in event_flow
+    assert "participant Producer as musicbrainz-ingestion" in cancellation
 
 
 def test_active_source_and_regressions_do_not_use_migration_issue_names() -> None:

@@ -1,7 +1,8 @@
 # Completion signals and health state
 
-The catalog-event contract carries two terminal control messages. They coordinate consumer
-lifecycle; they are not graph records and do not run an enrichment transaction.
+The `musicbrainz-ingestion` catalog-event contract carries two terminal control messages. They
+coordinate consumer lifecycle; they are not graph records and do not run an enrichment
+transaction.
 
 ## `file_complete`
 
