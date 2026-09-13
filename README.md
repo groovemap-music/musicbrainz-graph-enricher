@@ -154,10 +154,10 @@ derived by the collector's `spanmetrics` connector, never emitted here.
 
 ## Development
 
-The service depends on the shared `groovemap-runtime` package from
-`groovemap-music/python-libraries`. While that dependency is private, a narrowly installed
-GitHub App provides short-lived read access in CI; a personal access token is not supported for
-cross-repository authentication.
+**Public-library cutover: complete.** The service consumes the shared `groovemap-runtime`
+package from the public `groovemap-music/python-libraries` repository at the immutable revision
+recorded in `pyproject.toml` and `uv.lock`. Local setup and CI fetch that source without
+private-package credentials.
 
 ```bash
 mise install

@@ -97,6 +97,23 @@ def test_release_is_tag_only_attested_and_repository_named() -> None:
         assert marker not in workflow.lower()
 
 
+def test_public_library_cutover_is_documented_as_complete() -> None:
+    documents = (
+        ROOT / "README.md",
+        ROOT / "docs" / "release-compliance.md",
+    )
+    for path in documents:
+        text = path.read_text()
+        normalized = " ".join(text.split())
+        assert "**Public-library cutover: complete.**" in text
+        assert "without private-package credentials" in normalized
+
+    readme = documents[0].read_text()
+    assert "public `groovemap-music/python-libraries` repository" in readme
+    assert "While that dependency is private" not in readme
+    assert "GitHub App provides short-lived read access" not in readme
+
+
 def test_required_regression_suites_remain_in_the_full_gate() -> None:
     expected_tests = {
         "tests/test_shutdown_delivery_churn.py": (
