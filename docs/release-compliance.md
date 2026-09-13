@@ -11,9 +11,13 @@ installed service import, and checks its numeric non-root runtime identity. `jus
 release-dry-run` produces local checksums, an SBOM, third-party notices, and provenance without
 creating a tag, upload, release, or repository setting.
 
-The CI caller pins the organization Automation workflows and `python-libraries` dependency to
-immutable commits. Ordinary and Dependabot-authored pull requests run the same required job
-graph. Releases remain tag-only, and no Renovate workflow is active.
+The CI caller pins the organization Automation workflows to an immutable commit.
+**Public-library cutover: complete.** The `python-libraries` dependency is public, pinned to an
+immutable commit, and fetched without private-package credentials. Ordinary and
+Dependabot-authored pull requests run the same required job graph. The CI caller retains the
+supported explicit `CODECOV_TOKEN`, and the release caller retains the supported
+`prepare-image-command`; neither caller inherits secrets. Releases remain tag-only, and no
+Renovate workflow is active.
 
 The first-party package is MIT licensed. Dependency rights and vulnerabilities are checked from
 the Python 3.14 lock before release approval. Publication additionally requires a sanitized
