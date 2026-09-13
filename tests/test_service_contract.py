@@ -3,7 +3,14 @@
 from pathlib import Path
 
 import brainzgraphinator.brainzgraphinator as service
+from brainzgraphinator._projections import MB_RELATIONSHIP_MAP
 from brainzgraphinator.catalog_contract import AMQP_EXCHANGE_TYPE, ENTITY_TYPES, EXCHANGE_PREFIX
+from brainzgraphinator.queue_names import (
+    dead_letter_exchange_name,
+    dead_letter_queue_name,
+    exchange_name,
+    queue_name,
+)
 
 
 ROOT = Path(__file__).parent.parent
@@ -26,6 +33,49 @@ def test_catalog_contract_matches_musicbrainz_stream() -> None:
     assert EXCHANGE_PREFIX == "groovemap-musicbrainz"
     assert AMQP_EXCHANGE_TYPE == "fanout"
     assert ENTITY_TYPES == ["artists", "labels", "release-groups", "releases"]
+
+
+def test_documentation_matches_the_source_specific_runtime_contract() -> None:
+    readme = (ROOT / "README.md").read_text()
+    event_flow = (ROOT / "docs/musicbrainz-sync.md").read_text()
+    enrichment = (ROOT / "docs/graph-enrichment.md").read_text()
+
+    for entity in ENTITY_TYPES:
+        assert exchange_name(entity) in event_flow
+        assert queue_name(service.WIRE_CONSUMER_NAME, entity) in event_flow
+        assert dead_letter_exchange_name(service.WIRE_CONSUMER_NAME, entity) in event_flow
+        assert dead_letter_queue_name(service.WIRE_CONSUMER_NAME, entity) in event_flow
+    for relation, edge in MB_RELATIONSHIP_MAP.items():
+        assert relation in enrichment
+        assert f"`{edge}`" in enrichment
+    for variable in (
+        "NEO4J_HOST",
+        "NEO4J_PORT",
+        "NEO4J_USERNAME",
+        "NEO4J_PASSWORD",
+        "RABBITMQ_HOST",
+        "RABBITMQ_PORT",
+        "RABBITMQ_USERNAME",
+        "RABBITMQ_PASSWORD",
+        "MUSICBRAINZ_EXCHANGE_PREFIX",
+        "CONSUMER_CANCEL_DELAY",
+        "QUEUE_CHECK_INTERVAL",
+        "STUCK_CHECK_INTERVAL",
+        "STARTUP_IDLE_TIMEOUT",
+        "IDLE_LOG_INTERVAL",
+        "STARTUP_DELAY",
+    ):
+        assert f"`{variable}`" in readme
+    for metric in (
+        service.PIPELINE_MESSAGES,
+        service.PIPELINE_MESSAGE_DURATION,
+        service.PIPELINE_BATCH_SIZE,
+        service.PIPELINE_BATCH_FLUSH_DURATION,
+        service.PIPELINE_CONSUMERS_ACTIVE,
+    ):
+        assert f"`{metric}`" in readme
+    for recipe in ("just check", "just audit", "just image", "just release-dry-run"):
+        assert recipe in readme
 
 
 def test_public_docs_exclude_private_planning_material() -> None:

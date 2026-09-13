@@ -1,4 +1,4 @@
-# Consumer cancellation and draining
+# Consumer cancellation
 
 `musicbrainz-graph-enricher` manages one RabbitMQ consumer for each MusicBrainz entity stream.
 Consumers stop after completed streams and before process teardown, preventing unnecessary broker
@@ -8,7 +8,7 @@ activity and preserving deliveries during routine restarts.
 
 ```mermaid
 sequenceDiagram
-    participant Producer as Catalog producer
+    participant Producer as musicbrainz-ingestion
     participant Broker as RabbitMQ
     participant Enricher as musicbrainz-graph-enricher
     participant Neo4j

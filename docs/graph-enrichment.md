@@ -38,21 +38,31 @@ the stored edge follows the canonical direction.
 ```mermaid
 flowchart TD
     Event[MusicBrainz artist event]
-    Match{Discogs identifiers resolve?}
+    Match{Source Artist exists by Discogs id?}
     Node[Update existing Artist]
+    Relations{Supported relations?}
+    Target{Target id and node resolve?}
     Edge[MERGE canonical relationship]
-    Skip[Count skipped entity or edge]
+    EntitySkip[Count skipped entity]
+    EdgeSkip[Count skipped relationship]
+    Done[Acknowledge delivery]
 
     Event --> Match
-    Match -->|record and endpoints match| Node --> Edge
-    Match -->|missing match| Skip
+    Match -->|no| EntitySkip --> Done
+    Match -->|yes| Node --> Relations
+    Relations -->|no| Done
+    Relations -->|yes| Target
+    Target -->|yes| Edge --> Done
+    Target -->|no| EdgeSkip --> Done
 ```
 
 ## Media outputs
 
-A matched release also carries its canonical media (ADR 0007) into the graph. The event's
-`media` block is the vocabulary's verdict on the release's mediums; the enricher writes it as
-nodes and edges rather than re-deriving it:
+A matched release also carries its canonical media into the graph. The event's `media` block is
+the vocabulary verdict defined by
+[ADR 0007](https://github.com/groovemap-music/design/blob/main/docs/adr/0007-canonical-media-taxonomy.md)
+and produced by `musicbrainz-ingestion`; the enricher writes it as nodes and edges rather than
+re-deriving it:
 
 | Output | Shape |
 | --- | --- |
@@ -104,9 +114,16 @@ with no format at all is different: it maps to `other_unspecified` and is counte
 ### Events that predate the block
 
 An event published before the producer computed the block carries only the raw medium list in
-`media_raw`. The enricher derives the block from it through the shared runtime mapper, the same
-one the producer runs, so a replayed backlog lands the same media as a fresh event. An event
-with neither field contributes no media.
+`media_raw`. The enricher derives the block with the pinned runtime's compatibility mapper. Its
+fixtures are kept consistent with the producer's Rust mapper and the canonical design taxonomy,
+so a replayed backlog lands the same media as a fresh event. An event with neither field
+contributes no media.
+
+This repository owns these MusicBrainz projection queries. The Neo4j node constraints and
+indexes are authoritative in
+[`database-schema`](https://github.com/groovemap-music/database-schema); Discogs-owned
+properties and edges are authoritative in
+[`discogs-graph-enricher`](https://github.com/groovemap-music/discogs-graph-enricher).
 
 ## Health counters
 
