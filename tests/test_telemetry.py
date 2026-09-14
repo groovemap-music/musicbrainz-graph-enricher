@@ -22,6 +22,7 @@ from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 from orjson import dumps
 
 import brainzgraphinator.brainzgraphinator as bgmod
+from tests.neo4j_doubles import neo4j_driver, neo4j_transaction
 
 
 if TYPE_CHECKING:
@@ -89,17 +90,7 @@ def _execute_write_calling(mock_tx: Any) -> Any:
 
 def _matched_tx() -> AsyncMock:
     """A transaction mock whose MATCH queries always find a node."""
-    tx = AsyncMock()
-    mock_result = AsyncMock()
-    mock_result.single.return_value = {"matched_id": 12345}
-    mock_counters = MagicMock()
-    mock_counters.relationships_created = 1
-    mock_counters.contains_updates = True
-    mock_summary = MagicMock()
-    mock_summary.counters = mock_counters
-    mock_result.consume.return_value = mock_summary
-    tx.run.return_value = mock_result
-    return tx
+    return neo4j_transaction()
 
 
 # ── groovemap.pipeline.messages / message.duration ──────────────────────────
@@ -142,7 +133,7 @@ class TestPipelineMessages:
         mock_message = AsyncMock(spec=AbstractIncomingMessage)
         mock_message.body = dumps(record)
         mock_session = await mock_neo4j_driver.session(database="neo4j").__aenter__()
-        mock_session.execute_write.side_effect = _execute_write_calling(AsyncMock())
+        mock_session.execute_write.side_effect = _execute_write_calling(neo4j_transaction())
 
         with patch("brainzgraphinator.brainzgraphinator.graph", mock_neo4j_driver):
             await bgmod.on_artist_message(mock_message)
@@ -158,7 +149,7 @@ class TestPipelineMessages:
         mock_message = AsyncMock(spec=AbstractIncomingMessage)
         mock_message.body = dumps({"mbid": "abc", "discogs_artist_id": 1})
 
-        with patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()):
+        with patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()):
             await bgmod.on_artist_message(mock_message)
 
         point = collector.point_for("groovemap.pipeline.messages", source="musicbrainz", entity="artists", outcome="failed")
@@ -217,7 +208,7 @@ class TestPipelineMessages:
         mock_message.body = dumps({"type": "file_complete", "total_processed": 100})
 
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
             patch("brainzgraphinator.brainzgraphinator.queues", {}),
         ):
@@ -374,7 +365,7 @@ class TestMessagingConsumedFallback:
         expected_destination = bgmod.catalog_queue_name(bgmod.WIRE_CONSUMER_NAME, "artists")
 
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
             patch("brainzgraphinator.brainzgraphinator.queues", {}),
         ):

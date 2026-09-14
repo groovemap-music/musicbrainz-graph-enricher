@@ -20,6 +20,7 @@ from brainzgraphinator.brainzgraphinator import (
     reconcile_release_media,
     release_media_block,
 )
+from tests.neo4j_doubles import neo4j_transaction
 
 
 FIXTURE_DIR = Path(__file__).parent / "fixtures" / "media" / "v1"
@@ -79,11 +80,7 @@ def media_calls(tx: AsyncMock) -> list[tuple[str, dict[str, Any]]]:
 
 def matching_tx() -> AsyncMock:
     """A transaction whose MATCH resolves the release, like conftest's mock_tx."""
-    tx = AsyncMock()
-    result = AsyncMock()
-    result.single.return_value = {"matched_id": 99999}
-    tx.run.return_value = result
-    return tx
+    return neo4j_transaction(record={"matched_id": 99999})
 
 
 # ── Block resolution ──────────────────────────────────────────────────────
@@ -378,10 +375,7 @@ class TestUnmatchedReleasesAreSkipped:
     @pytest.mark.asyncio
     async def test_release_with_no_graph_node_writes_no_media(self) -> None:
         """A release whose node does not exist is counted as skipped and gains no media."""
-        tx = AsyncMock()
-        result = AsyncMock()
-        result.single = AsyncMock(return_value=None)
-        tx.run = AsyncMock(return_value=result)
+        tx = neo4j_transaction(record=None)
 
         with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
             assert await enrich_release(tx, release_event("musicbrainz-12-inch-vinyl")) is True
