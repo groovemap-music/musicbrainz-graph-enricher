@@ -1,8 +1,10 @@
 """Pytest configuration for brainzgraphinator tests."""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import patch
 
 import pytest
+
+from tests.neo4j_doubles import neo4j_driver, neo4j_transaction
 
 
 # Every standard OpenTelemetry variable that changes what the SDK records or exports. A test
@@ -44,35 +46,14 @@ def disable_batch_mode():
 
 @pytest.fixture
 def mock_neo4j_driver():
-    """Create a mock Neo4j driver for testing."""
-    driver = MagicMock()
-    mock_session = AsyncMock()
-
-    # Make session() return an async context manager
-    session_cm = AsyncMock()
-    session_cm.__aenter__ = AsyncMock(return_value=mock_session)
-    session_cm.__aexit__ = AsyncMock(return_value=False)
-    driver.session.return_value = session_cm
-
-    return driver
+    """Create an interface-faithful resilient Neo4j driver."""
+    return neo4j_driver()
 
 
 @pytest.fixture
 def mock_tx():
-    """Create a mock Neo4j async transaction for testing enrichment functions."""
-    tx = AsyncMock()
-    # Default: MATCH returns an async result with a single record
-    mock_result = AsyncMock()
-    mock_result.single.return_value = {"matched_id": 12345}
-    # Mock consume() to return a summary with counters (for relationship queries)
-    mock_counters = MagicMock()
-    mock_counters.relationships_created = 1
-    mock_counters.contains_updates = True
-    mock_summary = MagicMock()
-    mock_summary.counters = mock_counters
-    mock_result.consume.return_value = mock_summary
-    tx.run.return_value = mock_result
-    return tx
+    """Create an interface-faithful async transaction and result."""
+    return neo4j_transaction()
 
 
 @pytest.fixture
