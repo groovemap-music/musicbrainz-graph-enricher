@@ -165,15 +165,21 @@ private-package credentials.
 mise install
 just setup
 just check
+just test-integration
 just audit
 just image
 ```
 
 `just check` runs the locked format, lint, contract, type, coverage, secret, package,
 installation, license, and version-preview checks against mocked RabbitMQ and Neo4j
-boundaries. `just audit` is the dedicated locked dependency audit. `just image` builds and
-inspects `musicbrainz-graph-enricher:local`. `just release-dry-run` reruns the full check and
-builds local release evidence; publishing, tagging, and pushing remain separate operations.
+boundaries. `just test-integration` starts a disposable Neo4j container from
+`neo4j:2026-community@sha256:dbc377fb9cd8fe8dabc19d3041b197d5ca0ef8bae514cea175b8df265e5b7a76`,
+binds its random Bolt port to loopback, proves the shared delivery contract against real
+transactions, and removes the container on exit; it needs Docker but no operator credentials.
+See [integration testing](docs/integration-testing.md). `just audit` is the dedicated locked
+dependency audit. `just image` builds and inspects `musicbrainz-graph-enricher:local`.
+`just release-dry-run` reruns the full check and builds local release evidence; publishing,
+tagging, and pushing remain separate operations.
 
 ## Contracts and compatibility
 

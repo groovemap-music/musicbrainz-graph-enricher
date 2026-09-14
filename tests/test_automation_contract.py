@@ -1,5 +1,6 @@
 """Static contracts for immutable, fail-closed repository automation."""
 
+import json
 import re
 from pathlib import Path
 
@@ -50,6 +51,7 @@ def test_dependabot_pull_requests_run_the_ordinary_required_ci_graph() -> None:
         "package-command: just build",
         "install-command: just install-check",
         "image-command: just image",
+        "integration-command: just test-integration",
         "coverage-files: coverage.xml",
         "upload-codecov: true",
         "CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}",
@@ -129,6 +131,22 @@ def test_required_regression_suites_remain_in_the_full_gate() -> None:
         source = (ROOT / relative_path).read_text()
         for test_name in test_names:
             assert f"def {test_name}(" in source
+
+
+def test_real_neo4j_lane_is_pinned_disposable_and_credential_free() -> None:
+    contract = json.loads((ROOT / "contracts" / "integration-testing" / "v1" / "contract.json").read_text())
+    image = contract["database"]["image"]
+    script = (ROOT / "scripts" / "test-integration.sh").read_text()
+    justfile = (ROOT / "Justfile").read_text()
+
+    assert image == "neo4j:2026-community@sha256:dbc377fb9cd8fe8dabc19d3041b197d5ca0ef8bae514cea175b8df265e5b7a76"
+    assert image in script
+    assert "--publish 127.0.0.1::7687" in script
+    assert "trap cleanup EXIT" in script
+    assert 'docker rm --force "${container}"' in script
+    assert "NEO4J_INTEGRATION_PASSWORD" in script
+    assert "test-integration:\n    bash scripts/test-integration.sh" in justfile
+    assert 'pytest -m "not integration"' in justfile
 
 
 def test_no_renovate_or_legacy_claude_workflow_exists() -> None:

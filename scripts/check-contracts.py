@@ -17,6 +17,7 @@ def digest(path: Path) -> str:
 catalog_source = json.loads((ROOT / "contracts/catalog-events/v1/source.json").read_text())
 persistence_source = json.loads((ROOT / "contracts/persistence/v1/source.json").read_text())
 compatibility = json.loads((ROOT / "contracts/persistence/v1/compatibility.json").read_text())
+integration = json.loads((ROOT / "contracts/integration-testing/v1/contract.json").read_text())
 with (ROOT / "pyproject.toml").open("rb") as source:
     pyproject = tomllib.load(source)
 
@@ -28,3 +29,10 @@ assert compatibility["version"] == 1
 assert compatibility["application_runtime"]["tested_version"] == "0.1.0"
 runtime_source = pyproject["tool"]["uv"]["sources"]["groovemap-runtime"]
 assert runtime_source["rev"] == compatibility["application_runtime"]["tested_commit"]
+assert integration["contract"] == "groovemap.musicbrainz-graph-enricher.integration-testing"
+assert integration["version"] == 1
+assert integration["database"]["engine"] == "neo4j"
+assert "@sha256:" in integration["database"]["image"]
+assert integration["network"] == {"bind": "127.0.0.1", "bolt_port": "ephemeral"}
+assert integration["command"] == "just test-integration"
+assert integration["database"]["image"] in (ROOT / "scripts/test-integration.sh").read_text()
