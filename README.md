@@ -144,13 +144,15 @@ readable `traceparent` starts a new trace rather than failing.
 | `flush neo4j {entity}` | `INTERNAL` | `db.system.name`, `groovemap.entity`, `outcome` (`committed`\|`failed`), `error.type` on failure | this service, around the write, linked to the message spans in the batch |
 | `session neo4j` | `CLIENT` | `db.system.name`, `db.operation.name`, `error.type` on failure | `AsyncResilientNeo4jDriver`, nested inside the flush span |
 
-Because `common.process_message_with_retry` is bypassed (see above), the `process {queue}` span
-is opened here from `common.get_tracer` and `common.extract_context` with the name, kind, and
-attributes the shared wrapper would have used. Each delivery writes exactly one record, so a
-flush links exactly one member message span; `common.flush_span` caps the links at 64 for
-batching consumers. A failure sets span status `ERROR` with `error.type` only: never a message,
-a stack trace, or a span event carrying a payload. Call counts and durations per span name are
-derived by the collector's `spanmetrics` connector, never emitted here.
+`common.run_delivery` is the sole terminal ACK/NACK authority. The service keeps its
+MusicBrainz-specific validation, failure classifier, counters, and consumer-span observer local;
+fixes to settlement ordering, cancellation, or exactly-once behavior belong in
+`common.delivery` so every direct consumer receives the same repair. Each delivery writes
+exactly one record, so a flush links exactly one member message span; `common.flush_span` caps
+the links at 64 for batching consumers. A failure sets span status `ERROR` with `error.type`
+only: never a message, a stack trace, or a span event carrying a payload. Call counts and
+durations per span name are derived by the collector's `spanmetrics` connector, never emitted
+here.
 
 ## Development
 
