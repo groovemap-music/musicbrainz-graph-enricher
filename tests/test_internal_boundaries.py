@@ -7,11 +7,12 @@ import pytest
 
 from brainzgraphinator._projections import enrich_label
 from brainzgraphinator._queue_lifecycle import declare_stream_queue
+from tests.neo4j_doubles import neo4j_transaction
 
 
 @pytest.mark.asyncio
 async def test_projection_updates_only_the_injected_stats() -> None:
-    tx = AsyncMock()
+    tx = neo4j_transaction()
     stats = {
         "entities_enriched": 0,
         "entities_skipped_no_discogs_match": 0,

@@ -33,6 +33,7 @@ from brainzgraphinator.brainzgraphinator import (
     schedule_consumer_cancellation,
     signal_handler,
 )
+from tests.neo4j_doubles import neo4j_driver, neo4j_result, neo4j_session, neo4j_transaction
 
 
 CLEAN_STATS = {"entities_enriched": 0, "entities_skipped_no_discogs_match": 0, "relationships_created": 0, "relationships_skipped_missing_side": 0}
@@ -54,7 +55,7 @@ class TestHealthData:
         assert data["service"] == "musicbrainz-graph-enricher"
         assert data["current_task"] == "Initializing Neo4j connection"
 
-    @patch("brainzgraphinator.brainzgraphinator.graph", MagicMock())
+    @patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver())
     @patch("brainzgraphinator.brainzgraphinator.consumer_tags", {"artists": "tag-1"})
     @patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 0, "labels": 0, "release-groups": 0, "releases": 0})
     @patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0})
@@ -64,7 +65,7 @@ class TestHealthData:
         data = get_health_data()
         assert data["status"] == "healthy"
 
-    @patch("brainzgraphinator.brainzgraphinator.graph", MagicMock())
+    @patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver())
     @patch("brainzgraphinator.brainzgraphinator.consumer_tags", {})
     @patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 10, "labels": 0, "release-groups": 0, "releases": 0})
     @patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0})
@@ -120,9 +121,7 @@ class TestEnrichArtist:
     @pytest.mark.asyncio
     async def test_enrich_artist_no_neo4j_match(self, mock_tx: AsyncMock) -> None:
         """Artist with discogs_artist_id but no Neo4j match increments skip counter."""
-        mock_result = AsyncMock()
-        mock_result.single.return_value = None
-        mock_tx.run.return_value = mock_result
+        mock_tx.run.return_value = neo4j_result(record=None)
 
         record = {"mbid": "abc", "discogs_artist_id": 12345}
         with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
@@ -196,9 +195,7 @@ class TestEnrichLabel:
     @pytest.mark.asyncio
     async def test_enrich_label_no_neo4j_match(self, mock_tx: AsyncMock) -> None:
         """Label with discogs_label_id but no Neo4j match."""
-        mock_result = AsyncMock()
-        mock_result.single.return_value = None
-        mock_tx.run.return_value = mock_result
+        mock_tx.run.return_value = neo4j_result(record=None)
 
         record = {"mbid": "abc", "discogs_label_id": 54321}
         with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
@@ -248,9 +245,7 @@ class TestEnrichRelease:
     async def test_enrich_release_no_neo4j_match(self, mock_tx: AsyncMock) -> None:
         """Release with discogs_release_id but no Neo4j node increments skipped counter."""
         record = {"mbid": "abc", "discogs_release_id": 999}
-        mock_result = AsyncMock()
-        mock_result.single = AsyncMock(return_value=None)
-        mock_tx.run = AsyncMock(return_value=mock_result)
+        mock_tx.run.return_value = neo4j_result(record=None)
 
         with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
             result = await enrich_release(mock_tx, record)
@@ -408,12 +403,7 @@ class TestRelationshipEdges:
     async def test_create_edge_existing_relationship_updated(self, mock_tx: AsyncMock) -> None:
         """Existing relationship matched by MERGE counts as updated, not created."""
         # Mock: relationships_created=0, contains_updates=True (SET fired on existing rel)
-        mock_summary = MagicMock()
-        mock_summary.counters.relationships_created = 0
-        mock_summary.counters.contains_updates = True
-        mock_result = AsyncMock()
-        mock_result.consume = AsyncMock(return_value=mock_summary)
-        mock_tx.run = AsyncMock(return_value=mock_result)
+        mock_tx.run.return_value = neo4j_result(relationships_created=0, contains_updates=True)
 
         relations = [{"type": "member of band", "target_discogs_artist_id": 67890}]
         with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
@@ -425,12 +415,7 @@ class TestRelationshipEdges:
     async def test_create_edge_both_nodes_missing(self, mock_tx: AsyncMock) -> None:
         """When neither node exists, relationship is skipped (no updates, no creation)."""
         # Mock: relationships_created=0, contains_updates=False (no rows produced)
-        mock_summary = MagicMock()
-        mock_summary.counters.relationships_created = 0
-        mock_summary.counters.contains_updates = False
-        mock_result = AsyncMock()
-        mock_result.consume = AsyncMock(return_value=mock_summary)
-        mock_tx.run = AsyncMock(return_value=mock_result)
+        mock_tx.run.return_value = neo4j_result(relationships_created=0, contains_updates=False)
 
         relations = [{"type": "member of band", "target_discogs_artist_id": 67890}]
         with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
@@ -523,17 +508,7 @@ class TestMessageHandling:
         mock_session = await mock_neo4j_driver.session(database="neo4j").__aenter__()
 
         async def mock_tx_func(func: Any) -> Any:
-            mock_tx = AsyncMock()
-            mock_result = AsyncMock()
-            mock_result.single.return_value = {"matched_id": 12345}
-            mock_counters = MagicMock()
-            mock_counters.relationships_created = 1
-            mock_counters.contains_updates = True
-            mock_summary = MagicMock()
-            mock_summary.counters = mock_counters
-            mock_result.consume.return_value = mock_summary
-            mock_tx.run.return_value = mock_result
-            return await func(mock_tx)
+            return await func(neo4j_transaction())
 
         mock_session.execute_write.side_effect = mock_tx_func
 
@@ -550,7 +525,7 @@ class TestMessageHandling:
         mock_message.body = dumps({"type": "file_complete", "total_processed": 100})
 
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
             patch("brainzgraphinator.brainzgraphinator.queues", {}),
         ):
@@ -567,7 +542,7 @@ class TestMessageHandling:
         completed: set[str] = set()
 
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.completed_files", completed),
             patch("brainzgraphinator.brainzgraphinator.queues", {}),
         ):
@@ -587,7 +562,7 @@ class TestMessageHandling:
         mock_message = AsyncMock(spec=AbstractIncomingMessage)
         mock_message.body = b"not valid json{{"
 
-        with patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()):
+        with patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()):
             await on_artist_message(mock_message)
 
         mock_message.nack.assert_called_once_with(requeue=True)
@@ -599,7 +574,7 @@ class TestMessageHandling:
         mock_message = AsyncMock(spec=AbstractIncomingMessage)
         mock_message.body = dumps({"mbid": "abc", "discogs_artist_id": 1})
 
-        with patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()):
+        with patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()):
             await on_artist_message(mock_message)
 
         mock_message.nack.assert_called_once_with(requeue=False)
@@ -612,7 +587,7 @@ class TestMessageHandling:
         mock_message = AsyncMock(spec=AbstractIncomingMessage)
         mock_message.body = dumps({"id": "", "mbid": "", "discogs_artist_id": 1})
 
-        with patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()):
+        with patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()):
             await on_artist_message(mock_message)
 
         mock_message.nack.assert_called_once_with(requeue=False)
@@ -803,17 +778,7 @@ class TestEdgeCases:
         mock_session = await mock_neo4j_driver.session(database="neo4j").__aenter__()
 
         async def mock_tx_func(func: Any) -> Any:
-            mock_tx = AsyncMock()
-            mock_result = AsyncMock()
-            mock_result.single.return_value = {"matched_id": 54321}
-            mock_counters = MagicMock()
-            mock_counters.relationships_created = 1
-            mock_counters.contains_updates = True
-            mock_summary = MagicMock()
-            mock_summary.counters = mock_counters
-            mock_result.consume.return_value = mock_summary
-            mock_tx.run.return_value = mock_result
-            return await func(mock_tx)
+            return await func(neo4j_transaction(record={"matched_id": 54321}))
 
         mock_session.execute_write.side_effect = mock_tx_func
 
@@ -832,17 +797,7 @@ class TestEdgeCases:
         mock_session = await mock_neo4j_driver.session(database="neo4j").__aenter__()
 
         async def mock_tx_func(func: Any) -> Any:
-            mock_tx = AsyncMock()
-            mock_result = AsyncMock()
-            mock_result.single.return_value = {"matched_id": 99999}
-            mock_counters = MagicMock()
-            mock_counters.relationships_created = 1
-            mock_counters.contains_updates = True
-            mock_summary = MagicMock()
-            mock_summary.counters = mock_counters
-            mock_result.consume.return_value = mock_summary
-            mock_tx.run.return_value = mock_result
-            return await func(mock_tx)
+            return await func(neo4j_transaction(record={"matched_id": 99999}))
 
         mock_session.execute_write.side_effect = mock_tx_func
 
@@ -1030,7 +985,7 @@ class TestCheckConsumersUnexpectedlyDead:
     def test_returns_stuck_when_consumers_dead(self) -> None:
         """Health data shows stuck when consumers have died unexpectedly."""
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.consumer_tags", {}),
             patch("brainzgraphinator.brainzgraphinator.completed_files", {"artists"}),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 10, "labels": 0, "release-groups": 0, "releases": 0}),
@@ -1043,7 +998,7 @@ class TestCheckConsumersUnexpectedlyDead:
     def test_not_stuck_when_consumers_active(self) -> None:
         """Health data shows healthy when consumers are still active."""
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.consumer_tags", {"artists": "tag123"}),
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 10, "labels": 0, "release-groups": 0, "releases": 0}),
@@ -1055,7 +1010,7 @@ class TestCheckConsumersUnexpectedlyDead:
     def test_not_stuck_when_no_messages_processed(self) -> None:
         """Health data not stuck when no messages have been processed yet."""
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.consumer_tags", {}),
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 0, "labels": 0, "release-groups": 0, "releases": 0}),
@@ -1439,7 +1394,7 @@ class TestMessageHandlerEdgeCases:
         mock_message.body = dumps({"type": "file_complete", "total_processed": 100})
 
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()) as mock_files,
             patch("brainzgraphinator.brainzgraphinator.queues", {}),
             patch("brainzgraphinator.brainzgraphinator.CONSUMER_CANCEL_DELAY", 0),
@@ -1458,7 +1413,7 @@ class TestMessageHandlerEdgeCases:
         mock_queue = AsyncMock()
 
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
             patch("brainzgraphinator.brainzgraphinator.queues", {"releases": mock_queue}),
         ):
@@ -1476,17 +1431,7 @@ class TestMessageHandlerEdgeCases:
         mock_session = await mock_neo4j_driver.session(database="neo4j").__aenter__()
 
         async def mock_tx_func(func: Any) -> Any:
-            mock_tx = AsyncMock()
-            mock_result = AsyncMock()
-            mock_result.single.return_value = {"matched_id": 12345}
-            mock_counters = MagicMock()
-            mock_counters.relationships_created = 1
-            mock_counters.contains_updates = True
-            mock_summary = MagicMock()
-            mock_summary.counters = mock_counters
-            mock_result.consume.return_value = mock_summary
-            mock_tx.run.return_value = mock_result
-            return await func(mock_tx)
+            return await func(neo4j_transaction())
 
         mock_session.execute_write.side_effect = mock_tx_func
 
@@ -1557,13 +1502,13 @@ class TestMainNeo4jFailure:
         mock_config.neo4j_password = "password"
         mock_from_env.return_value = mock_config
 
-        mock_neo4j_instance = MagicMock()
+        mock_neo4j_instance = neo4j_driver()
         mock_neo4j_class.return_value = mock_neo4j_instance
 
         def failing_session(*_args: Any, **_kwargs: Any) -> Any:
             raise Exception("Neo4j connection refused")
 
-        mock_neo4j_instance.session = MagicMock(side_effect=failing_session)
+        mock_neo4j_instance.session.side_effect = failing_session
 
         with (
             patch.dict("os.environ", {"STARTUP_DELAY": "0"}),
@@ -1604,20 +1549,8 @@ class TestMainAmqpRetryExhausted:
         mock_config.amqp_connection = "amqp://guest:guest@localhost/"
         mock_from_env.return_value = mock_config
 
-        mock_neo4j_instance = MagicMock()
+        mock_neo4j_instance = neo4j_driver(session=neo4j_session(health_record={"test": 1}))
         mock_neo4j_class.return_value = mock_neo4j_instance
-        mock_neo4j_instance.close = AsyncMock()
-
-        mock_session = AsyncMock()
-        mock_result = AsyncMock()
-        mock_result.single = AsyncMock(return_value={"test": 1})
-        mock_session.run = AsyncMock(return_value=mock_result)
-
-        mock_cm = AsyncMock()
-        mock_cm.__aenter__ = AsyncMock(return_value=mock_session)
-        mock_cm.__aexit__ = AsyncMock(return_value=None)
-
-        mock_neo4j_instance.session = MagicMock(return_value=mock_cm)
 
         # RabbitMQ constructor succeeds, but connect() always raises
         mock_rabbitmq_instance = MagicMock()
@@ -1670,19 +1603,8 @@ class TestMainSuccessfulStartupAndShutdown:
         mock_from_env.return_value = mock_config
 
         # Setup Neo4j
-        mock_neo4j_instance = MagicMock()
-        mock_neo4j_instance.close = AsyncMock()
+        mock_neo4j_instance = neo4j_driver(session=neo4j_session(health_record={"test": 1}))
         mock_neo4j_class.return_value = mock_neo4j_instance
-
-        mock_session = AsyncMock()
-        mock_result = AsyncMock()
-        mock_result.single = AsyncMock(return_value={"test": 1})
-        mock_session.run = AsyncMock(return_value=mock_result)
-
-        mock_cm = AsyncMock()
-        mock_cm.__aenter__ = AsyncMock(return_value=mock_session)
-        mock_cm.__aexit__ = AsyncMock(return_value=None)
-        mock_neo4j_instance.session = MagicMock(return_value=mock_cm)
 
         # Setup RabbitMQ
         mock_rabbitmq_instance = MagicMock()
@@ -1798,18 +1720,8 @@ class TestMainAmqpConnectionNone:
         mock_config.amqp_connection = "amqp://guest:guest@localhost/"
         mock_from_env.return_value = mock_config
 
-        mock_neo4j_instance = MagicMock()
+        mock_neo4j_instance = neo4j_driver(session=neo4j_session(health_record={"test": 1}))
         mock_neo4j_class.return_value = mock_neo4j_instance
-
-        mock_session = AsyncMock()
-        mock_result = AsyncMock()
-        mock_result.single = AsyncMock(return_value={"test": 1})
-        mock_session.run = AsyncMock(return_value=mock_result)
-
-        mock_cm = AsyncMock()
-        mock_cm.__aenter__ = AsyncMock(return_value=mock_session)
-        mock_cm.__aexit__ = AsyncMock(return_value=None)
-        mock_neo4j_instance.session = MagicMock(return_value=mock_cm)
 
         # Make connect() set shutdown_requested so the while loop exits without connecting
         mock_rabbitmq_instance = MagicMock()
@@ -1980,7 +1892,7 @@ class TestHealthDataAdditional:
     def test_health_timestamp_is_utc(self) -> None:
         """Test get_health_data timestamp uses UTC."""
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.consumer_tags", {}),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 0, "labels": 0, "release-groups": 0, "releases": 0}),
             patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0}),
@@ -1995,7 +1907,7 @@ class TestHealthDataAdditional:
 
         current = time.time()
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.consumer_tags", {"artists": "tag-1"}),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 50, "labels": 0, "release-groups": 0, "releases": 0}),
             patch(
@@ -2009,7 +1921,7 @@ class TestHealthDataAdditional:
     def test_health_data_idle_waiting(self) -> None:
         """Health data shows idle when consumers active but no recent messages."""
         with (
-            patch("brainzgraphinator.brainzgraphinator.graph", MagicMock()),
+            patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
             patch("brainzgraphinator.brainzgraphinator.consumer_tags", {"artists": "tag-1"}),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 0, "labels": 0, "release-groups": 0, "releases": 0}),
             patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0}),

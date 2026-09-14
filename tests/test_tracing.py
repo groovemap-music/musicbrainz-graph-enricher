@@ -18,6 +18,7 @@ import pytest
 import pytest_asyncio
 from common import telemetry
 from common.telemetry import setup_telemetry, shutdown_telemetry
+from neo4j import AsyncDriver
 from neo4j.exceptions import ServiceUnavailable
 from opentelemetry.sdk.metrics import MeterProvider as SdkMeterProvider
 from opentelemetry.sdk.metrics.export import MetricExporter, MetricExportResult
@@ -27,6 +28,7 @@ from opentelemetry.trace import NoOpTracerProvider, SpanKind, StatusCode
 from orjson import dumps
 
 import brainzgraphinator.brainzgraphinator as bgmod
+from tests.neo4j_doubles import neo4j_driver, neo4j_session, neo4j_transaction
 
 
 if TYPE_CHECKING:
@@ -205,17 +207,7 @@ def _writing_session(mock_neo4j_driver: MagicMock, tx: Any) -> None:
 
 def _matched_tx() -> AsyncMock:
     """A transaction mock whose MATCH queries always find a node."""
-    tx = AsyncMock()
-    result = AsyncMock()
-    result.single.return_value = {"matched_id": 12345}
-    counters = MagicMock()
-    counters.relationships_created = 1
-    counters.contains_updates = True
-    summary = MagicMock()
-    summary.counters = counters
-    result.consume.return_value = summary
-    tx.run.return_value = result
-    return tx
+    return neo4j_transaction()
 
 
 async def _deliver(
@@ -329,7 +321,7 @@ class TestConsumerSpan:
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
             patch("brainzgraphinator.brainzgraphinator.queues", {}),
         ):
-            await _deliver(artists_queue, {"type": "file_complete", "total_processed": 100}, MagicMock(), {"traceparent": TRACEPARENT})
+            await _deliver(artists_queue, {"type": "file_complete", "total_processed": 100}, neo4j_driver(), {"traceparent": TRACEPARENT})
 
         assert traces.names() == [f"process {ARTISTS_QUEUE}"]
 
@@ -342,7 +334,7 @@ class TestConsumerSpan:
         sample_artist_record: dict[str, Any],
     ) -> None:
         """During shutdown a delivery is left unsettled and never processed, so never traced."""
-        message = await _deliver(artists_queue, sample_artist_record, MagicMock(), {"traceparent": TRACEPARENT})
+        message = await _deliver(artists_queue, sample_artist_record, neo4j_driver(), {"traceparent": TRACEPARENT})
 
         assert traces.exported == []
         assert message.acked == 0
@@ -433,8 +425,8 @@ class TestFlushSpan:
     ) -> None:
         """`session neo4j` comes free from AsyncResilientNeo4jDriver and must nest, not wrap."""
         driver = bgmod.AsyncResilientNeo4jDriver(uri="bolt://neo4j:7687", auth=("neo4j", "password"))
-        underlying = MagicMock()
-        underlying.session.return_value = _async_context(_recording_session(_matched_tx()))
+        underlying = MagicMock(spec_set=AsyncDriver)
+        underlying.session.return_value = _recording_session(_matched_tx())
 
         with patch.object(driver, "get_connection", AsyncMock(return_value=underlying)):
             await _deliver(artists_queue, sample_artist_record, driver, {"traceparent": TRACEPARENT})
@@ -458,21 +450,7 @@ class TestFlushSpan:
 
 def _recording_session(tx: Any) -> AsyncMock:
     """A Neo4j session mock whose execute_write runs the transaction function."""
-
-    async def run(func: Any) -> Any:
-        return await func(tx)
-
-    session = AsyncMock()
-    session.execute_write.side_effect = run
-    return session
-
-
-def _async_context(value: Any) -> AsyncMock:
-    """Wrap a value in an async context manager."""
-    manager = AsyncMock()
-    manager.__aenter__ = AsyncMock(return_value=value)
-    manager.__aexit__ = AsyncMock(return_value=False)
-    return manager
+    return neo4j_session(transaction=tx)
 
 
 # ── Environment contract ─────────────────────────────────────────────────────
