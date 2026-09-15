@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "command": "just test-integration",
+  "contract": "groovemap.musicbrainz-graph-enricher.integration-testing",
+  "coverage": [
+    "run_delivery commit-before-ack",
+    "transient Neo4j redelivery",
+    "deterministic payload rejection"
+  ],
+  "database": {
+    "engine": "neo4j",
+    "image": "neo4j:2026-community@sha256:dbc377fb9cd8fe8dabc19d3041b197d5ca0ef8bae514cea175b8df265e5b7a76"
+  },
+  "network": {
+    "bind": "127.0.0.1",
+    "bolt_port": "ephemeral"
+  },
+  "version": 1
+}

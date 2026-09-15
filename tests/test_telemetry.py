@@ -320,10 +320,7 @@ class TestConsumersActiveGauge:
 
 
 class TestMessagingConsumedFallback:
-    """This service registers with queue.consume() directly, bypassing
-    common.process_message_with_retry, so these are recorded locally with the
-    same instrument names and attribute shape the shared wrapper uses.
-    """
+    """The local observer records the service-specific metrics around run_delivery."""
 
     @pytest.mark.asyncio
     @patch("brainzgraphinator.brainzgraphinator.shutdown_requested", False)

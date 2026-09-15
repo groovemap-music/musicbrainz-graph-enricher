@@ -144,13 +144,15 @@ readable `traceparent` starts a new trace rather than failing.
 | `flush neo4j {entity}` | `INTERNAL` | `db.system.name`, `groovemap.entity`, `outcome` (`committed`\|`failed`), `error.type` on failure | this service, around the write, linked to the message spans in the batch |
 | `session neo4j` | `CLIENT` | `db.system.name`, `db.operation.name`, `error.type` on failure | `AsyncResilientNeo4jDriver`, nested inside the flush span |
 
-Because `common.process_message_with_retry` is bypassed (see above), the `process {queue}` span
-is opened here from `common.get_tracer` and `common.extract_context` with the name, kind, and
-attributes the shared wrapper would have used. Each delivery writes exactly one record, so a
-flush links exactly one member message span; `common.flush_span` caps the links at 64 for
-batching consumers. A failure sets span status `ERROR` with `error.type` only: never a message,
-a stack trace, or a span event carrying a payload. Call counts and durations per span name are
-derived by the collector's `spanmetrics` connector, never emitted here.
+`common.run_delivery` is the sole terminal ACK/NACK authority. The service keeps its
+MusicBrainz-specific validation, failure classifier, counters, and consumer-span observer local;
+fixes to settlement ordering, cancellation, or exactly-once behavior belong in
+`common.delivery` so every direct consumer receives the same repair. Each delivery writes
+exactly one record, so a flush links exactly one member message span; `common.flush_span` caps
+the links at 64 for batching consumers. A failure sets span status `ERROR` with `error.type`
+only: never a message, a stack trace, or a span event carrying a payload. Call counts and
+durations per span name are derived by the collector's `spanmetrics` connector, never emitted
+here.
 
 ## Development
 
@@ -163,15 +165,21 @@ private-package credentials.
 mise install
 just setup
 just check
+just test-integration
 just audit
 just image
 ```
 
 `just check` runs the locked format, lint, contract, type, coverage, secret, package,
 installation, license, and version-preview checks against mocked RabbitMQ and Neo4j
-boundaries. `just audit` is the dedicated locked dependency audit. `just image` builds and
-inspects `musicbrainz-graph-enricher:local`. `just release-dry-run` reruns the full check and
-builds local release evidence; publishing, tagging, and pushing remain separate operations.
+boundaries. `just test-integration` starts a disposable Neo4j container from
+`neo4j:2026-community@sha256:dbc377fb9cd8fe8dabc19d3041b197d5ca0ef8bae514cea175b8df265e5b7a76`,
+binds its random Bolt port to loopback, proves the shared delivery contract against real
+transactions, and removes the container on exit; it needs Docker but no operator credentials.
+See [integration testing](docs/integration-testing.md). `just audit` is the dedicated locked
+dependency audit. `just image` builds and inspects `musicbrainz-graph-enricher:local`.
+`just release-dry-run` reruns the full check and builds local release evidence; publishing,
+tagging, and pushing remain separate operations.
 
 ## Contracts and compatibility
 
