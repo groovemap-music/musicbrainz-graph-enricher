@@ -17,7 +17,7 @@ import brainzgraphinator.brainzgraphinator as service
 from tests.neo4j_doubles import neo4j_transaction
 
 
-RUNTIME_REVISION = "24704f5fd48d3ef4fff29398585e9924e225b0c5"
+RUNTIME_REVISION = "e372b6a7598ae31ee6578fdff39bc920bedd7136"
 ROOT = Path(__file__).parent.parent
 
 

@@ -59,6 +59,7 @@ RELEASE_MEDIA_EDGES_CYPHER = _projections.RELEASE_MEDIA_EDGES_CYPHER
 RELEASE_MEDIA_SUMMARY_CYPHER = _projections.RELEASE_MEDIA_SUMMARY_CYPHER
 media_edge_rows = _projections.media_edge_rows
 reconcile_release_media = _projections.reconcile_release_media
+release_event_rows = _projections.release_event_rows
 release_media_block = _projections.release_media_block
 
 SERVICE_NAME = "musicbrainz-graph-enricher"
