@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import contextvars
 import os
 import signal
 import threading
@@ -17,12 +18,16 @@ from common import (
     AsyncResilientNeo4jDriver,
     AsyncResilientRabbitMQ,
     DatabaseUnavailableError,
+    DeliveryResult,
+    FailureKind,
     HealthServer,
     OutageBackoff,
+    Settlement,
     extract_context,
     flush_span,
     get_tracer,
     neo4j_security_kwargs,
+    run_delivery,
     setup_logging,
     setup_telemetry,
     shutdown_telemetry,
@@ -154,8 +159,8 @@ PIPELINE_BATCH_SIZE = "groovemap.pipeline.batch.size"
 PIPELINE_BATCH_FLUSH_DURATION = "groovemap.pipeline.batch.flush.duration"
 PIPELINE_CONSUMERS_ACTIVE = "groovemap.pipeline.consumers.active"
 # Recorded locally, matching common.runtime_metrics.record_consumed_message exactly: this
-# service registers its handler with aio-pika's queue.consume() directly rather than going
-# through common.process_message_with_retry, so the shared wrapper never sees these deliveries.
+# service registers its handler with aio-pika's queue.consume() directly. The shared delivery
+# runner delegates those service-specific measurements back to the observer below.
 MESSAGING_CONSUMED_MESSAGES = "messaging.client.consumed.messages"
 MESSAGING_OPERATION_DURATION = "messaging.client.operation.duration"
 
@@ -283,11 +288,9 @@ def _record_consumed_message(destination: str, duration_s: float, error_type: st
 # Spans follow the same GrooveMap OpenTelemetry conventions as the metrics above, and are the
 # same no-ops when the 'otel' extra is absent or no collector endpoint is configured.
 #
-# common.process_message_with_retry opens the CONSUMER span for services that route their
-# handler through it. This one registers with aio-pika's queue.consume() directly (see the
-# messaging metrics note above), so the identical span is opened here from the library's own
-# helpers -- same name, kind, attributes, and extracted parent context -- rather than
-# reimplementing the wrapper's ack/nack policy, which this service owns.
+# This service registers with aio-pika's queue.consume() directly. Its DeliveryObserver opens
+# the CONSUMER span here from the runtime's tracing helpers, while common.run_delivery owns
+# transport settlement.
 MESSAGING_SYSTEM = "rabbitmq"
 
 # A batch flush links the message spans it covers, capped so a large batch cannot carry one
@@ -376,6 +379,56 @@ def consume_span(destination: str, headers: Any) -> Iterator[Any]:
 
     with manager as span:
         yield span
+
+
+_delivery_span: contextvars.ContextVar[Any] = contextvars.ContextVar("delivery_span", default=None)
+
+
+class MusicBrainzDeliveryObserver:
+    """Preserve this consumer's local telemetry around shared delivery settlement."""
+
+    @contextlib.contextmanager
+    def consume(self, destination: str, headers: object | None) -> Iterator[Any]:
+        with consume_span(destination, headers) as span:
+            token = _delivery_span.set(span)
+            try:
+                yield span
+            finally:
+                _delivery_span.reset(token)
+
+    def settled(self, *, entity: str, result: DeliveryResult, duration_s: float, span: Any) -> None:
+        if result.outcome != "control":
+            pipeline_outcome = result.outcome if result.outcome in {"processed", "skipped"} else "failed"
+            _record_pipeline_message(entity, pipeline_outcome)
+        if result.settlement is Settlement.ACK and result.outcome in {"processed", "skipped"}:
+            outage_backoff.reset()
+            message_counts[entity] += 1
+            last_message_time[entity] = time.time()
+            if message_counts[entity] % progress_interval == 0:
+                logger.info(
+                    f"📊 Enriched {entity} in Neo4j",
+                    message_counts=message_counts[entity],
+                )
+        _record_message_duration(entity, duration_s)
+        destination = catalog_queue_name(WIRE_CONSUMER_NAME, entity)
+        _record_consumed_message(destination, duration_s, result.error_type)
+        if result.error_type is not None:
+            _mark_span_failed(span, result.error_type)
+
+
+delivery_observer = MusicBrainzDeliveryObserver()
+
+
+def classify_delivery_failure(error: BaseException) -> FailureKind:
+    """Classify database outages that require throttled broker redelivery."""
+    if isinstance(error, (ServiceUnavailable, SessionExpired, DatabaseUnavailableError)):
+        return FailureKind.TRANSIENT
+    return FailureKind.DETERMINISTIC
+
+
+async def wait_before_requeue() -> None:
+    """Adapt the local backoff's diagnostic return value to the delivery contract."""
+    await outage_backoff.wait()
 
 
 def get_health_data() -> dict[str, Any]:
@@ -538,6 +591,9 @@ async def check_all_consumers_idle() -> bool:
 
 async def check_file_completion(data: dict[str, Any], data_type: str, message: AbstractIncomingMessage) -> bool:
     """Check if message is a file completion or extraction completion message."""
+    # Settlement belongs to common.run_delivery; retain the parameter as part of this public
+    # helper's introspected compatibility surface.
+    _ = message
     if data.get("type") == "file_complete":
         total_processed = data.get("total_processed", 0)
         logger.info(f"✅ File processing complete for {data_type}! Total records processed: {total_processed}")
@@ -549,7 +605,6 @@ async def check_file_completion(data: dict[str, Any], data_type: str, message: A
         # checker still fires for any in-flight messages during the delay.
         completed_files.add(data_type)
 
-        await message.ack()
         return True
 
     if data.get("type") == "extraction_complete":
@@ -572,7 +627,6 @@ async def check_file_completion(data: dict[str, Any], data_type: str, message: A
         if CONSUMER_CANCEL_DELAY > 0 and data_type in queues:
             await schedule_consumer_cancellation(data_type, queues[data_type])
 
-        await message.ack()
         return True
 
     return False
@@ -627,7 +681,7 @@ def make_message_handler(data_type: str, enrich_fn: _projections.Projection) -> 
 
     destination = catalog_queue_name(WIRE_CONSUMER_NAME, data_type)
 
-    async def handler(message: AbstractIncomingMessage) -> None:
+    async def handler(message: AbstractIncomingMessage) -> DeliveryResult:
         if shutdown_requested:
             # Leave the delivery UNACKED — never nack(requeue=True) here. The
             # consumer is still subscribed at this point, so a requeue is
@@ -636,40 +690,26 @@ def make_message_handler(data_type: str, enrich_fn: _projections.Projection) -> 
             # are dead-lettered within a second of a routine restart. Returning
             # without settling lets the connection close requeue them exactly once.
             logger.debug("🛑 Shutdown requested, leaving message unacked for redelivery")
-            return
+            return DeliveryResult(Settlement.DEFER, "shutdown")
 
-        # message.duration / messaging.client.* cover every settled delivery below,
-        # control messages included; groovemap.pipeline.messages (set per-branch) is
-        # domain-scoped to actual enrichment attempts.
-        started = time.perf_counter()
-        messaging_error_type: str | None = None
-
-        # Every delivery this service actually processes runs inside the CONSUMER span,
-        # joined to the extractor's trace through the message's traceparent header.
-        with consume_span(destination, getattr(message, "headers", None)) as consumer_span:
+        async def operation() -> DeliveryResult:
             try:
                 logger.debug("🔄 Received MusicBrainz message", data_type=data_type)
                 body: dict[str, Any] = loads(message.body)
 
                 if await check_file_completion(body, data_type, message):
-                    return
+                    return DeliveryResult(Settlement.ACK, "control")
 
                 # Validate required 'id' field — nack with requeue=False to avoid
                 # infinite requeue loop for malformed messages (matches brainztableinator).
                 if "id" not in body:
                     logger.error("❌ Message missing 'id' field", data_type=data_type)
-                    await message.nack(requeue=False)
-                    messaging_error_type = "ValidationError"
-                    _record_pipeline_message(data_type, "failed")
-                    return
+                    return DeliveryResult(Settlement.REJECT, "failed", "ValidationError")
 
                 data_id: str = body["id"]
                 if not data_id:
                     logger.warning("⚠️ Nacking record with empty mbid/id", data_type=data_type)
-                    await message.nack(requeue=False)
-                    messaging_error_type = "ValidationError"
-                    _record_pipeline_message(data_type, "failed")
-                    return
+                    return DeliveryResult(Settlement.REJECT, "failed", "ValidationError")
 
                 if graph is None:
                     raise RuntimeError("Neo4j driver not initialized")
@@ -695,6 +735,7 @@ def make_message_handler(data_type: str, enrich_fn: _projections.Projection) -> 
                 # One delivery is one flush, so the batch has exactly one member span: this
                 # delivery's CONSUMER span. A batching consumer would pass one context per member
                 # here, and both flush_links and common.tracing cap the list at 64.
+                consumer_span = _delivery_span.get()
                 with flush_span(PIPELINE_STORE, data_type, links=flush_links(consumer_span)) as batch_span:
                     async with graph.session(database="neo4j") as session:
 
@@ -727,62 +768,38 @@ def make_message_handler(data_type: str, enrich_fn: _projections.Projection) -> 
                         for key, value in local_stats.items():
                             enrichment_stats[key] += value
 
-                await message.ack()
-
-                # Neo4j answered — clear the outage backoff.
-                outage_backoff.reset()
-
-                # Increment counts only after successful processing and ack
-                message_counts[data_type] += 1
-                last_message_time[data_type] = time.time()
-                if message_counts[data_type] % progress_interval == 0:
-                    logger.info(
-                        f"📊 Enriched {data_type} in Neo4j",
-                        message_counts=message_counts[data_type],
-                    )
-
                 # entities_enriched vs. entities_skipped_no_discogs_match is exactly the
                 # per-message enrich_fn outcome (see enrich_artist/label/release/release_group):
                 # a record with no Discogs match is deliberately skipped, not an error.
                 outcome = "processed" if local_stats["entities_enriched"] > 0 else "skipped"
-                _record_pipeline_message(data_type, outcome)
+                return DeliveryResult(Settlement.ACK, outcome)
             except (ServiceUnavailable, SessionExpired, DatabaseUnavailableError) as e:
                 logger.warning(
                     f"⚠️ Neo4j unavailable, will retry {data_type} message",
                     error=str(e),
                 )
-                # Pause before requeueing. The main queues are quorum queues with
-                # x-delivery-limit=20, a budget with no time dimension: requeueing
-                # immediately burns all 20 redeliveries in ~3 minutes and RabbitMQ
-                # dead-letters a perfectly valid record mid-outage. Prefetch here is
-                # 200, so an unthrottled Neo4j outage puts 200 messages on that
-                # treadmill at once.
-                await outage_backoff.wait()
-                try:
-                    await message.nack(requeue=True)
-                except Exception as nack_error:
-                    logger.warning("⚠️ Failed to nack message", error=str(nack_error))
-                messaging_error_type = type(e).__name__
-                _record_pipeline_message(data_type, "failed")
+                raise
+            except asyncio.CancelledError:
+                raise
             except Exception as e:
                 logger.error(
                     f"❌ Failed to process {data_type} MusicBrainz message",
                     error=str(e),
                 )
-                try:
-                    await message.nack(requeue=True)
-                except Exception as nack_error:
-                    logger.warning("⚠️ Failed to nack message", error=str(nack_error))
-                messaging_error_type = type(e).__name__
-                _record_pipeline_message(data_type, "failed")
-            finally:
-                duration_s = time.perf_counter() - started
-                _record_message_duration(data_type, duration_s)
-                _record_consumed_message(destination, duration_s, messaging_error_type)
-                # The handler settles every failure itself, so nothing propagates out of
-                # the span for it to notice: mark it here instead.
-                if messaging_error_type is not None:
-                    _mark_span_failed(consumer_span, messaging_error_type)
+                # Preserve the existing immediate requeue default for unknown failures. Known
+                # database outages escape to the classifier and wait exactly once.
+                return DeliveryResult(Settlement.REQUEUE, "failed", type(e).__name__)
+
+        return await run_delivery(
+            message,
+            operation,
+            classifier=classify_delivery_failure,
+            observer=delivery_observer,
+            destination=destination,
+            entity=data_type,
+            headers=getattr(message, "headers", None),
+            wait_before_requeue=wait_before_requeue,
+        )
 
     return handler
 

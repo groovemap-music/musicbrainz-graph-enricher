@@ -8,6 +8,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from aio_pika.abc import AbstractIncomingMessage
+from common import DeliveryResult
 from neo4j.exceptions import ServiceUnavailable, SessionExpired
 from orjson import dumps
 
@@ -496,7 +497,7 @@ class TestMessageHandling:
         hints = get_type_hints(handler)
 
         assert hints["message"] is AbstractIncomingMessage
-        assert hints["return"] is type(None)
+        assert hints["return"] is DeliveryResult
 
     @pytest.mark.asyncio
     @patch("brainzgraphinator.brainzgraphinator.shutdown_requested", False)
@@ -1345,7 +1346,7 @@ class TestMessageHandlerEdgeCases:
     @pytest.mark.asyncio
     @patch("brainzgraphinator.brainzgraphinator.shutdown_requested", False)
     async def test_nack_failure_after_neo4j_error(self, mock_neo4j_driver: MagicMock, sample_artist_record: dict[str, Any]) -> None:
-        """Nack failure after Neo4j error is handled gracefully."""
+        """Nack failure after Neo4j error is visible without a second settlement."""
         mock_message = AsyncMock(spec=AbstractIncomingMessage)
         mock_message.body = dumps(sample_artist_record)
         mock_message.nack.side_effect = Exception("Nack failed")
@@ -1353,7 +1354,10 @@ class TestMessageHandlerEdgeCases:
         mock_session = await mock_neo4j_driver.session(database="neo4j").__aenter__()
         mock_session.execute_write.side_effect = ServiceUnavailable("Neo4j down")
 
-        with patch("brainzgraphinator.brainzgraphinator.graph", mock_neo4j_driver):
+        with (
+            patch("brainzgraphinator.brainzgraphinator.graph", mock_neo4j_driver),
+            pytest.raises(Exception, match="Nack failed"),
+        ):
             await on_artist_message(mock_message)
 
         mock_message.nack.assert_called_once_with(requeue=True)
@@ -1361,7 +1365,7 @@ class TestMessageHandlerEdgeCases:
     @pytest.mark.asyncio
     @patch("brainzgraphinator.brainzgraphinator.shutdown_requested", False)
     async def test_nack_failure_after_generic_error(self, mock_neo4j_driver: MagicMock, sample_artist_record: dict[str, Any]) -> None:
-        """Nack failure after generic error is handled gracefully."""
+        """Nack failure after a generic error is visible without a second settlement."""
         mock_message = AsyncMock(spec=AbstractIncomingMessage)
         mock_message.body = dumps(sample_artist_record)
         mock_message.nack.side_effect = Exception("Nack failed too")
@@ -1369,7 +1373,10 @@ class TestMessageHandlerEdgeCases:
         mock_session = await mock_neo4j_driver.session(database="neo4j").__aenter__()
         mock_session.execute_write.side_effect = RuntimeError("Bad stuff")
 
-        with patch("brainzgraphinator.brainzgraphinator.graph", mock_neo4j_driver):
+        with (
+            patch("brainzgraphinator.brainzgraphinator.graph", mock_neo4j_driver),
+            pytest.raises(Exception, match="Nack failed too"),
+        ):
             await on_artist_message(mock_message)
 
         mock_message.nack.assert_called_once_with(requeue=True)

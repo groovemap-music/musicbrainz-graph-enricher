@@ -6,6 +6,13 @@ immutable automation, package construction and installation, MIT metadata, compl
 worktree secret scans, and version consistency. `just audit` adds the current network-backed
 Python vulnerability audit.
 
+The reusable CI graph also runs `just test-integration`, the explicit service-backed lane
+defined by `contracts/integration-testing/v1/contract.json`. It needs no repository secret: the
+runner starts pinned image
+`neo4j:2026-community@sha256:dbc377fb9cd8fe8dabc19d3041b197d5ca0ef8bae514cea175b8df265e5b7a76`
+with disposable local credentials, publishes only a random loopback Bolt port, and removes the
+container after the tests. The default `just check` remains network- and service-free.
+
 `just image` builds the repository-named `musicbrainz-graph-enricher:local` image, verifies the
 installed service import, and checks its numeric non-root runtime identity. `just
 release-dry-run` produces local checksums, an SBOM, third-party notices, and provenance without
