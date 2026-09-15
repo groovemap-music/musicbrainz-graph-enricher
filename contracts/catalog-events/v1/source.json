@@ -1,7 +1,7 @@
 {
   "binding_sha256": "5ec6d7e0317e39396b9b40effb4804e70242768b95499b922b161c6f300c1273",
-  "contract_sha256": "85ebbe7b94669f2abd38ca9c5c83b4019aa71b8aa3aa4b9d9fb7f78ba35095ef",
-  "migration_transform": "Rescoped to the musicbrainz-only v1 contract split out of catalog-ingestion into musicbrainz-ingestion; the release event payload now carries a media taxonomy (media/media_raw) and the contract exposes precomputed runtime_identifiers for exchanges and per-consumer queues.",
-  "producer_commit": "f0dae1037c809c6855863aebc35d0a7d21366482",
+  "contract_sha256": "53073d4b4aac07655abe18688a4eb9c4902481f50dbd02b5b61c083c4b83be2f",
+  "migration_transform": "Adds country and release_events to the release fixture payload (plus catalog_numbers, not yet consumed) so downstream projections can carry MusicBrainz's regional release data.",
+  "producer_commit": "ada3fead007a4f83eaef55b82265443da3845b31",
   "producer_repository": "https://github.com/groovemap-music/musicbrainz-ingestion"
 }
