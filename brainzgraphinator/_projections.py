@@ -234,6 +234,25 @@ async def enrich_label(tx: Any, record: dict[str, Any], stats: dict[str, int]) -
     return True
 
 
+def release_event_rows(release_events: Any) -> list[str]:
+    """Collapse MusicBrainz release events into compact "date|area_name" rows.
+
+    Null-safe: a missing/non-list `release_events` yields an empty list, and an
+    entry missing both fields is skipped. An entry with only one of the two
+    fields keeps the other side empty (e.g. "1969-09-26|" or "|United Kingdom").
+    """
+    rows = []
+    for event in release_events or []:
+        if not isinstance(event, dict):
+            continue
+        date = event.get("date")
+        area_name = event.get("area_name")
+        if date is None and area_name is None:
+            continue
+        rows.append(f"{date or ''}|{area_name or ''}")
+    return rows
+
+
 async def enrich_release(tx: Any, record: dict[str, Any], stats: dict[str, int]) -> bool:
     """Enrich a matched Release and reconcile its canonical media projection."""
     discogs_id = record.get("discogs_release_id")
@@ -248,6 +267,8 @@ async def enrich_release(tx: Any, record: dict[str, Any], stats: dict[str, int])
         "    r.mb_barcode = $mb_barcode, "
         "    r.mb_status = $mb_status, "
         "    r.mb_release_group_mbid = $release_group_mbid, "
+        "    r.mb_country = $mb_country, "
+        "    r.mb_release_events = $mb_release_events, "
         "    r.mb_updated_at = $mb_updated_at "
         "RETURN r.id AS matched_id",
         discogs_id=discogs_id,
@@ -255,6 +276,8 @@ async def enrich_release(tx: Any, record: dict[str, Any], stats: dict[str, int])
         mb_barcode=record.get("barcode"),
         mb_status=record.get("status"),
         release_group_mbid=record.get("release_group_mbid"),
+        mb_country=record.get("country"),
+        mb_release_events=release_event_rows(record.get("release_events")),
         mb_updated_at=datetime.now(UTC).isoformat(),
     )
     matched = await result.single()

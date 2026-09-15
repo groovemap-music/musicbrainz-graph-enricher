@@ -11,7 +11,7 @@ counted as `entities_skipped_no_discogs_match`; it does not create a new node.
 | `Artist` | `discogs_artist_id` | `mbid`, `mb_type`, `mb_gender`, begin/end dates and areas, `mb_area`, `mb_disambiguation`, `mb_updated_at` |
 | `Label` | `discogs_label_id` | `mbid`, `mb_type`, `mb_label_code`, begin/end dates, `mb_area`, `mb_updated_at` |
 | `Master` | `discogs_master_id` | `mbid`, `mb_type`, `mb_secondary_types`, `mb_first_release_date`, `mb_disambiguation`, `mb_updated_at` |
-| `Release` | `discogs_release_id` | `mbid`, `mb_barcode`, `mb_status`, `mb_release_group_mbid`, `mb_updated_at`, `mb_media_families`, `mb_medium_count` |
+| `Release` | `discogs_release_id` | `mbid`, `mb_barcode`, `mb_status`, `mb_release_group_mbid`, `mb_country`, `mb_release_events`, `mb_updated_at`, `mb_media_families`, `mb_medium_count` |
 
 Discogs identifiers are converted to strings before matching because GrooveMap graph nodes use
 string `id` properties.
@@ -77,6 +77,20 @@ re-deriving it:
 services key them on the same vocabulary ids, so a medium is one node no matter which catalog
 first saw it. Medium properties are written `ON CREATE` only, so neither enricher rewrites the
 other's node on every event.
+
+## Country and release events
+
+A matched release also carries MusicBrainz's regional release data, written beside `mb_barcode`:
+
+| Output | Shape |
+| --- | --- |
+| `Release.mb_country` | The event's `country` verbatim, or `null` when the event doesn't carry one |
+| `Release.mb_release_events` | `release_events` collapsed into a list of compact `"date\|area_name"` strings; an empty list when the event carries no release events |
+
+Formatting is null-safe per entry: an event missing both `date` and `area_name` contributes no
+row, and one missing only a single side keeps the other (e.g. `"1969-09-26|"`). This is a
+MusicBrainz-sourced field distinct from Discogs' own `Release.country`, which the Discogs graph
+enricher owns; this service never writes it.
 
 The edges are not shared. `source` is part of the `ISSUED_ON` merge pattern, not a property set
 afterwards, so a release known to both catalogs holds one edge per catalog to the same medium
