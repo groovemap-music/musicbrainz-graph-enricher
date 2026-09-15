@@ -31,6 +31,7 @@ from brainzgraphinator.brainzgraphinator import (
     on_label_message,
     on_release_message,
     periodic_queue_checker,
+    release_event_rows,
     schedule_consumer_cancellation,
     signal_handler,
 )
@@ -230,7 +231,55 @@ class TestEnrichRelease:
         assert "SET r.mbid" in cypher
         assert "r.mb_barcode" in cypher
         assert "r.mb_status" in cypher
+        assert "r.mb_country" in cypher
+        assert "r.mb_release_events" in cypher
         assert "r.mb_updated_at" in cypher
+
+    @pytest.mark.asyncio
+    async def test_enrich_release_sets_mb_country_and_release_events(self, mock_tx: AsyncMock, sample_release_record: dict[str, Any]) -> None:
+        """A release carrying country and release events projects both, beside mb_barcode."""
+        record = {
+            **sample_release_record,
+            "country": "GB",
+            "release_events": [
+                {"date": "1969-09-26", "area_name": "United Kingdom", "area_mbid": "8a754a16-0027-3a29-b6d7-2b40ea0481ed"},
+                {"date": "1969-11-01", "area_name": "United States", "area_mbid": "489ce91b-6658-3307-9877-795b68554c98"},
+            ],
+        }
+        with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
+            result = await enrich_release(mock_tx, record)
+            assert result is True
+
+        call_kwargs = mock_tx.run.call_args_list[0].kwargs
+        assert call_kwargs["mb_country"] == "GB"
+        assert call_kwargs["mb_release_events"] == ["1969-09-26|United Kingdom", "1969-11-01|United States"]
+        assert call_kwargs["mb_barcode"] == record["barcode"]
+
+    @pytest.mark.asyncio
+    async def test_enrich_release_without_country_or_release_events(self, mock_tx: AsyncMock, sample_release_record: dict[str, Any]) -> None:
+        """A release without country or release events is projected null-safely."""
+        with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
+            await enrich_release(mock_tx, sample_release_record)
+
+        call_kwargs = mock_tx.run.call_args_list[0].kwargs
+        assert call_kwargs["mb_country"] is None
+        assert call_kwargs["mb_release_events"] == []
+
+    @pytest.mark.asyncio
+    async def test_enrich_release_legacy_event_without_date_or_area_skipped(self, mock_tx: AsyncMock, sample_release_record: dict[str, Any]) -> None:
+        """A legacy release event carrying neither date nor area_name is dropped, not crashed on."""
+        record = {
+            **sample_release_record,
+            "release_events": [
+                {"area_mbid": "8a754a16-0027-3a29-b6d7-2b40ea0481ed"},
+                {"date": "1969-09-26", "area_name": "United Kingdom"},
+            ],
+        }
+        with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
+            await enrich_release(mock_tx, record)
+
+        call_kwargs = mock_tx.run.call_args_list[0].kwargs
+        assert call_kwargs["mb_release_events"] == ["1969-09-26|United Kingdom"]
 
     @pytest.mark.asyncio
     async def test_enrich_release_no_discogs_id_skips(self, mock_tx: AsyncMock) -> None:
@@ -264,6 +313,35 @@ class TestEnrichRelease:
         call_kwargs = mock_tx.run.call_args_list[0].kwargs
         assert call_kwargs["discogs_id"] == "99999"
         assert isinstance(call_kwargs["discogs_id"], str)
+
+
+class TestReleaseEventRows:
+    """Tests for release_event_rows."""
+
+    def test_formats_date_and_area_name(self) -> None:
+        """Each event becomes a compact "date|area_name" row."""
+        events = [
+            {"date": "1969-09-26", "area_name": "United Kingdom", "area_mbid": "8a754a16-0027-3a29-b6d7-2b40ea0481ed"},
+            {"date": "1969-11-01", "area_name": "United States", "area_mbid": "489ce91b-6658-3307-9877-795b68554c98"},
+        ]
+        assert release_event_rows(events) == ["1969-09-26|United Kingdom", "1969-11-01|United States"]
+
+    def test_missing_release_events_is_empty_list(self) -> None:
+        """A missing release_events field yields an empty list, not an error."""
+        assert release_event_rows(None) == []
+
+    def test_non_list_release_events_is_empty_list(self) -> None:
+        """A non-list release_events field is treated as absent."""
+        assert release_event_rows("not-a-list") == []  # type: ignore[arg-type]
+
+    def test_entry_missing_both_fields_is_skipped(self) -> None:
+        """A legacy event with neither date nor area_name contributes no row."""
+        assert release_event_rows([{"area_mbid": "8a754a16-0027-3a29-b6d7-2b40ea0481ed"}]) == []
+
+    def test_entry_missing_one_field_keeps_the_other(self) -> None:
+        """An event missing only one side still yields a row, with that side empty."""
+        assert release_event_rows([{"date": "1969-09-26"}]) == ["1969-09-26|"]
+        assert release_event_rows([{"area_name": "United Kingdom"}]) == ["|United Kingdom"]
 
 
 # ── Release-group enrichment tests ────────────────────────────────────────
