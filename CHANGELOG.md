@@ -3,6 +3,23 @@
 All notable changes to this repository will be recorded here by Commitizen from
 Conventional Commits.
 
+## v0.3.0 (2026-09-15)
+
+### Feat
+
+- **graph**: project mb_country and mb_release_events onto matched releases
+- **telemetry**: trace consumed messages and neo4j batch flushes
+
+### Fix
+
+- **deps**: bump python to 3.14.7-slim and dockerfile frontend to 1.27 (#1)
+- **ci**: accept the no-bumpable-commits bump-preview state
+
+### Refactor
+
+- **delivery**: centralize MusicBrainz settlement
+- extract MusicBrainz graph seams
+
 ## v0.2.0 (2026-09-04)
 
 ### Feat
