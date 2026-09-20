@@ -122,7 +122,7 @@ BATCH_FLUSH_INTERVAL = float(os.environ.get("NEO4J_BATCH_FLUSH_INTERVAL", "5.0")
 
 # Connection state tracking
 rabbitmq_manager: Any = None  # Will hold AsyncResilientRabbitMQ instance
-active_connection: Any = None  # Current active connection
+active_connection: Any = None
 active_channel: Any = None  # Current active channel
 connection_check_task: asyncio.Task[None] | None = None
 
