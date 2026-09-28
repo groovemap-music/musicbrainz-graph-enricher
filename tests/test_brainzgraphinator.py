@@ -3,6 +3,7 @@
 import asyncio
 import contextlib
 import signal
+import time
 from typing import Any, get_type_hints
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -50,6 +51,7 @@ class TestHealthData:
     @patch("brainzgraphinator.brainzgraphinator.graph", None)
     @patch("brainzgraphinator.brainzgraphinator.consumer_tags", {})
     @patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 0, "labels": 0, "release-groups": 0, "releases": 0})
+    @patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", 0.0)
     def test_health_data_starting(self) -> None:
         """Health status is 'starting' when graph is None and no consumers registered."""
         data = get_health_data()
@@ -62,6 +64,7 @@ class TestHealthData:
     @patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 0, "labels": 0, "release-groups": 0, "releases": 0})
     @patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0})
     @patch("brainzgraphinator.brainzgraphinator.completed_files", set())
+    @patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", 0.0)
     def test_health_data_healthy(self) -> None:
         """Health status is 'healthy' when graph is initialized."""
         data = get_health_data()
@@ -797,6 +800,27 @@ class TestConsumerManagement:
             result = await check_all_consumers_idle()
         assert result is False
 
+    def test_register_consumer_logs_data_type_queue_and_tag(self) -> None:
+        """Registration logs the data type, durable queue name, tag, and recovery flag."""
+        with (
+            patch("brainzgraphinator.brainzgraphinator.consumer_tags", {}),
+            patch("brainzgraphinator.brainzgraphinator.connection_consumer_tags", {}),
+            patch("brainzgraphinator.brainzgraphinator._record_consumer_delta"),
+            patch("brainzgraphinator.brainzgraphinator.logger") as mock_logger,
+        ):
+            bgmod._register_consumer("release-groups", "ctag-rg", recovered=False)
+
+            call = mock_logger.info.call_args
+            assert call.args[0] == "✅ Registered RabbitMQ consumer"
+            assert call.kwargs == {
+                "data_type": "release-groups",
+                "queue_name": "groovemap-musicbrainz-brainzgraphinator-release-groups",
+                "consumer_tag": "ctag-rg",
+                "recovered": False,
+            }
+            assert bgmod.consumer_tags["release-groups"] == "ctag-rg"
+            assert bgmod.connection_consumer_tags["release-groups"] == "ctag-rg"
+
 
 # ── PROCESSORS map tests ─────────────────────────────────────────────────
 
@@ -1054,12 +1078,39 @@ class TestCloseRabbitMQConnection:
         error_str = " ".join(str(c) for c in mock_logger.error.call_args_list)
         assert "Error" in error_str
 
+    @pytest.mark.asyncio
+    async def test_logs_registered_and_active_consumer_tags_before_close(self) -> None:
+        """Teardown evidence distinguishes never-registered from dropped-but-registered."""
+        bgmod.active_channel = AsyncMock()
+        bgmod.active_connection = AsyncMock()
+        bgmod.connection_consumer_tags = {"artists": "tag-artists", "release-groups": "tag-release-groups"}
+        bgmod.consumer_tags = {"release-groups": "tag-release-groups"}
+        bgmod.completed_files = set()
+
+        with patch("brainzgraphinator.brainzgraphinator.logger") as mock_logger:
+            await close_rabbitmq_connection()
+
+        close_call = next(call for call in mock_logger.info.call_args_list if call.args[0] == "🔧 Closing RabbitMQ connection")
+        assert close_call.kwargs["registered_consumer_tags"] == {
+            "artists": "tag-artists",
+            "release-groups": "tag-release-groups",
+        }
+        assert close_call.kwargs["active_consumer_tags"] == {"release-groups": "tag-release-groups"}
+        assert bgmod.connection_consumer_tags == {}
+
 
 # ── Check consumers unexpectedly dead tests ──────────────────────────────
 
 
 class TestCheckConsumersUnexpectedlyDead:
-    """Tests for stuck state detection via health data."""
+    """Tests for stuck state detection via health data.
+
+    `has_processed_messages` used to gate this check system-wide, so once *any* data type had
+    processed a message, "all consumers gone" was the only detectable stuck shape. These tests
+    keep that original scenario green and add coverage for the data type whose consumer never
+    registered (or never delivered) in the first place -- proven separately in
+    TestConsumerAlarmTypes below.
+    """
 
     def test_returns_stuck_when_consumers_dead(self) -> None:
         """Health data shows stuck when consumers have died unexpectedly."""
@@ -1069,22 +1120,29 @@ class TestCheckConsumersUnexpectedlyDead:
             patch("brainzgraphinator.brainzgraphinator.completed_files", {"artists"}),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 10, "labels": 0, "release-groups": 0, "releases": 0}),
             patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0}),
+            patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", 0.0),
         ):
             data = get_health_data()
             assert data["status"] == "unhealthy"
             assert "STUCK" in data["current_task"]
+            assert set(data["consumer_alarm_types"]) == {"labels", "release-groups", "releases"}
 
     def test_not_stuck_when_consumers_active(self) -> None:
-        """Health data shows healthy when consumers are still active."""
+        """Health data shows healthy when every incomplete data type has a registered consumer."""
         with (
             patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
-            patch("brainzgraphinator.brainzgraphinator.consumer_tags", {"artists": "tag123"}),
+            patch(
+                "brainzgraphinator.brainzgraphinator.consumer_tags",
+                {"artists": "tag-artists", "labels": "tag-labels", "release-groups": "tag-release-groups", "releases": "tag-releases"},
+            ),
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 10, "labels": 0, "release-groups": 0, "releases": 0}),
             patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0}),
+            patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", 0.0),
         ):
             data = get_health_data()
             assert data["status"] == "healthy"
+            assert data["consumer_alarm_types"] == []
 
     def test_not_stuck_when_no_messages_processed(self) -> None:
         """Health data not stuck when no messages have been processed yet."""
@@ -1094,9 +1152,95 @@ class TestCheckConsumersUnexpectedlyDead:
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 0, "labels": 0, "release-groups": 0, "releases": 0}),
             patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0}),
+            patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", 0.0),
         ):
             data = get_health_data()
             assert data["status"] == "healthy"
+
+
+class TestConsumerAlarmTypes:
+    """Tests for _consumer_alarm_types: the never-registered / never-delivered consumer gate.
+
+    The old gate required a prior processed message anywhere in the process, so a data type
+    whose consumer never registered at all -- e.g. its queue.consume() call silently failed, or
+    the connection dropped a single stream while its siblings kept working -- could never be
+    reported: no messages meant `has_processed_messages` was False for that type, and other
+    active consumers meant `no_active_consumers` was False overall. This is exactly what let
+    4.46M parked release-group events sit behind a healthy healthcheck.
+    """
+
+    def test_never_registered_consumer_reported_after_grace_period(self) -> None:
+        """A never-registered consumer is reported once the startup grace period elapses."""
+        with (
+            patch("brainzgraphinator.brainzgraphinator.consumer_tags", {"artists": "tag-artists"}),
+            patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
+            patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 0, "labels": 0, "release-groups": 0, "releases": 0}),
+            patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0}),
+            patch("brainzgraphinator.brainzgraphinator.STARTUP_IDLE_TIMEOUT", 30),
+            patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", time.time() - 31),
+        ):
+            alarm_types = bgmod._consumer_alarm_types()
+        assert set(alarm_types) == {"labels", "release-groups", "releases"}
+
+    def test_never_registered_consumer_not_reported_within_grace_period(self) -> None:
+        """A never-registered consumer is not reported while the startup grace period runs."""
+        with (
+            patch("brainzgraphinator.brainzgraphinator.consumer_tags", {"artists": "tag-artists"}),
+            patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
+            patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 0, "labels": 0, "release-groups": 0, "releases": 0}),
+            patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0}),
+            patch("brainzgraphinator.brainzgraphinator.STARTUP_IDLE_TIMEOUT", 30),
+            patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", time.time()),
+        ):
+            alarm_types = bgmod._consumer_alarm_types()
+        assert alarm_types == []
+
+    def test_completed_data_type_never_reported_even_without_consumer(self) -> None:
+        """A completed data type is never reported, registered consumer or not."""
+        with (
+            patch("brainzgraphinator.brainzgraphinator.consumer_tags", {}),
+            patch("brainzgraphinator.brainzgraphinator.completed_files", {"artists", "labels", "release-groups", "releases"}),
+            patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 100, "labels": 50, "release-groups": 0, "releases": 20}),
+            patch(
+                "brainzgraphinator.brainzgraphinator.last_message_time",
+                {"artists": 1.0, "labels": 1.0, "release-groups": 0.0, "releases": 1.0},
+            ),
+            patch("brainzgraphinator.brainzgraphinator.STARTUP_IDLE_TIMEOUT", 30),
+            patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", time.time() - 60),
+        ):
+            alarm_types = bgmod._consumer_alarm_types()
+        assert alarm_types == []
+
+    def test_registered_but_never_delivered_reported_once_siblings_complete(self) -> None:
+        """A registered consumer that never delivered is reported once its siblings finish."""
+        with (
+            patch(
+                "brainzgraphinator.brainzgraphinator.consumer_tags",
+                {"artists": "tag-artists", "labels": "tag-labels", "release-groups": "stale-tag", "releases": "tag-releases"},
+            ),
+            patch("brainzgraphinator.brainzgraphinator.completed_files", {"artists", "labels", "releases"}),
+            patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 100, "labels": 50, "release-groups": 0, "releases": 75}),
+            patch(
+                "brainzgraphinator.brainzgraphinator.last_message_time",
+                {"artists": 1.0, "labels": 1.0, "release-groups": 0.0, "releases": 1.0},
+            ),
+            patch("brainzgraphinator.brainzgraphinator.STARTUP_IDLE_TIMEOUT", 30),
+            patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", time.time() - 31),
+        ):
+            alarm_types = bgmod._consumer_alarm_types()
+        assert alarm_types == ["release-groups"]
+
+    def test_no_watch_started_never_reports(self) -> None:
+        """consumer_watch_started_at == 0.0 (no connection yet) never reports without traffic."""
+        with (
+            patch("brainzgraphinator.brainzgraphinator.consumer_tags", {}),
+            patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
+            patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 0, "labels": 0, "release-groups": 0, "releases": 0}),
+            patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0}),
+            patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", 0.0),
+        ):
+            alarm_types = bgmod._consumer_alarm_types()
+        assert alarm_types == []
 
 
 # ── Periodic queue checker tests ─────────────────────────────────────────
@@ -1988,17 +2132,19 @@ class TestHealthDataAdditional:
 
     def test_health_data_active_processing(self) -> None:
         """Health data shows active task when recent messages received."""
-        import time
-
         current = time.time()
         with (
             patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
-            patch("brainzgraphinator.brainzgraphinator.consumer_tags", {"artists": "tag-1"}),
+            patch(
+                "brainzgraphinator.brainzgraphinator.consumer_tags",
+                {"artists": "tag-artists", "labels": "tag-labels", "release-groups": "tag-release-groups", "releases": "tag-releases"},
+            ),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 50, "labels": 0, "release-groups": 0, "releases": 0}),
             patch(
                 "brainzgraphinator.brainzgraphinator.last_message_time", {"artists": current, "labels": 0.0, "release-groups": 0.0, "releases": 0.0}
             ),
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
+            patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", 0.0),
         ):
             data = get_health_data()
             assert "Enriching" in data["current_task"]
@@ -2007,10 +2153,14 @@ class TestHealthDataAdditional:
         """Health data shows idle when consumers active but no recent messages."""
         with (
             patch("brainzgraphinator.brainzgraphinator.graph", neo4j_driver()),
-            patch("brainzgraphinator.brainzgraphinator.consumer_tags", {"artists": "tag-1"}),
+            patch(
+                "brainzgraphinator.brainzgraphinator.consumer_tags",
+                {"artists": "tag-artists", "labels": "tag-labels", "release-groups": "tag-release-groups", "releases": "tag-releases"},
+            ),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 0, "labels": 0, "release-groups": 0, "releases": 0}),
             patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0}),
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
+            patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", 0.0),
         ):
             data = get_health_data()
             assert "Idle" in data["current_task"]
@@ -2019,10 +2169,14 @@ class TestHealthDataAdditional:
         """Health data shows unhealthy when graph is None but messages were processed."""
         with (
             patch("brainzgraphinator.brainzgraphinator.graph", None),
-            patch("brainzgraphinator.brainzgraphinator.consumer_tags", {"artists": "tag-1"}),
+            patch(
+                "brainzgraphinator.brainzgraphinator.consumer_tags",
+                {"artists": "tag-artists", "labels": "tag-labels", "release-groups": "tag-release-groups", "releases": "tag-releases"},
+            ),
             patch("brainzgraphinator.brainzgraphinator.message_counts", {"artists": 10, "labels": 0, "release-groups": 0, "releases": 0}),
             patch("brainzgraphinator.brainzgraphinator.last_message_time", {"artists": 0.0, "labels": 0.0, "release-groups": 0.0, "releases": 0.0}),
             patch("brainzgraphinator.brainzgraphinator.completed_files", set()),
+            patch("brainzgraphinator.brainzgraphinator.consumer_watch_started_at", 0.0),
         ):
             data = get_health_data()
             assert data["status"] == "unhealthy"
