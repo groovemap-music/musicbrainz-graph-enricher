@@ -36,10 +36,45 @@ new work appears.
 
 ## Stuck-state recovery
 
-Every `STUCK_CHECK_INTERVAL`, the service detects the state where messages have been processed,
-some streams remain incomplete, and no consumers are registered. It marks health unhealthy while
-recovering the broker connection and consumer set. A recovery failure clears stale consumer tags
-so a later check can retry instead of reporting false health.
+Every `STUCK_CHECK_INTERVAL`, `_consumer_alarm_types()` reports the incomplete data types whose
+consumer is missing entirely, or that has a registered consumer but never received a single
+delivery once every sibling data type has finished. Either condition marks the health payload
+`unhealthy` (`consumer_alarm_types` names the affected types, `current_task` reads
+`STUCK - consumers died, awaiting recovery`) and triggers `_recover_consumers()`.
+
+This replaces the older gate, which required at least one message to have been processed
+*anywhere* before it would report anything. That gate could not see a data type whose consumer
+never registered at all -- its own message count stayed at zero forever, and other data types'
+consumers kept the overall "no active consumers" check from ever tripping. A production
+extraction run this way silently parked 4.46M `release-groups` events behind a healthy
+healthcheck: the `artists`, `labels`, and `releases` streams kept the service looking healthy
+while `release-groups` had no consumer at all.
+
+A never-registered consumer is only reported once `STARTUP_IDLE_TIMEOUT` seconds have passed
+since the current connection's consumers began registering (tracked in
+`consumer_watch_started_at`), so a data type still starting up is not flagged before every
+consumer has had a chance to subscribe. The pre-existing "all consumers died after messages were
+already flowing" case is still reported immediately, unchanged.
+
+A recovery failure clears stale consumer tags so a later check can retry instead of reporting
+false health.
+
+### Consumer registration and teardown logging
+
+Every successful `queue.consume()` call logs `"✅ Registered RabbitMQ consumer"` with the data
+type, its durable queue name, the broker-assigned consumer tag, and whether the registration
+happened during recovery (`recovered=True/False`). Closing the RabbitMQ connection logs
+`"🔧 Closing RabbitMQ connection"` with both the full set of tags registered on that connection
+(`registered_consumer_tags`) and the subset still active at close (`active_consumer_tags`),
+before the registration set is cleared for the next connection. Dropping a broken connection to
+recover also logs `"🔌 Dropping RabbitMQ connection for consumer recovery"` with the same two
+sets. Together these distinguish "this data type's consumer never registered" from "it
+registered, then was cancelled or dropped" without depending on the health endpoint.
+
+See [`gm-musicbrainz-sql-loader-dg-cev8`](https://github.com/groovemap-music/musicbrainz-sql-loader)
+for the companion fix applied to `brainztableinator`, the SQL loader's own consumer for the same
+MusicBrainz catalog streams: the same silent-starvation gate and the same registration/teardown
+logging shape, applied independently to that service's own declarations and detector.
 
 ## Process shutdown
 

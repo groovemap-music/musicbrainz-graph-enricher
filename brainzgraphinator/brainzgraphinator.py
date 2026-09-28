@@ -94,6 +94,16 @@ outage_backoff = OutageBackoff(SERVICE_NAME)
 
 # Consumer management
 consumer_tags: dict[str, str] = {}  # {"artists": "consumer-tag-123", ...}
+# The full registration set for the current AMQP connection. Entries stay here after a
+# data type's own consumer is cancelled (completion, cancellation delay) so connection-close
+# logging can tell "never registered" apart from "registered, then intentionally
+# cancelled/dropped".
+connection_consumer_tags: dict[str, str] = {}
+# When the current connection's consumers began registering (main() startup, or a successful
+# _recover_consumers()). 0.0 means no watch is active. Stuck detection waits out
+# STARTUP_IDLE_TIMEOUT from this timestamp before treating a still-unregistered data type as
+# stuck, so every consumer gets a chance to subscribe first.
+consumer_watch_started_at = 0.0
 consumer_cancel_tasks: dict[str, asyncio.Task[None]] = {}  # {"artists": asyncio.Task, ...}
 queues: dict[str, Any] = {}  # {"artists": queue_object, ...}
 CONSUMER_CANCEL_DELAY = int(os.environ.get("CONSUMER_CANCEL_DELAY", "300"))  # Default 5 minutes
@@ -104,7 +114,10 @@ QUEUE_CHECK_INTERVAL = int(os.environ.get("QUEUE_CHECK_INTERVAL", "3600"))  # De
 # Interval for checking stuck state (consumers died unexpectedly)
 STUCK_CHECK_INTERVAL = int(os.environ.get("STUCK_CHECK_INTERVAL", "30"))  # Default 30 seconds
 
-# Idle mode settings
+# Idle mode settings. STARTUP_IDLE_TIMEOUT doubles as the stuck-detector's startup grace
+# period (see _consumer_alarm_types): a data type with no registered consumer is only
+# reported once this many seconds have passed since the current connection's consumers
+# began registering, giving every consumer a chance to subscribe first.
 STARTUP_IDLE_TIMEOUT = int(os.environ.get("STARTUP_IDLE_TIMEOUT", "30"))
 IDLE_LOG_INTERVAL = int(os.environ.get("IDLE_LOG_INTERVAL", "300"))  # 5 min between idle status logs
 
@@ -432,6 +445,50 @@ async def wait_before_requeue() -> None:
     await outage_backoff.wait()
 
 
+def _register_consumer(data_type: str, consumer_tag: str, *, recovered: bool) -> None:
+    """Record one broker consumer registration and log its evidence trail."""
+    consumer_tags[data_type] = consumer_tag
+    connection_consumer_tags[data_type] = consumer_tag
+    _record_consumer_delta(1)
+    logger.info(
+        "✅ Registered RabbitMQ consumer",
+        data_type=data_type,
+        queue_name=catalog_queue_name(WIRE_CONSUMER_NAME, data_type),
+        consumer_tag=consumer_tag,
+        recovered=recovered,
+    )
+
+
+def _consumer_alarm_types(current_time: float | None = None) -> list[str]:
+    """Return incomplete data types whose consumer is missing or never delivered.
+
+    `has_processed_messages` used to gate every stuck check, so a data type whose consumer
+    never registered -- or registered but never received a single delivery while its siblings
+    all finished -- was invisible: the health payload stayed healthy and the recovery path
+    never fired. This reports that type once STARTUP_IDLE_TIMEOUT has elapsed since the
+    current connection's consumers began registering (`consumer_watch_started_at`), so a
+    still-starting connection is not flagged before every consumer has had a chance to
+    subscribe. The pre-existing "all consumers died after processing started" case is still
+    reported immediately, unchanged.
+    """
+    now = time.time() if current_time is None else current_time
+    traffic_seen = any(count > 0 for count in message_counts.values())
+    grace_expired = consumer_watch_started_at > 0 and (now - consumer_watch_started_at) >= STARTUP_IDLE_TIMEOUT
+    if not traffic_seen and not grace_expired:
+        return []
+
+    all_but_one_complete = len(completed_files) >= len(MUSICBRAINZ_DATA_TYPES) - 1
+    alarm_types = []
+    for data_type in MUSICBRAINZ_DATA_TYPES:
+        if data_type in completed_files:
+            continue
+        never_registered = data_type not in consumer_tags
+        stalled_after_siblings_done = grace_expired and all_but_one_complete and last_message_time.get(data_type, 0.0) <= 0
+        if never_registered or stalled_after_siblings_done:
+            alarm_types.append(data_type)
+    return alarm_types
+
+
 def get_health_data() -> dict[str, Any]:
     """Get current health data for monitoring."""
     active_task = None
@@ -447,11 +504,9 @@ def get_health_data() -> dict[str, Any]:
     if active_task is None and len(consumer_tags) > 0:
         active_task = "Idle - waiting for messages"
 
-    # Check for stuck state
-    no_active_consumers = len(consumer_tags) == 0
-    files_incomplete = len(completed_files) < len(MUSICBRAINZ_DATA_TYPES)
-    has_processed_messages = any(count > 0 for count in message_counts.values())
-    is_stuck = no_active_consumers and files_incomplete and has_processed_messages
+    # Check for stuck state: a missing/never-delivered consumer for an incomplete data type.
+    alarm_types = _consumer_alarm_types(current_time)
+    is_stuck = bool(alarm_types)
 
     if is_stuck:
         active_task = "STUCK - consumers died, awaiting recovery"
@@ -474,6 +529,7 @@ def get_health_data() -> dict[str, Any]:
         "message_counts": message_counts.copy(),
         "last_message_time": last_message_time.copy(),
         "active_consumers": list(consumer_tags.keys()),
+        "consumer_alarm_types": alarm_types,
         "completed_files": list(completed_files),
         "enrichment_stats": _get_enrichment_stats_snapshot(),
         "timestamp": datetime.now(UTC).isoformat(),
@@ -564,6 +620,12 @@ async def close_rabbitmq_connection() -> None:
     global active_connection, active_channel
 
     try:
+        logger.info(
+            "🔧 Closing RabbitMQ connection",
+            registered_consumer_tags=connection_consumer_tags.copy(),
+            active_consumer_tags=consumer_tags.copy(),
+            completed_files=sorted(completed_files),
+        )
         if active_channel:
             try:
                 await active_channel.close()
@@ -579,6 +641,8 @@ async def close_rabbitmq_connection() -> None:
             except Exception as e:
                 logger.warning("⚠️ Error closing connection", error=str(e))
             active_connection = None
+
+        connection_consumer_tags.clear()
 
         logger.info("✅ RabbitMQ connection closed", check_interval=f"{QUEUE_CHECK_INTERVAL}s")
     except Exception as e:
@@ -882,15 +946,15 @@ async def periodic_queue_checker() -> None:
 
             current_time = time.time()
 
-            # Check for stuck state
-            no_active_consumers = len(consumer_tags) == 0
-            files_incomplete = len(completed_files) < len(MUSICBRAINZ_DATA_TYPES)
-            has_processed_messages = any(count > 0 for count in message_counts.values())
+            # Check for stuck state: a missing/never-delivered consumer for an
+            # incomplete data type (see _consumer_alarm_types).
+            alarm_types = _consumer_alarm_types(current_time)
 
-            if no_active_consumers and files_incomplete and has_processed_messages:
+            if alarm_types:
                 logger.warning(
-                    "⚠️ Detected stuck state: consumers died but files not completed. Attempting recovery...",
-                    active_consumers=len(consumer_tags),
+                    "⚠️ Detected stuck state: consumer(s) missing but files not completed. Attempting recovery...",
+                    alarm_types=alarm_types,
+                    active_consumers=list(consumer_tags.keys()),
                     completed_files=list(completed_files),
                     message_counts=message_counts,
                 )
@@ -918,15 +982,27 @@ async def periodic_queue_checker() -> None:
 
 async def _recover_consumers() -> None:
     """Recover consumers by reconnecting to RabbitMQ and restarting consumption."""
-    global active_connection, active_channel, queues, idle_mode
+    global active_connection, active_channel, queues, idle_mode, consumer_watch_started_at
 
     if active_connection:
+        logger.warning(
+            "🔌 Dropping RabbitMQ connection for consumer recovery",
+            registered_consumer_tags=connection_consumer_tags.copy(),
+            active_consumer_tags=consumer_tags.copy(),
+        )
         try:
             await active_connection.close()
         except Exception as e:
             logger.warning("⚠️ Error closing broken connection during recovery", error=str(e))
         active_connection = None
         active_channel = None
+        # Clear stale consumer tags along with the connection they belonged to, so the
+        # registration loop below treats every data type as needing a fresh consumer
+        # rather than skipping one whose tag is now meaningless.
+        if consumer_tags:
+            _record_consumer_delta(-len(consumer_tags))
+        consumer_tags.clear()
+        connection_consumer_tags.clear()
 
     try:
         temp_connection = await rabbitmq_manager.connect()
@@ -951,6 +1027,8 @@ async def _recover_consumers() -> None:
 
             active_connection = temp_connection
             active_channel = temp_channel
+            connection_consumer_tags.clear()
+            consumer_watch_started_at = time.time()
 
             await active_channel.set_qos(prefetch_count=200)
 
@@ -970,8 +1048,7 @@ async def _recover_consumers() -> None:
                     handler = HANDLERS.get(data_type)
                     if handler:
                         consumer_tag = await queues[data_type].consume(handler, consumer_tag=f"{SERVICE_NAME}-{data_type}")
-                        consumer_tags[data_type] = consumer_tag
-                        _record_consumer_delta(1)
+                        _register_consumer(data_type, consumer_tag, recovered=True)
                         # Only un-complete a type that actually has a backlog, so
                         # genuinely-finished types stay marked complete.
                         if data_type in pending_counts:
@@ -1006,10 +1083,11 @@ async def _recover_consumers() -> None:
         if consumer_tags:
             _record_consumer_delta(-len(consumer_tags))
         consumer_tags.clear()
+        connection_consumer_tags.clear()
 
 
 async def main() -> None:
-    global config, graph, queues, rabbitmq_manager, active_connection, active_channel, connection_check_task
+    global config, graph, queues, rabbitmq_manager, active_connection, active_channel, connection_check_task, consumer_watch_started_at
 
     # Set up signal handlers for graceful shutdown
     signal.signal(signal.SIGINT, signal_handler)
@@ -1110,11 +1188,12 @@ async def main() -> None:
             queues[data_type] = await declare_stream_queue(channel, WIRE_CONSUMER_NAME, data_type)
 
         # Start consuming from each queue
+        connection_consumer_tags.clear()
+        consumer_watch_started_at = time.time()
         for data_type in MUSICBRAINZ_DATA_TYPES:
             handler = HANDLERS[data_type]
             consumer_tag = await queues[data_type].consume(handler, consumer_tag=f"{SERVICE_NAME}-{data_type}")
-            consumer_tags[data_type] = consumer_tag
-            _record_consumer_delta(1)
+            _register_consumer(data_type, consumer_tag, recovered=False)
             logger.info(f"✅ Started consuming {data_type} MusicBrainz messages")
 
         logger.info(
