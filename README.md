@@ -71,7 +71,7 @@ Operational tuning:
 | `CONSUMER_CANCEL_DELAY` | `300` | Grace period before cancelling a completed stream consumer; `0` disables cancellation |
 | `QUEUE_CHECK_INTERVAL` | `3600` | Interval for checking idle queues for new work |
 | `STUCK_CHECK_INTERVAL` | `30` | Interval for detecting and recovering missing consumers |
-| `STARTUP_IDLE_TIMEOUT` | `30` | Time without messages before entering idle mode |
+| `STARTUP_IDLE_TIMEOUT` | `30` | Time without messages before entering idle mode; also the stuck-detector's startup grace period (see [Consumer cancellation](docs/consumer-cancellation.md#stuck-state-recovery)) |
 | `IDLE_LOG_INTERVAL` | `300` | Idle status log interval |
 | `STARTUP_DELAY` | `5` | Delay before dependency initialization |
 | `MUSICBRAINZ_EXCHANGE_PREFIX` | `groovemap-musicbrainz` | Producer-owned exchange prefix |
