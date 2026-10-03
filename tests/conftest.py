@@ -123,3 +123,12 @@ def sample_release_group_record():
         "first_release_date": "1969-09-26",
         "disambiguation": "",
     }
+
+
+@pytest.fixture(autouse=True)
+def isolated_consumer_recovery(monkeypatch: pytest.MonkeyPatch):
+    """Do not leak the recovery request introduced by failed broker cancels."""
+    import brainzgraphinator.brainzgraphinator as service
+
+    monkeypatch.setattr(service, "consumer_recovery_requested", False)
+    yield
