@@ -56,8 +56,8 @@ since the current connection's consumers began registering (tracked in
 consumer has had a chance to subscribe. The pre-existing "all consumers died after messages were
 already flowing" case is still reported immediately, unchanged.
 
-A recovery failure clears stale consumer tags so a later check can retry instead of reporting
-false health.
+A recovery failure requests another check. Tags are cleared after confirmed transport
+closure; a failed close retains the subscription evidence and retryable handles.
 
 ### Consumer registration and teardown logging
 
@@ -85,3 +85,27 @@ has begun is left unacknowledged; closing the connection returns it to RabbitMQ 
 This order protects the quorum queue's 20-delivery budget. Repeatedly nacking while a consumer is
 still subscribed can immediately redeliver the same message and exhaust that budget. The
 shutdown-delivery-churn regression test preserves this behavior.
+
+
+## Confirmed cancellation and new extractions
+
+Completion and shutdown cancels await `CancelOk` with `nowait=False` and a
+five-second deadline. Active tags and their metric are removed only on confirmed
+cancellation or confirmed channel/connection closure. Registration history stays
+in `connection_consumer_tags` until transport closure, preserving the existing
+registration and teardown evidence. Missing queue handles, timeout, and interrupted
+in-flight cancels leave the subscription uncertain and request recovery. The
+periodic checker honors that request even when all types are marked complete,
+and health remains unhealthy until recovery is attempted successfully.
+
+When regular records arrive after completion, the type's completion marker and
+previous cancellation timer are cleared. Its starvation alarm is active again,
+and the prior extraction cannot cancel its ongoing work. Shared `run_delivery`
+retains ownership of settlement; completion controls still return ACK and shutdown
+deliveries remain unsettled for transport-close redelivery.
+
+Shutdown stops old timers, awaits immediate cancels concurrently within five
+seconds, stops background tasks, and explicitly closes the broker transport with
+a five-second deadline before closing Neo4j. Failed cancellation never logs false
+success or blocks teardown indefinitely. Failed transport teardown keeps handles
+and tags available for a retry.

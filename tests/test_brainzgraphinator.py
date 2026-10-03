@@ -934,7 +934,7 @@ class TestScheduleConsumerCancellation:
         await schedule_consumer_cancellation("artists", mock_queue)
         await asyncio.sleep(0.2)
 
-        mock_queue.cancel.assert_called_once_with("consumer-tag-123", nowait=True)
+        mock_queue.cancel.assert_called_once_with("consumer-tag-123", nowait=False, timeout=5.0)
 
     @pytest.mark.asyncio
     @patch("brainzgraphinator.brainzgraphinator.CONSUMER_CANCEL_DELAY", 0.1)
@@ -1053,7 +1053,8 @@ class TestCloseRabbitMQConnection:
             await close_rabbitmq_connection()
 
         assert bgmod.active_channel is None
-        assert bgmod.active_connection is None
+        assert bgmod.active_connection is mock_connection
+        assert bgmod.consumer_recovery_requested
 
     @pytest.mark.asyncio
     async def test_close_when_no_active_connections(self) -> None:
