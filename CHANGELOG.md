@@ -3,6 +3,14 @@
 All notable changes to this repository will be recorded here by Commitizen from
 Conventional Commits.
 
+## v0.3.1 (2026-10-04)
+
+### Fix
+
+- **consumers**: confirm bounded cancellation and rearm MusicBrainz runs
+- **contracts**: promote persistence compatibility from database-schema@525cbc1
+- **consumers**: detect silent stream starvation
+
 ## v0.3.0 (2026-09-15)
 
 ### Feat
