@@ -128,25 +128,59 @@ Nine of the passing tests are the synthetic preparation regressions. Passing thi
 gate does not satisfy the missing empirical spike acceptance, so no submission is
 made.
 
-## Work required to unblock acceptance
+## Offline tooling added since the audit
 
-Obtain a tag-bearing snapshot/export with release versus release-group scope and
-vote/occurrence semantics documented, plus both observed and PART_OF taxonomy
-exports. Inventory all distinct tags once, retaining raw catalog data locally.
-Have a person label approximately 200 tags, sampling head/long-tail, ambiguous
-parents, non-English labels, genre-only and junk; retain real reviewer provenance
-and a separate calibration/evaluation split. Do not generate labels with a model.
+All stdlib-only, excluded from the wheel, exercised only by fake in-process
+transports and synthetic fixtures (`tests/test_tag_capture_spike.py`). None of it is
+acceptance evidence.
 
-Verify legitimate pinned Jev 1.12 and flat-Claude access/budget. A capture adapter
-is still required: bounded offline distinct-tag requests, retries respecting actual
-rate-limit responses, exact returned model, wall-clock latency, token usage,
-request failures, and authoritative billing units/rates. Keep credentials outside
-captures. Cache each full request once and measure cold versus replay counts and
-latency; extrapolate only from actual vocabulary and measured usage. Current replay
-has no provider adapter or cost extrapolator and must not be described as a finished
-benchmark.
+- `scripts/spike_tag_capture.py capture`: a provider-agnostic capture adapter. It
+  needs `TYPESAFE_API_KEY` in the environment and a caller-supplied transport
+  (`--transport-factory module:callable`; see the module docstring for the two-method
+  contract). It refuses to start when the key is absent or when `jev-1.12` cannot be
+  verified, and aborts (caching nothing) if a response reports another model; it
+  never substitutes an alias or newer model. Requests are bounded (`--max-requests`
+  counts every attempt, including retries). Rate-limit responses are retried after the
+  provider's own retry-after, or capped exponential backoff when none is given, and
+  a retry-after beyond the bound becomes a recorded failure instead of a long sleep.
+  Output is the replay `taxonomy` + `captures` shape plus `measurements` (exact
+  returned model, wall-clock latency, token usage, attempts), `failures` (redacted),
+  and completed/failed/skipped tags. The key is never written. Labels and
+  `flat_claude` must still be added by people/actual runs before `replay`.
+- The cache is the `captures` mapping itself, keyed by the replay's `request_key`
+  (tag, options, taxonomy sha, parent, prompt, model). Passing a prior bundle back in
+  resumes without calls; stats report cold versus replay request counts, latency,
+  and tokens avoided. `traverse` gained an optional `resolve` hook for this; replay
+  behaviour is unchanged.
+- `scripts/spike_tag_capture.py extrapolate`: projects requests, tokens and
+  sequential latency from a capture's measured usage and an explicitly supplied
+  actual vocabulary size from a full inventory. It refuses without measurements, usage,
+  or size. A cost is produced only if you supply rates with their authoritative
+  source; otherwise cost is null. It assumes linearity and no concurrency, and
+  states so.
+- `scripts/spike_taxonomy_export.py`: given local provenance JSON and two JSONL files
+  (observed `genre, style, count`; actual PART_OF `genre, style`), it keeps both pair
+  sets and provenance separate, reports observed pairs missing from PART_OF, PART_OF
+  pairs never observed, and styles observed under several genres. It never merges or
+  freezes a target.
 
-Then evaluate all four methods on the reviewed held-out sample, audit errors and
-threshold uncertainty, and translate the chosen calibrated rule to vocabulary
-review-queue size. Only those actual results can support GO / NO-GO. An ADR outline
-and follow-up adoption beads are deliberately deferred until a supported GO.
+## Remaining blockers (all need a person, credentials, or data)
+
+1. A real transport. The TypeSafe wire format was not verifiable from this seat
+   (no Context7 access; no SDK installed; no network used), so no transport ships.
+   Someone with SDK/docs access must write one for the contract above and confirm
+   that it reports the exact returned model, complete Choice probabilities and usage.
+2. `TYPESAFE_API_KEY`, verified access to `jev-1.12` (not the advertised 1.13), and a
+   spend budget, plus authoritative billing rates for that model.
+3. A tag-bearing MusicBrainz corpus with release versus release-group scope and vote
+   semantics documented, to run `inventory` over fully for vocabulary size and coverage.
+4. Real observed and PART_OF exports from the Discogs-side store to feed the taxonomy
+   export, followed by human review of ambiguous parents.
+5. Approximately 200 human-labelled tags (head/long-tail, ambiguous parents,
+   non-English, genre-only, junk) with real reviewer provenance and a calibration /
+   evaluation split. Never model-generated.
+6. Flat-Claude captures against the same frozen target set.
+7. Run the four-method evaluation, separation analysis and extrapolation on real
+   inputs, then the GO / NO-GO. Until then the spike is **not complete** and no verdict
+   exists.
+
