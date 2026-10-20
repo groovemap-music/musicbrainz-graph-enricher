@@ -77,7 +77,8 @@ def request_key(tag, options, taxonomy_sha, parent=()):
     return hashlib.sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
 
 
-def traverse(tag, tree, captures, taxonomy_sha, width):
+def traverse(tag, tree, captures, taxonomy_sha, width, resolve=None):
+    """`resolve(tag, options, parent, key)` lets a capture adapter own lookup; replay passes none."""
     if width not in (1, 3):
         raise ValueError("only greedy and beam K=3 are prepared")
     candidates = [((), 0.0, 0)]
@@ -91,7 +92,8 @@ def traverse(tag, tree, captures, taxonomy_sha, width):
             if len(options) == 1:
                 expanded.append(((*path, options[0]), log_probability, decisions))
                 continue
-            capture = captures[request_key(tag, options, taxonomy_sha, path)]  # Missing evidence fails closed.
+            key = request_key(tag, options, taxonomy_sha, path)
+            capture = resolve(tag, options, path, key) if resolve else captures[key]  # Missing evidence fails closed.
             if capture["model"] != MODEL and not capture["model"].startswith(MODEL + "."):
                 raise ValueError("capture did not use the required Jev 1.12 model")
             probabilities = capture["probabilities"]
