@@ -2,6 +2,7 @@
 
 import asyncio
 import contextlib
+import os
 import signal
 import time
 from typing import Any, get_type_hints
@@ -733,6 +734,38 @@ class TestConfig:
         assert cfg.neo4j_username == "neo4j"
         assert cfg.neo4j_password == "test"
         assert "amqp://" in cfg.amqp_connection
+
+    _BASE_ENV = {  # noqa: RUF012
+        "NEO4J_HOST": "neo4j",
+        "NEO4J_USERNAME": "neo4j",
+        "NEO4J_PASSWORD": "test",
+        "RABBITMQ_HOST": "rabbitmq",
+        "RABBITMQ_USERNAME": "guest",
+        "RABBITMQ_PASSWORD": "guest",
+    }
+
+    def test_health_port_defaults_to_role_port(self) -> None:
+        """HEALTH_PORT unset falls back to 8001."""
+        from brainzgraphinator.config import BrainzgraphinatorConfig
+
+        with patch.dict("os.environ", self._BASE_ENV, clear=False):
+            os.environ.pop("HEALTH_PORT", None)
+            assert BrainzgraphinatorConfig.from_env().health_port == 8001
+
+    def test_health_port_override(self) -> None:
+        """HEALTH_PORT overrides the default."""
+        from brainzgraphinator.config import BrainzgraphinatorConfig
+
+        with patch.dict("os.environ", {**self._BASE_ENV, "HEALTH_PORT": "9123"}, clear=False):
+            assert BrainzgraphinatorConfig.from_env().health_port == 9123
+
+    @pytest.mark.parametrize("value", ["abc", "0", "65536", "-1", "80.5"])
+    def test_health_port_invalid_raises(self, value: str) -> None:
+        """An invalid or out-of-range HEALTH_PORT is rejected, never defaulted."""
+        from brainzgraphinator.config import BrainzgraphinatorConfig
+
+        with patch.dict("os.environ", {**self._BASE_ENV, "HEALTH_PORT": value}, clear=False), pytest.raises(ValueError, match="Invalid HEALTH_PORT"):
+            BrainzgraphinatorConfig.from_env()
 
     def test_config_from_env_missing_raises(self) -> None:
         """Config raises ValueError when required env vars missing."""

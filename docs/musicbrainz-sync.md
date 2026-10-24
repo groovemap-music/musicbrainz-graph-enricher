@@ -70,6 +70,7 @@ They do not perform graph cleanup. Details are in [completion signals](file-comp
 
 ## Observability
 
-`http://localhost:8011/health` reports the service status, current task, per-stream message
+`http://localhost:8001/health` (the graph-enricher role port; override with `HEALTH_PORT`, which must be
+an integer from 1 to 65535 or startup fails) reports the service status, current task, per-stream message
 counts and timestamps, active consumers, completed streams, and enrichment counters. Runtime
 logs and health data identify the service as `musicbrainz-graph-enricher`.
