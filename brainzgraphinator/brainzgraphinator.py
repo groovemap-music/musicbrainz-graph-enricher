@@ -5,6 +5,7 @@ import contextlib
 import contextvars
 import os
 import signal
+import sys
 import threading
 import time
 from asyncio import run
@@ -63,6 +64,8 @@ release_event_rows = _projections.release_event_rows
 release_media_block = _projections.release_media_block
 
 SERVICE_NAME = "musicbrainz-graph-enricher"
+EXIT_OK = 0
+EXIT_STARTUP_FAILED = 1
 # This value is part of the v1 catalog-event wire contract. Renaming it would
 # create a second set of durable queues and strand messages in the existing set.
 WIRE_CONSUMER_NAME = "brainzgraphinator"
@@ -1114,7 +1117,12 @@ async def _recover_consumers() -> None:
         await close_rabbitmq_connection()
 
 
-async def main() -> None:
+async def main() -> int:
+    """Run the service and return its process exit status.
+
+    0 is a clean (signal-driven) shutdown; 1 means startup gave up, which cli() turns
+    into the process exit status so Docker's ``restart: on-failure`` restarts it.
+    """
     global config, graph, queues, rabbitmq_manager, active_connection, active_channel, connection_check_task, consumer_watch_started_at
 
     # Set up signal handlers for graceful shutdown
@@ -1140,7 +1148,7 @@ async def main() -> None:
     except ValueError as e:
         logger.error("❌ Configuration error", error=str(e))
         shutdown_telemetry()
-        return
+        return EXIT_STARTUP_FAILED
 
     # Start health server
     health_server = HealthServer(config.health_port, get_health_data)
@@ -1164,7 +1172,7 @@ async def main() -> None:
     except Exception as e:
         logger.error("❌ Failed to connect to Neo4j", error=str(e))
         shutdown_telemetry()
-        return
+        return EXIT_STARTUP_FAILED
 
     print(STARTUP_BANNER)
 
@@ -1197,12 +1205,17 @@ async def main() -> None:
             else:
                 logger.error(f"❌ Failed to connect to AMQP broker after {max_startup_retries} attempts: {e}")
                 shutdown_telemetry()
-                return
+                return EXIT_STARTUP_FAILED
 
     if amqp_connection is None:
+        # The retry loop only exits without a connection when a signal arrived mid-startup.
+        if shutdown_requested:
+            logger.info("🛑 Shutdown requested before the AMQP connection was established")
+            shutdown_telemetry()
+            return EXIT_OK
         logger.error("❌ No AMQP connection available")
         shutdown_telemetry()
-        return
+        return EXIT_STARTUP_FAILED
 
     async with amqp_connection:
         channel = await amqp_connection.channel()
@@ -1266,11 +1279,12 @@ async def main() -> None:
                 "✅ musicbrainz-graph-enricher shutdown complete",
                 enrichment_stats=enrichment_stats,
             )
+    return EXIT_OK
 
 
 def cli() -> None:
     """Run the async service from a console-script entry point."""
-    run(main())
+    sys.exit(run(main()))
 
 
 if __name__ == "__main__":

@@ -2004,10 +2004,10 @@ class TestMainAmqpConnectionNone:
                 patch("brainzgraphinator.brainzgraphinator.asyncio.sleep", AsyncMock(return_value=None)),
                 patch("brainzgraphinator.brainzgraphinator.logger") as mock_logger,
             ):
-                await main()
+                exit_status = await main()
 
-            error_calls = str(mock_logger.error.call_args_list)
-            assert "AMQP" in error_calls or "connection" in error_calls.lower()
+            assert exit_status == 0
+            assert "AMQP connection" in str(mock_logger.info.call_args_list)
         finally:
             bgmod.shutdown_requested = original_shutdown
 
