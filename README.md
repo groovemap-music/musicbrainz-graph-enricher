@@ -13,7 +13,7 @@ flowchart LR
     Exchange[groovemap-musicbrainz-* fanout exchanges]
     Service[musicbrainz-graph-enricher]
     Graph[(GrooveMap Neo4j graph)]
-    Health[HTTP health endpoint :8011]
+    Health[HTTP health endpoint :8001]
     DLQ[Per-entity dead-letter queues]
 
     Producer --> Exchange --> Service
@@ -82,8 +82,9 @@ The compatibility-only `NEO4J_BATCH_MODE`, `NEO4J_BATCH_SIZE`, and
 `NEO4J_BATCH_FLUSH_INTERVAL` settings are read with defaults of `true`, `100`, and `5.0`.
 They do not enable batching or change transaction size or timing.
 
-The health endpoint is served on `http://localhost:8011/health` and identifies the service as
-`musicbrainz-graph-enricher`. It never serves `/metrics`; the endpoint always answers `404`
+The health endpoint is served on `http://localhost:8001/health` and identifies the service as
+`musicbrainz-graph-enricher`. 8001 is the role port shared by every graph enricher; set `HEALTH_PORT`
+to override it (an invalid or out-of-range value stops startup with a configuration error). It never serves `/metrics`; the endpoint always answers `404`
 regardless of the OpenTelemetry configuration below.
 
 ## Observability

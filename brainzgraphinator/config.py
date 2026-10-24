@@ -9,6 +9,23 @@ from typing import cast
 from common.config import _build_amqp_url, _build_neo4j_uri, get_secret
 
 
+DEFAULT_HEALTH_PORT = 8001
+
+
+def _health_port_from_env() -> int:
+    """Read HEALTH_PORT, defaulting to the graph-enricher role port; reject invalid values."""
+    raw = getenv("HEALTH_PORT")
+    if raw is None or raw.strip() == "":
+        return DEFAULT_HEALTH_PORT
+    try:
+        port = int(raw)
+    except ValueError:
+        raise ValueError(f"Invalid HEALTH_PORT {raw!r}: must be an integer between 1 and 65535") from None
+    if not 1 <= port <= 65535:
+        raise ValueError(f"Invalid HEALTH_PORT {raw!r}: must be an integer between 1 and 65535")
+    return port
+
+
 @dataclass(frozen=True)
 class BrainzgraphinatorConfig:
     """Configuration for the MusicBrainz graph enricher."""
@@ -17,6 +34,7 @@ class BrainzgraphinatorConfig:
     neo4j_host: str
     neo4j_username: str
     neo4j_password: str = field(repr=False)
+    health_port: int = DEFAULT_HEALTH_PORT
 
     @classmethod
     def from_env(cls) -> BrainzgraphinatorConfig:
@@ -34,9 +52,11 @@ class BrainzgraphinatorConfig:
         ]
         if missing_vars:
             raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+        health_port = _health_port_from_env()
         return cls(
             amqp_connection=_build_amqp_url(),
             neo4j_host=_build_neo4j_uri(),
             neo4j_username=cast("str", neo4j_username),
             neo4j_password=cast("str", neo4j_password),
+            health_port=health_port,
         )
