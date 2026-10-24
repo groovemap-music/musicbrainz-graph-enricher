@@ -759,7 +759,7 @@ class TestConfig:
         with patch.dict("os.environ", {**self._BASE_ENV, "HEALTH_PORT": "9123"}, clear=False):
             assert BrainzgraphinatorConfig.from_env().health_port == 9123
 
-    @pytest.mark.parametrize("value", ["abc", "0", "65536", "-1", "80.5"])
+    @pytest.mark.parametrize("value", ["abc", "0", "65536", "-1", "80.5", "", "  "])
     def test_health_port_invalid_raises(self, value: str) -> None:
         """An invalid or out-of-range HEALTH_PORT is rejected, never defaulted."""
         from brainzgraphinator.config import BrainzgraphinatorConfig

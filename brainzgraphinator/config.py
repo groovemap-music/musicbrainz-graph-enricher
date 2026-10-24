@@ -13,9 +13,9 @@ DEFAULT_HEALTH_PORT = 8001
 
 
 def _health_port_from_env() -> int:
-    """Read HEALTH_PORT, defaulting to the graph-enricher role port; reject invalid values."""
+    """Read HEALTH_PORT, defaulting to the role port only when unset; reject invalid (including empty) values."""
     raw = getenv("HEALTH_PORT")
-    if raw is None or raw.strip() == "":
+    if raw is None:
         return DEFAULT_HEALTH_PORT
     try:
         port = int(raw)
