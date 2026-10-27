@@ -43,12 +43,19 @@ stateDiagram-v2
 
 The health payload contains:
 
+- `status`: `starting`, `healthy`, or `unhealthy`;
 - `service`: `musicbrainz-graph-enricher`;
 - `message_counts` and `last_message_time` by entity stream;
 - `active_consumers` and `completed_files`;
-- `enrichment_stats`; and
-- `current_task`, including idle, startup, or stuck status.
+- `consumer_alarm_types`: incomplete streams whose consumer is missing or never delivered;
+- `enrichment_stats`;
+- `current_task`, including idle, startup, or stuck status; and
+- `timestamp`.
 
 A service with no Neo4j driver is `starting` before any work and `unhealthy` after activity. A
-missing-consumer state is unhealthy when some streams are incomplete and at least one message has
-already been processed. Otherwise a connected service is healthy, including a completed idle run.
+connected service is `unhealthy` while `consumer_alarm_types` is non-empty or a consumer recovery
+is pending. An incomplete stream is alarmed when its consumer is missing after messages have
+flowed or after the `STARTUP_IDLE_TIMEOUT` registration grace period, or when it never received a
+delivery after every sibling stream completed; see
+[stuck-state recovery](consumer-cancellation.md#stuck-state-recovery). Otherwise a connected
+service is healthy, including a completed idle run.

@@ -2217,8 +2217,8 @@ class TestHealthDataAdditional:
 
 
 class TestRecoverConsumersAllTypesBrainzgraphinator:
-    """Regression (cu2.53): _recover_consumers must start consumers for ALL
-    MusicBrainz data types, not just those with a backlog at the check instant."""
+    """Regression: _recover_consumers must start consumers for ALL MusicBrainz
+    data types, not just those with a backlog at the check instant."""
 
     @pytest.mark.asyncio
     async def test_recovers_all_types_not_just_backlogged(self) -> None:
@@ -2264,8 +2264,8 @@ class TestRecoverConsumersAllTypesBrainzgraphinator:
 
 
 class TestRecoverConsumersClearsTagsBrainzgraphinator:
-    """Regression (cu2.54): recovery errors after ≥1 consumer registered must
-    clear consumer_tags so the stuck-state detector can re-fire."""
+    """Regression: recovery errors after ≥1 consumer registered must clear
+    consumer_tags so the stuck-state detector can re-fire."""
 
     @pytest.mark.asyncio
     async def test_error_after_partial_registration_clears_consumer_tags(self) -> None:

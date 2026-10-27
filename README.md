@@ -209,6 +209,7 @@ the console command, and documentation use `musicbrainz-graph-enricher`.
 - [Consumer lifecycle](docs/consumer-cancellation.md)
 - [Completion signals](docs/file-completion-tracking.md)
 - [Database resilience](docs/database-resilience.md)
+- [Integration testing](docs/integration-testing.md)
 - [Release compliance](docs/release-compliance.md)
 - [History rewrite approval gate](docs/history-rewrite-gate.md)
 
