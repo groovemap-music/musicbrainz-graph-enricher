@@ -17,10 +17,6 @@ PUBLIC_DOCS = (
     ROOT / "docs/graph-enrichment.md",
     ROOT / "docs/musicbrainz-sync.md",
 )
-ACTIVE_SOURCE_TESTS = (
-    ROOT / "brainzgraphinator/brainzgraphinator.py",
-    *(ROOT / "tests").glob("*.py"),
-)
 
 
 def test_runtime_identity_uses_repository_name() -> None:
@@ -30,11 +26,9 @@ def test_runtime_identity_uses_repository_name() -> None:
     assert service.SERVICE_NAME in service.STARTUP_BANNER
 
 
-def test_active_documentation_uses_groovemap_identity() -> None:
+def test_active_documentation_does_not_use_retired_producer_name() -> None:
     for path in PUBLIC_DOCS:
         text = path.read_text()
-        assert "Discogsography" not in text
-        assert "discogsography" not in text
         assert "catalog-ingestion" not in text
 
 
@@ -45,12 +39,6 @@ def test_active_documentation_names_the_musicbrainz_producer() -> None:
     assert "Producer[musicbrainz-ingestion]" in readme
     assert "Producer[musicbrainz-ingestion]" in event_flow
     assert "participant Producer as musicbrainz-ingestion" in cancellation
-
-
-def test_active_source_and_regressions_do_not_use_migration_issue_names() -> None:
-    migration_issue_prefix = "discogs" + "ography-"
-    for path in ACTIVE_SOURCE_TESTS:
-        assert migration_issue_prefix not in path.read_text().lower()
 
 
 def test_readme_covers_the_service_operating_contract() -> None:

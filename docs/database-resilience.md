@@ -52,5 +52,7 @@ heartbeat settings. After completion-driven idle shutdown, the periodic checker 
 and passively checks every queue. If any queue has work, it declares the full consumer topology and
 starts a consumer for every stream, including streams that were empty at the instant of the check.
 
-This repository's default tests mock both external boundaries. Operational validation against live
-RabbitMQ and Neo4j belongs to the deployment stack and is intentionally separate from `just check`.
+This repository's default tests mock both external boundaries. `just test-integration` separately
+proves delivery settlement against a disposable real Neo4j container; see
+[integration testing](integration-testing.md). Operational validation against live RabbitMQ and
+Neo4j belongs to the deployment stack and is intentionally separate from `just check`.

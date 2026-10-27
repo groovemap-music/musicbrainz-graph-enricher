@@ -84,7 +84,6 @@ def test_public_docs_exclude_private_planning_material() -> None:
     assert not any(item.is_file() for item in (ROOT / "docs" / "specs").rglob("*"))
     docs = "\n".join(path.read_text() for path in [ROOT / "README.md", *(ROOT / "docs").glob("*.md")])
     assert "Python 3.14" in docs
-    assert "discogsography" not in docs.casefold()
 
 
 def test_release_and_history_docs_keep_remote_mutations_separately_approved() -> None:

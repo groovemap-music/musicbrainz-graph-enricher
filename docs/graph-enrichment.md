@@ -78,6 +78,11 @@ services key them on the same vocabulary ids, so a medium is one node no matter 
 first saw it. Medium properties are written `ON CREATE` only, so neither enricher rewrites the
 other's node on every event.
 
+The edges are not shared. `source` is part of the `ISSUED_ON` merge pattern, not a property set
+afterwards, so a release known to both catalogs holds one edge per catalog to the same medium
+and the API can reconcile the two. A Discogs-sourced edge is never matched, updated, or
+deleted here.
+
 ## Country and release events
 
 A matched release also carries MusicBrainz's regional release data, written beside `mb_barcode`:
@@ -91,11 +96,6 @@ Formatting is null-safe per entry: an event missing both `date` and `area_name` 
 row, and one missing only a single side keeps the other (e.g. `"1969-09-26|"`). This is a
 MusicBrainz-sourced field distinct from Discogs' own `Release.country`, which the Discogs graph
 enricher owns; this service never writes it.
-
-The edges are not shared. `source` is part of the `ISSUED_ON` merge pattern, not a property set
-afterwards, so a release known to both catalogs holds one edge per catalog to the same medium
-and the API can reconcile the two. A Discogs-sourced edge is never matched, updated, or
-deleted here.
 
 ### Reconciling a change
 
