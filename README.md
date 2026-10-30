@@ -5,6 +5,30 @@ existing GrooveMap Neo4j entities with MusicBrainz metadata and relationships. I
 create unmatched catalog entities: records and relationship endpoints without a resolved
 Discogs identifier are deliberately skipped.
 
+## Quick start
+
+You need Docker, [mise](https://mise.jdx.dev), a running RabbitMQ that receives the
+`musicbrainz-ingestion` catalog events, and a Neo4j graph that already holds GrooveMap
+`Artist`, `Label`, `Master`, and `Release` nodes.
+
+```bash
+mise install              # pinned Python, uv, just, and gitleaks
+just setup                # install locked dependencies
+just check                # format, lint, types, tests, and packaging checks (no services needed)
+just image                # build musicbrainz-graph-enricher:local
+
+docker run --rm -p 8001:8001 \
+  -e NEO4J_HOST=neo4j -e NEO4J_USERNAME=neo4j -e NEO4J_PASSWORD=change-me \
+  -e RABBITMQ_HOST=rabbitmq \
+  musicbrainz-graph-enricher:local
+
+curl http://localhost:8001/health
+```
+
+Replace the hostnames and credentials with your own, and attach the container to the Docker
+network that can reach both services. The full variable list is under
+[Configuration](#configuration).
+
 ## Data flow
 
 ```mermaid
@@ -82,9 +106,16 @@ The compatibility-only `NEO4J_BATCH_MODE`, `NEO4J_BATCH_SIZE`, and
 `NEO4J_BATCH_FLUSH_INTERVAL` settings are read with defaults of `true`, `100`, and `5.0`.
 They do not enable batching or change transaction size or timing.
 
-The health endpoint is served on `http://localhost:8001/health` and identifies the service as
-`musicbrainz-graph-enricher`. 8001 is the role port shared by every graph enricher; set `HEALTH_PORT`
-to override it (an invalid or out-of-range value stops startup with a configuration error). It never serves `/metrics`; the endpoint always answers `404`
+Other settings:
+
+| Variable | Default | Purpose |
+| --- | ---: | --- |
+| `HEALTH_PORT` | `8001` | Health endpoint port; 8001 is the role port shared by every graph enricher. An empty, non-numeric, or out-of-range value stops startup with a configuration error |
+| `LOG_LEVEL` | `INFO` | Log verbosity; an unrecognized value falls back to `INFO` |
+| `ENVIRONMENT` | `development` | Deployment name added to every log record; it does not change verbosity |
+
+The health endpoint is served at `http://localhost:8001/health` and identifies the service as
+`musicbrainz-graph-enricher`. It never serves `/metrics`: that path always answers `404`
 regardless of the OpenTelemetry configuration below.
 
 ## Observability
@@ -212,6 +243,7 @@ the console command, and documentation use `musicbrainz-graph-enricher`.
 - [Integration testing](docs/integration-testing.md)
 - [Release compliance](docs/release-compliance.md)
 - [History rewrite approval gate](docs/history-rewrite-gate.md)
+- [MusicBrainz tag mapping](docs/tag-mapping-spike.md) (dated prerequisite audit)
 
 ## License
 
