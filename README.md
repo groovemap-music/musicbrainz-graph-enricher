@@ -15,18 +15,22 @@ You need Docker, [mise](https://mise.jdx.dev), a running RabbitMQ that receives 
 mise install              # pinned Python, uv, just, and gitleaks
 just setup                # install locked dependencies
 just check                # format, lint, types, tests, and packaging checks (no services needed)
-just image                # build musicbrainz-graph-enricher:local
+just image                # build musicbrainz-graph-enricher:local (needs network access)
 
 docker run --rm -p 8001:8001 \
   -e NEO4J_HOST=neo4j -e NEO4J_USERNAME=neo4j -e NEO4J_PASSWORD=change-me \
   -e RABBITMQ_HOST=rabbitmq \
   musicbrainz-graph-enricher:local
 
-curl http://localhost:8001/health
+curl -i http://localhost:8001/health
 ```
 
 Replace the hostnames and credentials with your own, and attach the container to the Docker
-network that can reach both services. The full variable list is under
+network that can reach both services. RabbitMQ credentials default to `groovemap` / `groovemap`;
+set `RABBITMQ_USERNAME` and `RABBITMQ_PASSWORD` if yours differ. `just image` needs network
+access because it fetches the pinned `groovemap-runtime` source. The health endpoint answers
+`503` until the service has connected to Neo4j and RabbitMQ and is `healthy`, so use
+`curl -i` to see the status code and body. The full variable list is under
 [Configuration](#configuration).
 
 ## Data flow
