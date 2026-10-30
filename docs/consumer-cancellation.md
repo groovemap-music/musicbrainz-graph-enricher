@@ -86,7 +86,6 @@ This order protects the quorum queue's 20-delivery budget. Repeatedly nacking wh
 still subscribed can immediately redeliver the same message and exhaust that budget. The
 shutdown-delivery-churn regression test preserves this behavior.
 
-
 ## Confirmed cancellation and new extractions
 
 Completion and shutdown cancels await `CancelOk` with `nowait=False` and a
