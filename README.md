@@ -103,7 +103,8 @@ Operational tuning:
 | `IDLE_LOG_INTERVAL` | `300` | Idle status log interval |
 | `STARTUP_DELAY` | `5` | Delay before dependency initialization |
 | `MUSICBRAINZ_EXCHANGE_PREFIX` | `groovemap-musicbrainz` | Producer-owned exchange prefix |
-| `LOG_FILE_MAX_BYTES` | `104857600` (100 MiB) | Size cap for `/logs/musicbrainz-graph-enricher.log` before it rotates; read by the pinned `groovemap-runtime` at handler-construction time |
+| `LOG_FILE` | `/logs/musicbrainz-graph-enricher.log` | Log file path. The container writes `/logs/<service>.log`; when the file cannot be opened (for example `/logs` is absent in a local run) the runtime warns once and logs to the console instead. An empty value disables the file. `PROFILING_LOG_FILE` does the same for the query-profiling log |
+| `LOG_FILE_MAX_BYTES` | `104857600` (100 MiB) | Size cap for the log file before it rotates; read by the pinned `groovemap-runtime` at handler-construction time |
 | `LOG_FILE_BACKUP_COUNT` | `5` | Number of rotated log backups retained alongside the active file |
 
 The compatibility-only `NEO4J_BATCH_MODE`, `NEO4J_BATCH_SIZE`, and
