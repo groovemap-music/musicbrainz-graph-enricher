@@ -3,6 +3,22 @@
 All notable changes to this repository will be recorded here by Commitizen from
 Conventional Commits.
 
+## v0.4.0 (2026-10-31)
+
+### Feat
+
+- **health**: move health port to role port 8001 and read HEALTH_PORT
+
+### Fix
+
+- **deps**: upgrade msgpack past CVE-2026-114613
+- **cli**: exit 1 when startup gives up so Docker restarts the service
+- **health**: reject set-but-empty HEALTH_PORT
+- **deps**: upgrade filelock to 4.2.1 past CVE-2026-112940
+- **deps**: bump certifi and opentelemetry stack to fix pip-audit advisories
+- **deps**: bump multidict to fix CVE-2026-104874 (#10)
+- **deps**: bump multidict to fix CVE-2026-104874 flagged by pip-audit
+
 ## v0.3.1 (2026-10-04)
 
 ### Fix
