@@ -112,6 +112,12 @@ def main() -> None:
             "use_weighted_exact": round(uses_w, 3),
             "none_precision": round(len(pred_none & true_none_ok) / len(pred_none), 3) if pred_none else None,
             "none_recall_on_junk": round(len(pred_none & junk) / len(junk), 3),
+            "assigned": len(labels) - len(pred_none),
+            "assigned_precision": round(sum(res[t]["exact"] for t in labels if t not in pred_none) / (len(labels) - len(pred_none)), 3)
+            if len(labels) > len(pred_none)
+            else None,
+            "genre_like_recall": round(sum(res[t]["exact"] for t in genre_like if t not in pred_none) / len(genre_like), 3),
+            "junk_given_a_genre": sorted(t for t in junk if t not in pred_none),
             "errors": sorted(f"{t} -> {fmt_path(pred.get(t, ()))}" for t in labels if not res[t]["exact"]),
         }
     summary["methods"] = methods

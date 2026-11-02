@@ -8,10 +8,12 @@ Deterministic baselines: match the tag against Discogs genre and style names.
 
 A genre-name match wins over a style match. A style under several genres goes to the
 genre with the most masters carrying that pair. No match predicts NONE. Writes
-results/string_match.json.
+results/string_match.json; given vocab_top.tsv also the whole-vocabulary coverage.
 """
 
 import json
+import sys
+from pathlib import Path
 
 from common import DATA, HERE, load_sample, load_tree, norm
 
@@ -39,6 +41,16 @@ def main() -> None:
         out[name] = {r["tag"]: list(table.get(key(r["tag"]), ())) for r in load_sample()}
     (HERE / "results").mkdir(exist_ok=True)
     (HERE / "results" / "string_match.json").write_text(json.dumps(out, indent=1, ensure_ascii=False) + "\n")
+    if len(sys.argv) > 1:  # optional: vocab_top.tsv from vocab.py, for whole-vocabulary coverage
+        rows = [(t, int(c)) for t, c in (line.rstrip("\n").split("\t") for line in Path(sys.argv[1]).read_text(encoding="utf-8").splitlines())]
+        total = sum(c for _, c in rows)
+        cover = {}
+        for name, key in (("exact", lambda x: x.strip().lower()), ("normalized", norm)):
+            table = build(tree, key)
+            hit = [(t, c) for t, c in rows if key(t) in table]
+            cover[name] = {"tags": len(hit), "use_share": round(sum(c for _, c in hit) / total, 4)}
+        (HERE / "results" / "string_match_vocab_coverage.json").write_text(json.dumps(cover, indent=1) + "\n")
+        print(json.dumps(cover))
 
 
 if __name__ == "__main__":

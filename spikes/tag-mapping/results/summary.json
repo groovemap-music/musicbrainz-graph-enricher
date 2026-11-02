@@ -54,6 +54,10 @@
    "use_weighted_exact": 0.732,
    "none_precision": 0.594,
    "none_recall_on_junk": 1.0,
+   "assigned": 35,
+   "assigned_precision": 1.0,
+   "genre_like_recall": 0.323,
+   "junk_given_a_genre": [],
    "errors": [
     "adult contemporary -> NONE",
     "alternative dance -> NONE",
@@ -141,6 +145,10 @@
    "use_weighted_exact": 0.787,
    "none_precision": 0.624,
    "none_recall_on_junk": 1.0,
+   "assigned": 43,
+   "assigned_precision": 1.0,
+   "genre_like_recall": 0.404,
+   "junk_given_a_genre": [],
    "errors": [
     "adult contemporary -> NONE",
     "alternative dance -> NONE",
