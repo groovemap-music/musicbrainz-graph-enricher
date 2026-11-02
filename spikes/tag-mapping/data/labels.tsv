@@ -1,0 +1,201 @@
+tag	accepted	(NONE | G:genre-only | S:style under each tree parent | P:genre/style); alternatives separated by " | "
+black metal	S:Black Metal
+soul	S:Soul | G:Funk / Soul
+hard rock	S:Hard Rock
+ebm	S:EBM
+shoegaze	S:Shoegaze
+progressive rock	S:Prog Rock
+dark wave	S:Darkwave
+punk rock	S:Punk
+hip-hop/rap	G:Hip Hop | P:Hip Hop/Hip Hop
+jungle	S:Jungle
+pop punk	S:Pop Punk
+easy listening	S:Easy Listening
+breaks	S:Breaks
+modern classical	S:Modern Classical
+post-hardcore	S:Post-Hardcore
+americana	G:Folk, World, & Country | P:Folk, World, & Country/Country | S:Country Rock | P:Folk, World, & Country/Folk Rock
+bluegrass	S:Bluegrass
+stoner metal	S:Stoner Rock
+jazz rock	S:Jazz-Rock
+piano	NONE | P:Classical/Piano
+composer	NONE
+power electronics	S:Power Electronics
+symphonic metal	S:Symphonic Metal
+k-pop	S:K-pop
+salsa	S:Salsa
+latin jazz	S:Latin Jazz
+folk pop	G:Pop | G:Folk, World, & Country | P:Folk, World, & Country/Folk
+hard bop	S:Hard Bop
+brutal death metal	S:Brutal Death Metal
+folk metal	S:Folk Metal
+cool jazz	S:Cool Jazz
+vocal	NONE | S:Vocal
+desert rock	S:Stoner Rock | G:Rock
+arena rock	S:Arena Rock
+psychedelic pop	P:Pop/Psychedelic | G:Pop
+toronto	NONE
+san francisco	NONE
+conscious hip hop	S:Conscious
+groove metal	S:Groove Metal
+melodic	NONE
+melodic black metal	S:Black Metal
+adult contemporary	G:Pop | P:Pop/Soft Rock | P:Pop/Ballad
+surf rock	S:Surf
+acid rock	S:Acid Rock
+poetry	S:Poetry
+futurepop	S:Future Pop
+mod	S:Mod
+oldies	NONE
+manchester	NONE
+singer	NONE
+experiemental	S:Experimental
+merengue	S:Merengue
+psybient	G:Electronic | P:Electronic/Ambient | P:Electronic/Psy-Trance | P:Electronic/Downtempo
+jazz hop	S:Jazzy Hip-Hop
+epic	NONE
+alternative dance	G:Electronic | P:Electronic/Dance-pop | P:Electronic/Indie Pop | P:Rock/Alternative Rock
+belgium	NONE
+delta blues	S:Delta Blues
+ambient pop	G:Pop | S:Dream Pop | P:Electronic/Ambient
+nerdcore	G:Hip Hop
+funk / soul	G:Funk / Soul
+post-internet	NONE
+funk metal	S:Funk Metal
+space music	G:Electronic | P:Electronic/Ambient | P:Electronic/New Age | P:Electronic/Berlin-School
+death-doom metal	S:Doom Metal | S:Death Metal
+amsterdam	NONE
+greek	NONE
+c64 remix	S:Chiptune | G:Electronic
+glam metal	S:Glam | P:Rock/Heavy Metal
+neo-soul	S:Neo Soul
+ireland	NONE
+video game soundtrack	S:Video Game Music
+filmi	S:Bollywood | G:Stage & Screen
+jazz pop	G:Jazz | G:Pop | P:Pop/Vocal | P:Jazz/Contemporary Jazz
+singer songwriter	NONE | G:Folk, World, & Country | P:Folk, World, & Country/Folk
+dance-punk	S:Post-Punk | S:Electroclash
+houston	NONE
+analog	NONE
+relax	NONE
+edinburgh	NONE
+female vocal	NONE
+rome	NONE
+jazzthing.de	NONE
+praise & worship	S:Gospel | P:Pop/Religious | P:Folk, World, & Country/Religious
+alliteration	NONE
+smooth soul	S:Soul | S:Contemporary R&B | G:Funk / Soul
+eclectic	NONE
+crossover	NONE | S:Crossover Thrash | S:Crossover thrash
+leipzig	NONE
+drum&bass	S:Drum n Bass
+massachusetts	NONE
+italo	S:Italo-Disco | S:Italodance | S:Italo House
+future beat	S:Future Bass | P:Electronic/Bass Music | G:Electronic
+1980s	NONE
+louisville	NONE
+terrorcore	P:Electronic/Hardcore | S:Speedcore | S:Gabber
+naturewave	G:Electronic | P:Electronic/Ambient | P:Electronic/Vaporwave | P:Electronic/New Age
+hawaii	NONE
+raw punk	S:Punk | S:Crust
+hard	NONE
+post-whatever	NONE
+go-go	S:Go-Go
+anthem	NONE
+industrial black metal	S:Black Metal | S:Industrial Metal
+tropical rock	G:Rock | G:Latin
+horror metal	P:Rock/Horror Rock | P:Rock/Heavy Metal | G:Rock
+romanian band	NONE
+contralto	NONE
+von records	NONE
+harpist	NONE
+westcoast	NONE | G:Hip Hop | S:G-Funk | S:Gangsta | S:AOR
+folk black metal	S:Black Metal | S:Folk Metal
+deutschpop	G:Pop | P:Pop/Europop | P:Pop/NDW
+french singer	NONE | P:Pop/Chanson
+sound healing	S:Therapy | S:New Age | P:Electronic/Ambient
+progressive deathcore	S:Deathcore
+beatbox	S:Beatbox
+stupid	NONE
+michel banabila	NONE
+dungeon rap	G:Hip Hop | S:Horrorcore | S:Memphis Rap | P:Hip Hop/Phonk
+contemporary reggae	G:Reggae | P:Reggae/Reggae | P:Reggae/Reggae-Pop
+protest song	NONE | P:Folk, World, & Country/Political | P:Folk, World, & Country/Folk
+heart	NONE
+emanuel brown	NONE
+royalty free tracks	NONE
+star trek	NONE
+reims	NONE
+bubblegrunge	P:Rock/Grunge | P:Rock/Alternative Rock | P:Rock/Post-Grunge
+tv show	NONE | P:Stage & Screen/Theme | G:Stage & Screen
+melodic pop	G:Pop
+gold coast	NONE
+dance hall	S:Dancehall
+old school metal	P:Rock/Heavy Metal | G:Rock
+chiang rai	NONE
+illuminated paths	NONE
+musical theater	S:Musical
+ukgarage	S:UK Garage
+hariton zoe	NONE
+character: 鬼人正邪	NONE
+iconic	NONE
+beck	NONE
+lithuanian dream pop	S:Dream Pop
+mobile	NONE
+fergana	NONE
+early	NONE | P:Classical/Early
+no-wave	S:No Wave
+6" flexi-disc	NONE
+indie-rock / avantgarde	S:Indie Rock | P:Rock/Avantgarde
+musique concrète instrumentale	S:Musique Concrète | P:Classical/Contemporary | P:Classical/Modern
+runescape	NONE | S:Video Game Music
+voice actor europa	NONE
+south portland	NONE
+dirt	NONE
+disco rap	G:Hip Hop | P:Hip Hop/Hip Hop
+sub-bass	NONE | S:Bass Music
+シンセウェイブ	S:Synthwave
+#thril	NONE
+terry riley	NONE
+schubert	NONE
+starmania	NONE
+tübingen	NONE
+tar	NONE
+country ballad	P:Folk, World, & Country/Country
+independiente	NONE
+israeli indie	S:Indie Rock | S:Indie Pop
+chill music	NONE | P:Electronic/Downtempo
+sugar	NONE
+j.r.r. tolkien	NONE
+raydeoworld	NONE
+thee oh sees	NONE
+isle of eigg	NONE
+electronic horror	G:Electronic | P:Electronic/Dark Ambient | P:Electronic/Score
+santur	NONE
+amy	NONE
+nightdrive	P:Electronic/Synthwave | NONE
+urine	NONE
+sub pop records	NONE
+nardcore	P:Rock/Hardcore | P:Rock/Punk
+#dance	NONE | G:Electronic
+brutal deathgrind	P:Rock/Grindcore | P:Rock/Brutal Death Metal | P:Rock/Death Metal
+counting crows	NONE
+aedtpworld	NONE
+panart	NONE
+lucenec	NONE
+blues/soul	G:Blues | G:Funk / Soul | S:Rhythm & Blues | S:Soul
+deutscher rap	G:Hip Hop | P:Hip Hop/Hip Hop
+battle music	NONE
+leagueoflyons	NONE
+john wetton	NONE
+vomir	NONE
+dance anthem	NONE | G:Electronic
+robocop	NONE
+vinyl release	NONE
+all hardware	NONE
+indie lofi	S:Lo-Fi | S:Indie Rock | S:Indie Pop
+blagoveshchensk	NONE
+veedel kaztro	NONE
+jester on cover	NONE
+chefboy tyree	NONE
+guns n roses	NONE

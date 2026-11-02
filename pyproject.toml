@@ -77,6 +77,7 @@ lines-after-imports = 2
 "brainzgraphinator/brainzgraphinator.py" = ["T201"]
 "tests/**/*.py" = ["PLC", "S105", "T201"]
 "scripts/*.py" = ["S108", "T201"]
+"spikes/**/*.py" = ["T201"]
 
 [tool.mypy]
 python_version = "3.14"
