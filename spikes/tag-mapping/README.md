@@ -19,7 +19,7 @@ Throwaway code for bead `gm-musicbrainz-graph-enricher-569`. The write-up is
 | `vocab.py` | Q1/Q2: distinct tags, uses, top-N coverage, genre-list buckets |
 | `discogs_taxonomy.py` | Q7: observed vs single-genre (`graph.part_of`) pairs, and the tree at genre share >= 0.20 |
 | `data/sample.json` | 200 tags, seed 569: 90 from rank 1-1000, 70 from rank > 1000 with >= 20 uses, 40 with 5-19 uses |
-| `data/labels.tsv` | The answer key. **Agent-drafted (claude-opus-5-5), pending human review.** `NONE`, `G:genre`, `S:style` (every tree parent), `P:genre/style`; ` \| ` separates acceptable answers |
+| `data/labels.tsv` | The answer key, one row per tag: confidence, tag, uses, stratum, accepted answers, rule (R1-R6, defined in the file header), reviewer. **Agent-drafted (claude-opus-5-5), pending human review**; the 54 `unsure` rows come first |
 | `common.py` | Tree, label expansion (rejects anything not in the tree), scoring |
 | `string_match.py` | Deterministic baselines (exact, normalized) |
 | `jev_beam.py` | TypeSafe Choice per node, greedy and beam K=3, cached in `data/captures/jev_cache.json` |

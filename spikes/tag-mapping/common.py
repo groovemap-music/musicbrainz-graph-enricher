@@ -55,9 +55,11 @@ def load_labels(tree: dict[str, list[str]]) -> dict[str, set[Path_]]:
     """Expand labels.tsv into accepted path sets, rejecting anything not in the tree."""
     par = parents(tree)
     labels: dict[str, set[Path_]] = {}
-    lines = (DATA / "labels.tsv").read_text(encoding="utf-8").splitlines()[1:]
-    for line in lines:
-        tag, spec = line.split("\t")[:2]
+    lines = [x for x in (DATA / "labels.tsv").read_text(encoding="utf-8").splitlines() if x and not x.startswith("## ")]
+    header = lines[0].split("\t")
+    for line in lines[1:]:
+        row = dict(zip(header, line.split("\t"), strict=False))
+        tag, spec = row["tag"], row["accepted"]
         accepted: set[Path_] = set()
         for item in (x.strip() for x in spec.split(" | ")):
             if item == "NONE":

@@ -249,7 +249,7 @@ the console command, and documentation use `musicbrainz-graph-enricher`.
 - [Integration testing](docs/integration-testing.md)
 - [Release compliance](docs/release-compliance.md)
 - [History rewrite approval gate](docs/history-rewrite-gate.md)
-- [MusicBrainz tag mapping](docs/tag-mapping-spike.md) (dated prerequisite audit)
+- [MusicBrainz tag mapping](docs/tag-mapping-spike.md) (spike; model runs pending)
 
 ## License
 
