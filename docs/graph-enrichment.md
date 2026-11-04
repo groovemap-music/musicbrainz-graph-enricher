@@ -83,6 +83,12 @@ afterwards, so a release known to both catalogs holds one edge per catalog to th
 and the API can reconcile the two. A Discogs-sourced edge is never matched, updated, or
 deleted here.
 
+When a release's media change, the `ISSUED_ON` edges this service wrote to media the release no
+longer has are deleted. A `Medium` node that edge pointed at is then deleted too, but only when
+no `ISSUED_ON` edge from any catalog still reaches it and nothing but its own `IN_FAMILY` edge
+touches it. A medium Discogs, or another release, still uses is never pruned, and `MediaFamily`
+nodes never are. Orphans left by releases processed before this rule are not swept retroactively.
+
 ## Replays of unchanged data
 
 Every enrichment SET is gated on `mb_hash`, a versioned SHA-256 of exactly what the event

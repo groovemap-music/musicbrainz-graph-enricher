@@ -276,7 +276,22 @@ class TestDiscogsMediaIsUntouched:
 
         for cypher, _ in media_calls(tx):
             assert "media_families" not in cypher.replace("mb_media_families", "")
-            assert "DETACH DELETE" not in cypher
+
+    @pytest.mark.asyncio
+    async def test_only_the_summary_statement_may_prune_and_only_a_medium(self) -> None:
+        """The orphan prune is scoped to Medium nodes the stale sweep just emptied."""
+        tx = matching_tx()
+        with patch.dict(bgmod.enrichment_stats, CLEAN_STATS):
+            await enrich_release(tx, release_event("musicbrainz-multi-medium-cd-dvd"))
+
+        summary, edges = (cypher for cypher, _ in media_calls(tx))
+        assert "DETACH" not in summary + edges  # a surprise relationship must abort, not be detached
+        assert summary.count("DELETE family_edge, m") == 1
+        assert "DELETE" not in edges
+        order = ["DELETE stale", "WITH DISTINCT m", "SET m._prune_lock = true", "WHERE NOT (m)<-[:ISSUED_ON]-()", "DELETE family_edge, m"]
+        assert [summary.index(part) for part in order] == sorted(summary.index(part) for part in order)
+        assert "<> 'IN_FAMILY'" in summary  # nothing else may reference it
+        assert "MediaFamily" not in summary
 
 
 # ── Stale edge cleanup ───────────────────────────────────────────────────
