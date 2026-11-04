@@ -175,7 +175,11 @@ async def test_batched_delivery_leaves_the_same_graph_and_stats_as_per_message(n
     batched = await deliver(True, batch_deliveries, neo4j_driver)
 
     assert batched == per_message
-    assert await graph_state(neo4j_driver) == expected_graph
+    actual_graph = await graph_state(neo4j_driver)
+    only_batched = sorted(set(actual_graph["nodes"]) - set(expected_graph["nodes"]))
+    only_per_message = sorted(set(expected_graph["nodes"]) - set(actual_graph["nodes"]))
+    assert (only_batched, only_per_message) == ([], []), "node properties differ between the two write paths"
+    assert actual_graph == expected_graph
     assert dict(service.enrichment_stats) == expected_stats
     assert all(d.settlements == [("ack", None)] for _, d in batch_deliveries)
     # The stale ISSUED_ON edge on r0 was reconciled away in the batch as well.
