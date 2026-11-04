@@ -139,6 +139,11 @@ graph: AsyncResilientNeo4jDriver | None = None
 BATCH_MODE = os.environ.get("NEO4J_BATCH_MODE", "true").lower() == "true"
 BATCH_SIZE = max(1, int(os.environ.get("NEO4J_BATCH_SIZE", "100")))
 BATCH_LINGER = float(os.environ.get("NEO4J_BATCH_LINGER", "0.05"))
+# Allow only one batch per data type to commit at a time. Off by default: at the default sizes
+# (prefetch 200, batch 100) parallel flushes do not contend and are faster. With many small
+# concurrent batches, releases deadlock on the shared Medium/MediaFamily nodes and every deadlock
+# is a retried transaction; turning this on removes them (scripts/bench-contention.sh).
+SERIALIZE_FLUSHES = os.environ.get("NEO4J_SERIALIZE_FLUSHES", "false").lower() == "true"
 # Legacy knob, still readable for environment compatibility; BATCH_LINGER governs flush timing.
 BATCH_FLUSH_INTERVAL = float(os.environ.get("NEO4J_BATCH_FLUSH_INTERVAL", "5.0"))
 
@@ -812,12 +817,15 @@ class WriteBatcher:
         self.loop: asyncio.AbstractEventLoop | None = None
         self.timer: asyncio.TimerHandle | None = None
         self.flushes: set[asyncio.Task[None]] = set()
+        # Held around a commit only when SERIALIZE_FLUSHES is on; batches keep filling meanwhile.
+        self.commit_lock = asyncio.Lock()
 
     async def submit(self, record: dict[str, Any], stats: dict[str, int]) -> bool:
         loop = asyncio.get_running_loop()
         if self.loop is not loop:
             # A new event loop (tests, restart) cannot resume the old loop's timer or tasks.
             self.loop, self.pending, self.timer, self.flushes = loop, [], None, set()
+            self.commit_lock = asyncio.Lock()
         future: asyncio.Future[bool] = loop.create_future()
         self.pending.append(_PendingWrite(record, _delivery_span.get(), future))
         if len(self.pending) >= BATCH_SIZE:
@@ -848,7 +856,8 @@ class WriteBatcher:
 
     async def _write(self, batch: list[_PendingWrite]) -> None:
         try:
-            stats = await self._commit(batch)
+            async with self._commit_guard():
+                stats = await self._commit(batch)
         except _TRANSIENT_WRITE_ERRORS as error:
             self._fail(batch, error)
         except asyncio.CancelledError:
@@ -864,13 +873,17 @@ class WriteBatcher:
                     batch_size=len(batch),
                     error=str(error),
                 )
-                await asyncio.gather(*(self._replay(item) for item in batch))
+                for item in batch:
+                    await self._replay(item)
         else:
             flags, batch_stats = stats
             await _merge_global_stats(batch_stats, entity_keys=False)
             for item, matched in zip(batch, flags, strict=True):
                 if not item.future.done():
                     item.future.set_result(matched)
+
+    def _commit_guard(self) -> Any:
+        return self.commit_lock if SERIALIZE_FLUSHES else contextlib.nullcontext()
 
     @staticmethod
     def _fail(batch: list[_PendingWrite], error: BaseException) -> None:
