@@ -503,6 +503,63 @@
       "undirected": true,
       "writes": "nothing"
     },
+    "free_text_keys": {
+      "availability": "unconditional",
+      "function": "graph.text_key",
+      "hash": "sha256 of the value's UTF-8 bytes",
+      "introduced_in_contract_version": 1,
+      "kind": "additive",
+      "migration": "A guarded transaction per relation builds the unique and hash indexes, then drops the primary key and the indexes that stored the raw column. It runs with the loaders stopped and does not rewrite the table.",
+      "note": "PostgreSQL refuses a btree entry over 2704 bytes after compression, and these columns are free text with no bound, so a credit past the limit could not be stored. Each relation keeps its key columns and its whole value; a UNIQUE index over graph.text_key enforces the key in place of a primary key, and a hash index keeps = on the column. No column is added, so a writer's column list is unchanged. A target-less ON CONFLICT DO NOTHING fires on the unique index; an ON CONFLICT naming the columns does not infer it, and none of the loaders uses one.",
+      "relations": {
+        "company": {
+          "key": [
+            "company_id"
+          ],
+          "lookup": "company_id"
+        },
+        "credited_on": {
+          "key": [
+            "release_id",
+            "person_name",
+            "role"
+          ],
+          "lookup": "person_name"
+        },
+        "credited_to": {
+          "key": [
+            "release_id",
+            "company_id",
+            "role",
+            "source"
+          ],
+          "lookup": "company_id"
+        },
+        "person": {
+          "key": [
+            "name"
+          ],
+          "lookup": "name"
+        },
+        "same_as": {
+          "key": [
+            "artist_id",
+            "person_name"
+          ],
+          "lookup": "person_name"
+        },
+        "track_credited_on": {
+          "key": [
+            "release_id",
+            "track_ordinal",
+            "sub_track_ordinal",
+            "person_name",
+            "role"
+          ],
+          "lookup": "person_name"
+        }
+      }
+    },
     "functions": [
       "graph.bootstrap_fill",
       "graph.credit_role_category",
@@ -511,7 +568,8 @@
       "graph.mb_relationship_type",
       "graph.medium_label",
       "graph.refresh_artist_member_of",
-      "graph.refresh_vertex_degree"
+      "graph.refresh_vertex_degree",
+      "graph.text_key"
     ],
     "introduced_in_contract_version": 1,
     "key_columns": {
