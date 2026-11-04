@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import hashlib
+import os
 from datetime import UTC, datetime
-from typing import Any, Protocol
+from typing import Any, NamedTuple, Protocol
 
 import orjson
 from common.media import families_of, map_musicbrainz_release, medium_label
@@ -190,6 +191,11 @@ async def create_relationship_edges(
 
 HASH_VERSION = "v1"
 
+# Operator override: MB_REPLAY_GATE=false disables the gate so every event rewrites its node and
+# re-projects its relationships and media. Use it to force a reprojection (e.g. after repairing
+# the graph by hand) without bumping HASH_VERSION; it is read at import, so restart to change it.
+REPLAY_GATE = os.environ.get("MB_REPLAY_GATE", "true").lower() != "false"
+
 # (graph property, row key). The row key is the parameter name of both statement shapes.
 ARTIST_FIELDS = [
     (key, key)
@@ -223,7 +229,7 @@ def payload_hash(*parts: Any) -> str:
     return f"{HASH_VERSION}:{digest}"
 
 
-def _gated_cypher(label: str, var: str, fields: list[tuple[str, str]], *, batch: bool) -> str:
+def _gated_cypher(label: str, var: str, fields: list[tuple[str, str]], *, batch: bool, relations: bool = False) -> str:
     """Build the MATCH-then-conditional-SET statement for one entity kind.
 
     The SET runs only when the stored digest differs. The statement still returns the matched
@@ -235,12 +241,15 @@ def _gated_cypher(label: str, var: str, fields: list[tuple[str, str]], *, batch:
     prefix = "UNWIND $rows AS row " if batch else ""
     with_row = f"{var}, row" if batch else var
     returned = "row.idx AS idx" if batch else f"{var}.id AS matched_id"
+    changed = f"({var}.mb_hash IS NULL OR {var}.mb_hash <> {source}mb_hash)" if REPLAY_GATE else "true"
+    # Artists also report the relations digest of their last fully projected relation set.
+    extra = f", {var}.mb_relations_hash AS relations_hash" if relations else ""
     return (
         f"{prefix}MATCH ({var}:{label} {{id: {match_id}}}) "
-        f"WITH {with_row}, ({var}.mb_hash IS NULL OR {var}.mb_hash <> {source}mb_hash) AS changed "
+        f"WITH {with_row}, {changed} AS changed "
         "FOREACH (_ IN CASE WHEN changed THEN [1] ELSE [] END | "
         f"SET {assignments}, {var}.mb_hash = {source}mb_hash, {var}.mb_updated_at = $mb_updated_at) "
-        f"RETURN {returned}, changed"
+        f"RETURN {returned}, changed{extra}"
     )
 
 
@@ -283,8 +292,11 @@ async def enrich_artist(tx: Any, record: dict[str, Any], stats: dict[str, int]) 
         mb_updated_at=datetime.now(UTC).isoformat(),
     )
     matched = await result.single()
-    changed = _record_outcome(matched, stats)
-    if relations and matched and changed:
+    _record_outcome(matched, stats)
+    # The per-message path never gates relationships: it cannot tell a relation skipped for a
+    # missing target from an unchanged one, and the MERGEs are idempotent. Only the batch path,
+    # which can, keeps a relations digest (see enrich_artists_batch).
+    if relations and matched:
         await create_relationship_edges(tx, discogs_id, relations, stats)
     return True
 
@@ -408,6 +420,14 @@ def _life_span(record: dict[str, Any], key: str) -> Any:
     return record.get(f"{key}_date", (record.get("life_span") or {}).get(key))
 
 
+class Outcome(NamedTuple):
+    """What one record of a batch did to its node."""
+
+    matched: bool
+    changed: bool  # written by this batch (False for an unchanged replay and for a superseded duplicate)
+    stored_relations_hash: Any  # the artist's last fully projected relations digest, if any
+
+
 async def _run_entity_batch(
     tx: Any,
     spec: tuple[str, str, list[tuple[str, str]]],
@@ -416,28 +436,47 @@ async def _run_entity_batch(
     build_row: Any,
     extra_hash: Any,
     stats: dict[str, int],
-) -> tuple[list[bool], list[bool]]:
-    """Write the changed records with one UNWIND; return per-record (matched, changed) flags."""
+    *,
+    relations: bool = False,
+) -> list[Outcome]:
+    """Write the changed records with one UNWIND and report each record's outcome.
+
+    Several records for the same Discogs id collapse to the last one, as sequential delivery
+    would leave the node; a single statement never carries two rows for one node, so the
+    stored-digest comparison cannot let an older record overwrite a newer one. Earlier
+    duplicates share the node's matched flag and report unchanged.
+    """
     label, var, fields = spec
     now = datetime.now(UTC).isoformat()
-    rows: list[dict[str, Any]] = []
+    last_index: dict[str, int] = {}
     for index, record in enumerate(records):
-        discogs_id = record.get(id_key)
-        if discogs_id is not None:
-            row = build_row(record)
-            rows.append({"idx": index, "discogs_id": str(discogs_id), **row, "mb_hash": payload_hash(row, extra_hash(record))})
+        if record.get(id_key) is not None:
+            last_index[str(record[id_key])] = index
 
-    outcomes: dict[int, bool] = {}
+    rows: list[dict[str, Any]] = []
+    for index in sorted(last_index.values()):
+        record = records[index]
+        row = build_row(record)
+        rows.append({"idx": index, "discogs_id": str(record[id_key]), **row, "mb_hash": payload_hash(row, extra_hash(record))})
+
+    written: dict[int, tuple[bool, Any]] = {}
     if rows:
-        result = await tx.run(_gated_cypher(label, var, fields, batch=True), rows=rows, mb_updated_at=now)
-        outcomes = {int(row["idx"]): bool(row["changed"]) async for row in result}
+        result = await tx.run(_gated_cypher(label, var, fields, batch=True, relations=relations), rows=rows, mb_updated_at=now)
+        written = {int(row["idx"]): (bool(row["changed"]), row.get("relations_hash") if relations else None) async for row in result}
 
-    matched = [index in outcomes for index in range(len(records))]
-    changed = [outcomes.get(index, False) for index in range(len(records))]
-    stats["entities_enriched"] += sum(matched)
-    stats["entities_skipped_no_discogs_match"] += len(matched) - sum(matched)
-    stats["replays_skipped_unchanged"] = stats.get("replays_skipped_unchanged", 0) + sum(m and not c for m, c in zip(matched, changed, strict=True))
-    return matched, changed
+    outcomes: list[Outcome] = []
+    for index, record in enumerate(records):
+        representative = last_index.get(str(record[id_key])) if record.get(id_key) is not None else None
+        if representative is None or representative not in written:
+            outcomes.append(Outcome(False, False, None))
+        else:
+            changed, stored = written[representative]
+            outcomes.append(Outcome(True, changed and index == representative, stored))
+    matched = sum(outcome.matched for outcome in outcomes)
+    stats["entities_enriched"] += matched
+    stats["entities_skipped_no_discogs_match"] += len(outcomes) - matched
+    stats["replays_skipped_unchanged"] = stats.get("replays_skipped_unchanged", 0) + sum(not changed for changed, _ in written.values())
+    return outcomes
 
 
 def _artist_row(record: dict[str, Any]) -> dict[str, Any]:
@@ -458,43 +497,60 @@ async def create_relationship_edges_batch(
     tx: Any,
     relations: list[tuple[str, dict[str, Any]]],
     stats: dict[str, int],
-) -> None:
-    """Project supported relationships for many source artists, one UNWIND per edge type."""
+) -> dict[str, bool]:
+    """Project supported relationships for many source artists, one UNWIND per edge type.
+
+    Returns, per source artist, whether every supported relation was projected. A relation whose
+    target is missing or not yet in the graph leaves its artist incomplete.
+    """
     by_type: dict[str, list[dict[str, str]]] = {}
+    expected: dict[str, int] = {}
     for source_discogs_id, relation in relations:
         edge_type = MB_RELATIONSHIP_MAP.get(relation.get("type", ""))
         if edge_type is None:
             continue
+        owner = str(source_discogs_id)
+        expected[owner] = expected.get(owner, 0) + 1
         target_discogs_id = relation.get("target_discogs_artist_id")
         if target_discogs_id is None:
             stats["relationships_skipped_missing_side"] += 1
             continue
-        edge_source_id, edge_target_id = str(source_discogs_id), str(target_discogs_id)
+        edge_source_id, edge_target_id = owner, str(target_discogs_id)
         if relation.get("direction") == "backward":
             edge_source_id, edge_target_id = edge_target_id, edge_source_id
-        by_type.setdefault(edge_type, []).append({"source_id": edge_source_id, "target_id": edge_target_id})
+        by_type.setdefault(edge_type, []).append({"owner": owner, "source_id": edge_source_id, "target_id": edge_target_id})
 
+    projected: dict[str, int] = {}
     for edge_type, rows in by_type.items():
         # Cypher relationship types cannot be parameters; edge_type is restricted to the map.
         result = await tx.run(
             "UNWIND $rows AS row "
             "MATCH (a:Artist {id: row.source_id}) MATCH (b:Artist {id: row.target_id}) "
             f"MERGE (a)-[r:{edge_type}]->(b) SET r.source = 'musicbrainz' "
-            "RETURN count(*) AS matched",
+            "RETURN row.owner AS owner, count(*) AS matched",
             rows=rows,
         )
-        record = await result.single()
-        matched = int(record["matched"]) if record else 0
+        matched = 0
+        async for record in result:
+            matched += int(record["matched"])
+            projected[record["owner"]] = projected.get(record["owner"], 0) + int(record["matched"])
         summary = await result.consume()
         created = summary.counters.relationships_created
         stats["relationships_created"] += created
         stats["relationships_updated"] += max(matched - created, 0)
         stats["relationships_skipped_missing_side"] += len(rows) - matched
+    return {owner: projected.get(owner, 0) >= count for owner, count in expected.items()}
 
 
 async def enrich_artists_batch(tx: Any, records: list[dict[str, Any]], stats: dict[str, int]) -> list[bool]:
-    """Enrich many Artists and project their supported relationships in one transaction."""
-    flags, changed = await _run_entity_batch(
+    """Enrich many Artists and project their supported relationships in one transaction.
+
+    Relationships are gated by their own digest, `mb_relations_hash`, which is stored only once
+    every supported relation was projected. A relation whose target Artist is not in the graph yet
+    therefore keeps being retried on replay until it resolves, instead of being gated out by the
+    node's own digest.
+    """
+    outcomes = await _run_entity_batch(
         tx,
         ("Artist", "a", ARTIST_FIELDS),
         "discogs_artist_id",
@@ -502,17 +558,36 @@ async def enrich_artists_batch(tx: Any, records: list[dict[str, Any]], stats: di
         _artist_row,
         lambda record: record.get("relations") or [],
         stats,
+        relations=True,
     )
-    # An unchanged replay already projected its relationships; only changed records rewrite them.
-    relations = [
-        (str(record["discogs_artist_id"]), relation)
-        for record, was_changed in zip(records, changed, strict=True)
-        if was_changed
-        for relation in record.get("relations") or []
-    ]
-    if relations:
-        await create_relationship_edges_batch(tx, relations, stats)
-    return flags
+    relations: list[tuple[str, dict[str, Any]]] = []
+    digests: dict[str, str] = {}
+    for index, (record, outcome) in enumerate(zip(records, outcomes, strict=True)):
+        if not outcome.matched or _superseded(index, records):
+            continue
+        record_relations = record.get("relations") or []
+        digest = payload_hash(record_relations)
+        if REPLAY_GATE and outcome.stored_relations_hash == digest:
+            continue
+        owner = str(record["discogs_artist_id"])
+        digests[owner] = digest
+        relations.extend((owner, relation) for relation in record_relations)
+
+    if digests:
+        complete = await create_relationship_edges_batch(tx, relations, stats)
+        done = [{"id": owner, "hash": digest} for owner, digest in digests.items() if complete.get(owner, True)]
+        if done:
+            await tx.run(
+                "UNWIND $rows AS row MATCH (a:Artist {id: row.id}) SET a.mb_relations_hash = row.hash",
+                rows=done,
+            )
+    return [outcome.matched for outcome in outcomes]
+
+
+def _superseded(index: int, records: list[dict[str, Any]]) -> bool:
+    """Return whether a later record in the batch targets the same Discogs artist."""
+    discogs_id = str(records[index]["discogs_artist_id"])
+    return any(str(later.get("discogs_artist_id")) == discogs_id for later in records[index + 1 :])
 
 
 def _label_row(record: dict[str, Any]) -> dict[str, Any]:
@@ -528,8 +603,8 @@ def _label_row(record: dict[str, Any]) -> dict[str, Any]:
 
 async def enrich_labels_batch(tx: Any, records: list[dict[str, Any]], stats: dict[str, int]) -> list[bool]:
     """Enrich many Labels in one transaction."""
-    flags, _ = await _run_entity_batch(tx, ("Label", "l", LABEL_FIELDS), "discogs_label_id", records, _label_row, lambda _record: None, stats)
-    return flags
+    outcomes = await _run_entity_batch(tx, ("Label", "l", LABEL_FIELDS), "discogs_label_id", records, _label_row, lambda _record: None, stats)
+    return [outcome.matched for outcome in outcomes]
 
 
 def _release_row(record: dict[str, Any]) -> dict[str, Any]:
@@ -545,13 +620,13 @@ def _release_row(record: dict[str, Any]) -> dict[str, Any]:
 
 async def enrich_releases_batch(tx: Any, records: list[dict[str, Any]], stats: dict[str, int]) -> list[bool]:
     """Enrich many Releases and reconcile their media projections in one transaction."""
-    flags, changed = await _run_entity_batch(tx, ("Release", "r", RELEASE_FIELDS), "discogs_release_id", records, _release_row, _media_digest, stats)
+    outcomes = await _run_entity_batch(tx, ("Release", "r", RELEASE_FIELDS), "discogs_release_id", records, _release_row, _media_digest, stats)
 
     # A later message for the same release replaces an earlier one, as sequential delivery would.
     summaries: dict[str, dict[str, Any]] = {}
     edges: dict[str, list[dict[str, Any]]] = {}
-    for record, was_changed in zip(records, changed, strict=True):
-        if not was_changed:
+    for record, outcome in zip(records, outcomes, strict=True):
+        if not outcome.changed:
             continue
         media = release_media_block(record)
         if media is None:
@@ -572,7 +647,7 @@ async def enrich_releases_batch(tx: Any, records: list[dict[str, Any]], stats: d
         items_flat = [row for rows in edges.values() for row in rows]
         if items_flat:
             await tx.run(RELEASE_MEDIA_EDGES_BATCH_CYPHER, items=items_flat, source=MEDIA_SOURCE)
-    return flags
+    return [outcome.matched for outcome in outcomes]
 
 
 def _release_group_row(record: dict[str, Any]) -> dict[str, Any]:
@@ -587,7 +662,7 @@ def _release_group_row(record: dict[str, Any]) -> dict[str, Any]:
 
 async def enrich_release_groups_batch(tx: Any, records: list[dict[str, Any]], stats: dict[str, int]) -> list[bool]:
     """Enrich many Masters with release-group metadata in one transaction."""
-    flags, _ = await _run_entity_batch(
+    outcomes = await _run_entity_batch(
         tx,
         ("Master", "m", RELEASE_GROUP_FIELDS),
         "discogs_master_id",
@@ -596,7 +671,7 @@ async def enrich_release_groups_batch(tx: Any, records: list[dict[str, Any]], st
         lambda _record: None,
         stats,
     )
-    return flags
+    return [outcome.matched for outcome in outcomes]
 
 
 BATCH_PROJECTIONS: dict[str, BatchProjection] = {

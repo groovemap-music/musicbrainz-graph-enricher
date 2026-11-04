@@ -18,6 +18,7 @@ from neo4j import AsyncDriver, AsyncGraphDatabase
 from orjson import dumps
 
 import brainzgraphinator.brainzgraphinator as service
+from brainzgraphinator import _projections
 
 
 pytestmark = pytest.mark.integration
@@ -158,3 +159,85 @@ async def test_a_node_enriched_before_the_gate_is_rewritten_once(neo4j_driver: A
     await asyncio.sleep(0.01)
     await deliver(neo4j_driver, batched, messages())
     assert (await stamps(neo4j_driver))["a1"] == migrated
+
+
+async def batch(driver: AsyncDriver, function: Any, records: list[dict[str, Any]]) -> list[bool]:
+    stats = dict.fromkeys(service.enrichment_stats, 0)
+    async with driver.session(database="neo4j") as session:
+        outcome: list[bool] = []
+
+        async def work(tx: Any) -> None:
+            outcome.extend(await function(tx, records, stats))
+
+        await session.execute_write(work)
+    return outcome
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("stored_is_last", [True, False])
+async def test_duplicate_records_in_one_batch_leave_the_last_one(neo4j_driver: AsyncDriver, stored_is_last: bool) -> None:
+    older = {"id": "mb-a1", "discogs_artist_id": "a1", "type": "Group"}
+    newer = {"id": "mb-a1", "discogs_artist_id": "a1", "type": "Person"}
+    # Seed the node with the digest of whichever record will NOT be applied last, so one of the
+    # two rows is an "unchanged replay" and the other is not: the order-sensitive case.
+    seeded, delivered = ([newer], [older, newer]) if stored_is_last else ([older], [newer, older])
+    assert await batch(neo4j_driver, _projections.enrich_artists_batch, seeded) == [True]
+
+    assert await batch(neo4j_driver, _projections.enrich_artists_batch, delivered) == [True, True]
+
+    final = delivered[-1]
+    assert await run(neo4j_driver, "MATCH (a:Artist {id: 'a1'}) RETURN a.mb_type AS t, a.mb_hash AS h") == [
+        {"t": final["type"], "h": _projections.payload_hash(_projections._artist_row(final), [])}
+    ]
+
+
+@pytest.mark.asyncio
+async def test_duplicate_releases_in_one_batch_keep_only_the_last_media(neo4j_driver: AsyncDriver) -> None:
+    def release(medium: str) -> dict[str, Any]:
+        return {"id": "mb-r1", "discogs_release_id": "r1", "media": {"items": [{"medium": medium, "family": "optical", "qty": 1}]}}
+
+    assert await batch(neo4j_driver, _projections.enrich_releases_batch, [release("cd"), release("dvd")]) == [True, True]
+
+    rows = await run(neo4j_driver, "MATCH (:Release {id: 'r1'})-[:ISSUED_ON {source: 'musicbrainz'}]->(m) RETURN m.id AS id")
+    assert rows == [{"id": "dvd"}]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("batched", [True, False], ids=["batched", "per-message"])
+async def test_relation_to_a_missing_target_is_retried_until_it_resolves(neo4j_driver: AsyncDriver, batched: bool) -> None:
+    artist = {"id": "mb-a1", "discogs_artist_id": "a1", "relations": [{"type": "teacher", "target_discogs_artist_id": "late"}]}
+
+    def work() -> list[tuple[Any, Delivery]]:
+        return [(service.on_artist_message, Delivery(dict(artist)))]
+
+    await deliver(neo4j_driver, batched, work())
+    assert await run(neo4j_driver, "MATCH (:Artist {id: 'a1'})-[e:TAUGHT]->() RETURN count(e) AS n") == [{"n": 0}]
+    assert await run(neo4j_driver, "MATCH (a:Artist {id: 'a1'}) RETURN a.mb_relations_hash AS h") == [{"h": None}]
+
+    await run(neo4j_driver, "CREATE (:Artist {id: 'late'})")  # the target now exists
+    await deliver(neo4j_driver, batched, work())  # an unchanged replay must still project it
+
+    assert await run(neo4j_driver, "MATCH (:Artist {id: 'a1'})-[e:TAUGHT]->(:Artist {id: 'late'}) RETURN count(e) AS n") == [{"n": 1}]
+    if batched:
+        stored = await run(neo4j_driver, "MATCH (a:Artist {id: 'a1'}) RETURN a.mb_relations_hash AS h")
+        assert stored[0]["h"] is not None
+        before = dict(service.enrichment_stats)
+        await deliver(neo4j_driver, batched, work())
+        created, updated = (service.enrichment_stats[key] for key in ("relationships_created", "relationships_updated"))
+        assert (created, updated) == (before["relationships_created"], before["relationships_updated"]) or (created, updated) == (0, 0)
+        assert service.enrichment_stats["replays_skipped_unchanged"] >= 1
+
+
+@pytest.mark.asyncio
+async def test_the_operator_override_forces_reprojection(neo4j_driver: AsyncDriver) -> None:
+    await deliver(neo4j_driver, True, messages())
+    first = await stamps(neo4j_driver)
+    await run(neo4j_driver, "MATCH (:Artist {id: 'a1'})-[e:MEMBER_OF]->() DELETE e")  # drift to repair
+    await asyncio.sleep(0.01)
+
+    with patch.object(_projections, "REPLAY_GATE", False):
+        await deliver(neo4j_driver, True, messages())
+
+    second = await stamps(neo4j_driver)
+    assert all(second[key][0] != first[key][0] for key in first)
+    assert await run(neo4j_driver, "MATCH (:Artist {id: 'a1'})-[e:MEMBER_OF]->(:Artist {id: 'a2'}) RETURN count(e) AS n") == [{"n": 1}]
