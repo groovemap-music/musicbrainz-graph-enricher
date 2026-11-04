@@ -285,10 +285,11 @@ class TestDiscogsMediaIsUntouched:
             await enrich_release(tx, release_event("musicbrainz-multi-medium-cd-dvd"))
 
         summary, edges = (cypher for cypher, _ in media_calls(tx))
-        assert "DETACH DELETE" not in edges
-        assert summary.count("DETACH DELETE") == 1
-        assert summary.index("DELETE stale") < summary.index("WITH DISTINCT m") < summary.index("DETACH DELETE m")
-        assert "NOT (m)<-[:ISSUED_ON]-()" in summary  # any catalog's edge keeps the medium
+        assert "DETACH" not in summary + edges  # a surprise relationship must abort, not be detached
+        assert summary.count("DELETE family_edge, m") == 1
+        assert "DELETE" not in edges
+        order = ["DELETE stale", "WITH DISTINCT m", "SET m._prune_lock = true", "WHERE NOT (m)<-[:ISSUED_ON]-()", "DELETE family_edge, m"]
+        assert [summary.index(part) for part in order] == sorted(summary.index(part) for part in order)
         assert "<> 'IN_FAMILY'" in summary  # nothing else may reference it
         assert "MediaFamily" not in summary
 

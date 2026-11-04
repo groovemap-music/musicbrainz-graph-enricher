@@ -7,6 +7,7 @@ clauses is engine behaviour a mocked transaction cannot show, hence a real Neo4j
 
 from __future__ import annotations
 
+import asyncio
 import os
 from typing import Any
 
@@ -34,11 +35,21 @@ async def run(driver: AsyncDriver, query: str, **parameters: Any) -> list[dict[s
         return [dict(record) async for record in result]
 
 
-async def reconcile(driver: AsyncDriver, record: dict[str, Any]) -> None:
+@pytest.fixture(params=["single", "batch"])
+def path(request: pytest.FixtureRequest) -> str:
+    """Both write paths must prune: the per-message statement and the default UNWIND batch."""
+    return str(request.param)
+
+
+async def reconcile(driver: AsyncDriver, record: dict[str, Any], path: str = "single") -> None:
     async with driver.session(database="neo4j") as session:
 
         async def work(tx: Any) -> None:
-            await _projections.reconcile_release_media(tx, "r1", record)
+            if path == "batch":
+                stats = dict.fromkeys(("entities_enriched", "entities_skipped_no_discogs_match"), 0)
+                assert await _projections.enrich_releases_batch(tx, [record], stats) == [True]
+            else:
+                await _projections.reconcile_release_media(tx, "r1", record)
 
         await session.execute_write(work)
 
@@ -66,11 +77,11 @@ async def neo4j_driver() -> AsyncDriver:
 
 
 @pytest.mark.asyncio
-async def test_a_replaced_medium_is_pruned_and_the_new_one_kept(neo4j_driver: AsyncDriver) -> None:
-    await reconcile(neo4j_driver, release_event("cd", "dvd"))
+async def test_a_replaced_medium_is_pruned_and_the_new_one_kept(neo4j_driver: AsyncDriver, path: str) -> None:
+    await reconcile(neo4j_driver, release_event("cd", "dvd"), path)
     assert await media(neo4j_driver) == ["cd", "dvd"]
 
-    await reconcile(neo4j_driver, release_event("cd"))
+    await reconcile(neo4j_driver, release_event("cd"), path)
 
     assert await media(neo4j_driver) == ["cd"]
     # The family is a small shared vocabulary node and is never pruned; the pruned medium's
@@ -80,27 +91,27 @@ async def test_a_replaced_medium_is_pruned_and_the_new_one_kept(neo4j_driver: As
 
 
 @pytest.mark.asyncio
-async def test_a_block_with_no_items_clears_the_release_and_its_mediums(neo4j_driver: AsyncDriver) -> None:
-    await reconcile(neo4j_driver, release_event("cd", "dvd"))
+async def test_a_block_with_no_items_clears_the_release_and_its_mediums(neo4j_driver: AsyncDriver, path: str) -> None:
+    await reconcile(neo4j_driver, release_event("cd", "dvd"), path)
 
-    await reconcile(neo4j_driver, release_event())
+    await reconcile(neo4j_driver, release_event(), path)
 
     assert await media(neo4j_driver) == []
     assert await run(neo4j_driver, "MATCH (r:Release {id: 'r1'}) RETURN r.mb_medium_count AS n") == [{"n": 0}]
 
 
 @pytest.mark.asyncio
-async def test_a_medium_another_release_uses_survives(neo4j_driver: AsyncDriver) -> None:
+async def test_a_medium_another_release_uses_survives(neo4j_driver: AsyncDriver, path: str) -> None:
     await run(neo4j_driver, "MATCH (r:Release {id: 'r2'}) CREATE (r)-[:ISSUED_ON {source: 'musicbrainz'}]->(:Medium {id: 'dvd'})")
-    await reconcile(neo4j_driver, release_event("dvd"))
+    await reconcile(neo4j_driver, release_event("dvd"), path)
 
-    await reconcile(neo4j_driver, release_event())
+    await reconcile(neo4j_driver, release_event(), path)
 
     assert await media(neo4j_driver) == ["dvd"]
 
 
 @pytest.mark.asyncio
-async def test_a_medium_discogs_still_uses_survives_and_its_edge_is_untouched(neo4j_driver: AsyncDriver) -> None:
+async def test_a_medium_discogs_still_uses_survives_and_its_edge_is_untouched(neo4j_driver: AsyncDriver, path: str) -> None:
     # Discogs edges to the same medium: from this very release, and from another one.
     await run(
         neo4j_driver,
@@ -108,8 +119,8 @@ async def test_a_medium_discogs_still_uses_survives_and_its_edge_is_untouched(ne
         "CREATE (a)-[:ISSUED_ON {source: 'discogs', qty: 1}]->(m:Medium {id: 'cd'}), "
         "       (b)-[:ISSUED_ON {source: 'discogs', qty: 2}]->(m)",
     )
-    await reconcile(neo4j_driver, release_event("cd"))
-    await reconcile(neo4j_driver, release_event())
+    await reconcile(neo4j_driver, release_event("cd"), path)
+    await reconcile(neo4j_driver, release_event(), path)
 
     assert await media(neo4j_driver) == ["cd"]
     edges = await run(neo4j_driver, "MATCH (r)-[e:ISSUED_ON]->(:Medium {id: 'cd'}) RETURN r.id AS r, e.source AS s ORDER BY r")
@@ -117,18 +128,75 @@ async def test_a_medium_discogs_still_uses_survives_and_its_edge_is_untouched(ne
 
 
 @pytest.mark.asyncio
-async def test_a_medium_with_any_other_relationship_survives(neo4j_driver: AsyncDriver) -> None:
-    await reconcile(neo4j_driver, release_event("cd"))
+async def test_a_medium_with_any_other_relationship_survives(neo4j_driver: AsyncDriver, path: str) -> None:
+    await reconcile(neo4j_driver, release_event("cd"), path)
     await run(neo4j_driver, "MATCH (m:Medium {id: 'cd'}) CREATE (:Referrer)-[:REFERS_TO]->(m)")
 
-    await reconcile(neo4j_driver, release_event())
+    await reconcile(neo4j_driver, release_event(), path)
 
     assert await media(neo4j_driver) == ["cd"]
 
 
 @pytest.mark.asyncio
-async def test_replaying_the_same_event_changes_nothing(neo4j_driver: AsyncDriver) -> None:
-    await reconcile(neo4j_driver, release_event("cd", "dvd"))
-    await reconcile(neo4j_driver, release_event("cd", "dvd"))
+async def test_replaying_the_same_event_changes_nothing(neo4j_driver: AsyncDriver, path: str) -> None:
+    await reconcile(neo4j_driver, release_event("cd", "dvd"), path)
+    await reconcile(neo4j_driver, release_event("cd", "dvd"), path)
 
     assert await media(neo4j_driver) == ["cd", "dvd"]
+
+
+@pytest.mark.asyncio
+async def test_one_batch_prunes_for_several_releases_and_spares_shared_mediums(neo4j_driver: AsyncDriver) -> None:
+    async with neo4j_driver.session(database="neo4j") as session:
+
+        async def work(tx: Any) -> None:
+            await _projections.enrich_releases_batch(
+                tx,
+                [
+                    {**release_event("cd", "dvd"), "discogs_release_id": "r1"},
+                    {**release_event("dvd", "vinyl"), "discogs_release_id": "r2"},
+                ],
+                dict.fromkeys(("entities_enriched", "entities_skipped_no_discogs_match"), 0),
+            )
+
+        await session.execute_write(work)
+        assert await media(neo4j_driver) == ["cd", "dvd", "vinyl"]
+
+        async def replace(tx: Any) -> None:
+            await _projections.enrich_releases_batch(
+                tx,
+                [
+                    {**release_event("cd"), "discogs_release_id": "r1"},
+                    {**release_event("vinyl"), "discogs_release_id": "r2"},
+                ],
+                dict.fromkeys(("entities_enriched", "entities_skipped_no_discogs_match"), 0),
+            )
+
+        await session.execute_write(replace)
+
+    # dvd lost both users and is pruned; cd and vinyl are still referenced.
+    assert await media(neo4j_driver) == ["cd", "vinyl"]
+
+
+@pytest.mark.asyncio
+async def test_an_edge_attached_while_pruning_is_never_silently_detached(neo4j_driver: AsyncDriver) -> None:
+    for attempt in range(15):
+        await run(neo4j_driver, "MATCH (m:Medium) DETACH DELETE m")
+        await reconcile(neo4j_driver, release_event("cd"), "batch")
+
+        async def attach(driver: AsyncDriver = neo4j_driver) -> None:
+            async with driver.session(database="neo4j") as session:
+
+                async def work(tx: Any) -> None:
+                    await (
+                        await tx.run("MATCH (r:Release {id: 'r3'}) MERGE (m:Medium {id: 'cd'}) MERGE (r)-[:ISSUED_ON {source: 'discogs'}]->(m)")
+                    ).consume()
+
+                await session.execute_write(work)
+
+        await asyncio.gather(reconcile(neo4j_driver, release_event(), "batch"), attach())
+
+        # Whichever transaction won, the Discogs edge exists with its Medium: no dangling edge, no lost edge.
+        edges = await run(neo4j_driver, "MATCH (:Release {id: 'r3'})-[e:ISSUED_ON]->(m:Medium {id: 'cd'}) RETURN count(e) AS n")
+        assert edges == [{"n": 1}], f"attempt {attempt}"
+        await run(neo4j_driver, "MATCH (:Release {id: 'r3'})-[e:ISSUED_ON]->() DELETE e")
