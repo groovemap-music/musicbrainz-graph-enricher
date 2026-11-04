@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
 from datetime import UTC, datetime
 from typing import Any, Protocol
 
+import orjson
 from common.media import families_of, map_musicbrainz_release, medium_label
 
 
@@ -177,6 +179,92 @@ async def create_relationship_edges(
             stats["relationships_skipped_missing_side"] += 1
 
 
+# ── Payload-hash replay gate ─────────────────────────────────────────────
+#
+# Every enrichment SET is gated on `mb_hash`, a digest of exactly what the event projects onto
+# the graph (properties, supported relations, media). A replay of unchanged data matches the
+# node, finds the same digest and writes nothing; `mb_updated_at` therefore records when the
+# MusicBrainz data last actually changed, not when the message was last delivered. The events
+# carry no source timestamp of their own, so the time of the change is the best available.
+# A node enriched before the gate existed has no digest and is rewritten once.
+
+HASH_VERSION = "v1"
+
+# (graph property, row key). The row key is the parameter name of both statement shapes.
+ARTIST_FIELDS = [
+    (key, key)
+    for key in (
+        "mbid",
+        "mb_type",
+        "mb_gender",
+        "mb_begin_date",
+        "mb_end_date",
+        "mb_area",
+        "mb_begin_area",
+        "mb_end_area",
+        "mb_disambiguation",
+    )
+]
+LABEL_FIELDS = [(key, key) for key in ("mbid", "mb_type", "mb_label_code", "mb_begin_date", "mb_end_date", "mb_area")]
+RELEASE_FIELDS = [
+    ("mbid", "mbid"),
+    ("mb_barcode", "mb_barcode"),
+    ("mb_status", "mb_status"),
+    ("mb_release_group_mbid", "release_group_mbid"),
+    ("mb_country", "mb_country"),
+    ("mb_release_events", "mb_release_events"),
+]
+RELEASE_GROUP_FIELDS = [(key, key) for key in ("mbid", "mb_type", "mb_secondary_types", "mb_first_release_date", "mb_disambiguation")]
+
+
+def payload_hash(*parts: Any) -> str:
+    """Return a versioned, order-independent digest of the projected payload."""
+    digest = hashlib.sha256(orjson.dumps(parts, option=orjson.OPT_SORT_KEYS, default=str)).hexdigest()
+    return f"{HASH_VERSION}:{digest}"
+
+
+def _gated_cypher(label: str, var: str, fields: list[tuple[str, str]], *, batch: bool) -> str:
+    """Build the MATCH-then-conditional-SET statement for one entity kind.
+
+    The SET runs only when the stored digest differs. The statement still returns the matched
+    node (and whether it changed) so callers can tell "no Discogs match" from "unchanged".
+    """
+    source = "row." if batch else "$"
+    match_id = "row.discogs_id" if batch else "$discogs_id"
+    assignments = ", ".join(f"{var}.{prop} = {source}{key}" for prop, key in fields)
+    prefix = "UNWIND $rows AS row " if batch else ""
+    with_row = f"{var}, row" if batch else var
+    returned = "row.idx AS idx" if batch else f"{var}.id AS matched_id"
+    return (
+        f"{prefix}MATCH ({var}:{label} {{id: {match_id}}}) "
+        f"WITH {with_row}, ({var}.mb_hash IS NULL OR {var}.mb_hash <> {source}mb_hash) AS changed "
+        "FOREACH (_ IN CASE WHEN changed THEN [1] ELSE [] END | "
+        f"SET {assignments}, {var}.mb_hash = {source}mb_hash, {var}.mb_updated_at = $mb_updated_at) "
+        f"RETURN {returned}, changed"
+    )
+
+
+def _record_outcome(matched: Any, stats: dict[str, int]) -> bool:
+    """Count a single-record result and return whether the node was written."""
+    if not matched:
+        stats["entities_skipped_no_discogs_match"] += 1
+        return False
+    stats["entities_enriched"] += 1
+    changed = bool(matched.get("changed", True))
+    if not changed:
+        stats["replays_skipped_unchanged"] = stats.get("replays_skipped_unchanged", 0) + 1
+    return changed
+
+
+def _media_digest(record: dict[str, Any]) -> Any:
+    """Return what the release's media block projects, for the payload hash."""
+    media = release_media_block(record)
+    if media is None:
+        return None
+    items = [item for item in (media.get("items") or []) if isinstance(item, dict)]
+    return [families_of(media), len(items), media_edge_rows(media)]
+
+
 async def enrich_artist(tx: Any, record: dict[str, Any], stats: dict[str, int]) -> bool:
     """Enrich a matched Artist and project its supported relationships."""
     discogs_id = record.get("discogs_artist_id")
@@ -185,39 +273,18 @@ async def enrich_artist(tx: Any, record: dict[str, Any], stats: dict[str, int]) 
         return True
 
     discogs_id = str(discogs_id)
+    relations = record.get("relations") or []
+    row = _artist_row(record)
     result = await tx.run(
-        "MATCH (a:Artist {id: $discogs_id}) "
-        "SET a.mbid = $mbid, "
-        "    a.mb_type = $mb_type, "
-        "    a.mb_gender = $mb_gender, "
-        "    a.mb_begin_date = $mb_begin_date, "
-        "    a.mb_end_date = $mb_end_date, "
-        "    a.mb_area = $mb_area, "
-        "    a.mb_begin_area = $mb_begin_area, "
-        "    a.mb_end_area = $mb_end_area, "
-        "    a.mb_disambiguation = $mb_disambiguation, "
-        "    a.mb_updated_at = $mb_updated_at "
-        "RETURN a.id AS matched_id",
+        _gated_cypher("Artist", "a", ARTIST_FIELDS, batch=False),
         discogs_id=discogs_id,
-        mbid=record.get("mbid", record.get("id")),
-        mb_type=record.get("mb_type", record.get("type")),
-        mb_gender=record.get("gender"),
-        mb_begin_date=record.get("begin_date", (record.get("life_span") or {}).get("begin")),
-        mb_end_date=record.get("end_date", (record.get("life_span") or {}).get("end")),
-        mb_area=record.get("area"),
-        mb_begin_area=record.get("begin_area"),
-        mb_end_area=record.get("end_area"),
-        mb_disambiguation=record.get("disambiguation"),
+        **row,
+        mb_hash=payload_hash(row, relations),
         mb_updated_at=datetime.now(UTC).isoformat(),
     )
     matched = await result.single()
-    if matched:
-        stats["entities_enriched"] += 1
-    else:
-        stats["entities_skipped_no_discogs_match"] += 1
-
-    relations = record.get("relations", [])
-    if relations and matched:
+    changed = _record_outcome(matched, stats)
+    if relations and matched and changed:
         await create_relationship_edges(tx, discogs_id, relations, stats)
     return True
 
@@ -229,28 +296,15 @@ async def enrich_label(tx: Any, record: dict[str, Any], stats: dict[str, int]) -
         stats["entities_skipped_no_discogs_match"] += 1
         return True
 
-    discogs_id = str(discogs_id)
+    row = _label_row(record)
     result = await tx.run(
-        "MATCH (l:Label {id: $discogs_id}) "
-        "SET l.mbid = $mbid, "
-        "    l.mb_type = $mb_type, "
-        "    l.mb_label_code = $mb_label_code, "
-        "    l.mb_begin_date = $mb_begin_date, "
-        "    l.mb_end_date = $mb_end_date, "
-        "    l.mb_area = $mb_area, "
-        "    l.mb_updated_at = $mb_updated_at "
-        "RETURN l.id AS matched_id",
-        discogs_id=discogs_id,
-        mbid=record.get("mbid", record.get("id")),
-        mb_type=record.get("mb_type", record.get("type")),
-        mb_label_code=record.get("label_code"),
-        mb_begin_date=record.get("begin_date", (record.get("life_span") or {}).get("begin")),
-        mb_end_date=record.get("end_date", (record.get("life_span") or {}).get("end")),
-        mb_area=record.get("area"),
+        _gated_cypher("Label", "l", LABEL_FIELDS, batch=False),
+        discogs_id=str(discogs_id),
+        **row,
+        mb_hash=payload_hash(row, None),
         mb_updated_at=datetime.now(UTC).isoformat(),
     )
-    matched = await result.single()
-    stats["entities_enriched" if matched else "entities_skipped_no_discogs_match"] += 1
+    _record_outcome(await result.single(), stats)
     return True
 
 
@@ -281,31 +335,17 @@ async def enrich_release(tx: Any, record: dict[str, Any], stats: dict[str, int])
         return True
 
     discogs_id = str(discogs_id)
+    row = _release_row(record)
     result = await tx.run(
-        "MATCH (r:Release {id: $discogs_id}) "
-        "SET r.mbid = $mbid, "
-        "    r.mb_barcode = $mb_barcode, "
-        "    r.mb_status = $mb_status, "
-        "    r.mb_release_group_mbid = $release_group_mbid, "
-        "    r.mb_country = $mb_country, "
-        "    r.mb_release_events = $mb_release_events, "
-        "    r.mb_updated_at = $mb_updated_at "
-        "RETURN r.id AS matched_id",
+        _gated_cypher("Release", "r", RELEASE_FIELDS, batch=False),
         discogs_id=discogs_id,
-        mbid=record.get("mbid", record.get("id")),
-        mb_barcode=record.get("barcode"),
-        mb_status=record.get("status"),
-        release_group_mbid=record.get("release_group_mbid"),
-        mb_country=record.get("country"),
-        mb_release_events=release_event_rows(record.get("release_events")),
+        **row,
+        mb_hash=payload_hash(row, _media_digest(record)),
         mb_updated_at=datetime.now(UTC).isoformat(),
     )
     matched = await result.single()
-    if matched:
-        stats["entities_enriched"] += 1
+    if _record_outcome(matched, stats):
         await reconcile_release_media(tx, discogs_id, record)
-    else:
-        stats["entities_skipped_no_discogs_match"] += 1
     return True
 
 
@@ -316,26 +356,15 @@ async def enrich_release_group(tx: Any, record: dict[str, Any], stats: dict[str,
         stats["entities_skipped_no_discogs_match"] += 1
         return True
 
-    discogs_id = str(discogs_id)
+    row = _release_group_row(record)
     result = await tx.run(
-        "MATCH (m:Master {id: $discogs_id}) "
-        "SET m.mbid = $mbid, "
-        "    m.mb_type = $mb_type, "
-        "    m.mb_secondary_types = $mb_secondary_types, "
-        "    m.mb_first_release_date = $mb_first_release_date, "
-        "    m.mb_disambiguation = $mb_disambiguation, "
-        "    m.mb_updated_at = $mb_updated_at "
-        "RETURN m.id AS matched_id",
-        discogs_id=discogs_id,
-        mbid=record.get("mbid", record.get("id")),
-        mb_type=record.get("mb_type", record.get("type")),
-        mb_secondary_types=record.get("secondary_types", []),
-        mb_first_release_date=record.get("first_release_date"),
-        mb_disambiguation=record.get("disambiguation"),
+        _gated_cypher("Master", "m", RELEASE_GROUP_FIELDS, batch=False),
+        discogs_id=str(discogs_id),
+        **row,
+        mb_hash=payload_hash(row, None),
         mb_updated_at=datetime.now(UTC).isoformat(),
     )
-    matched = await result.single()
-    stats["entities_enriched" if matched else "entities_skipped_no_discogs_match"] += 1
+    _record_outcome(await result.single(), stats)
     return True
 
 
@@ -345,60 +374,6 @@ async def enrich_release_group(tx: Any, record: dict[str, Any], stats: dict[str,
 # message. The per-record functions above stay as the isolation fallback: when a batch fails
 # for a non-transient reason, the flusher replays its members one by one so a single poison
 # record cannot fail its neighbours.
-
-ARTIST_BATCH_CYPHER = (
-    "UNWIND $rows AS row "
-    "MATCH (a:Artist {id: row.discogs_id}) "
-    "SET a.mbid = row.mbid, "
-    "    a.mb_type = row.mb_type, "
-    "    a.mb_gender = row.mb_gender, "
-    "    a.mb_begin_date = row.mb_begin_date, "
-    "    a.mb_end_date = row.mb_end_date, "
-    "    a.mb_area = row.mb_area, "
-    "    a.mb_begin_area = row.mb_begin_area, "
-    "    a.mb_end_area = row.mb_end_area, "
-    "    a.mb_disambiguation = row.mb_disambiguation, "
-    "    a.mb_updated_at = $mb_updated_at "
-    "RETURN DISTINCT a.id AS matched_id"
-)
-
-LABEL_BATCH_CYPHER = (
-    "UNWIND $rows AS row "
-    "MATCH (l:Label {id: row.discogs_id}) "
-    "SET l.mbid = row.mbid, "
-    "    l.mb_type = row.mb_type, "
-    "    l.mb_label_code = row.mb_label_code, "
-    "    l.mb_begin_date = row.mb_begin_date, "
-    "    l.mb_end_date = row.mb_end_date, "
-    "    l.mb_area = row.mb_area, "
-    "    l.mb_updated_at = $mb_updated_at "
-    "RETURN DISTINCT l.id AS matched_id"
-)
-
-RELEASE_BATCH_CYPHER = (
-    "UNWIND $rows AS row "
-    "MATCH (r:Release {id: row.discogs_id}) "
-    "SET r.mbid = row.mbid, "
-    "    r.mb_barcode = row.mb_barcode, "
-    "    r.mb_status = row.mb_status, "
-    "    r.mb_release_group_mbid = row.release_group_mbid, "
-    "    r.mb_country = row.mb_country, "
-    "    r.mb_release_events = row.mb_release_events, "
-    "    r.mb_updated_at = $mb_updated_at "
-    "RETURN DISTINCT r.id AS matched_id"
-)
-
-RELEASE_GROUP_BATCH_CYPHER = (
-    "UNWIND $rows AS row "
-    "MATCH (m:Master {id: row.discogs_id}) "
-    "SET m.mbid = row.mbid, "
-    "    m.mb_type = row.mb_type, "
-    "    m.mb_secondary_types = row.mb_secondary_types, "
-    "    m.mb_first_release_date = row.mb_first_release_date, "
-    "    m.mb_disambiguation = row.mb_disambiguation, "
-    "    m.mb_updated_at = $mb_updated_at "
-    "RETURN DISTINCT m.id AS matched_id"
-)
 
 RELEASE_MEDIA_SUMMARY_BATCH_CYPHER = (
     "UNWIND $rows AS row "
@@ -435,29 +410,34 @@ def _life_span(record: dict[str, Any], key: str) -> Any:
 
 async def _run_entity_batch(
     tx: Any,
-    cypher: str,
+    spec: tuple[str, str, list[tuple[str, str]]],
     id_key: str,
     records: list[dict[str, Any]],
     build_row: Any,
+    extra_hash: Any,
     stats: dict[str, int],
-) -> list[bool]:
-    """Write the matchable records with one UNWIND and flag which Discogs ids matched."""
+) -> tuple[list[bool], list[bool]]:
+    """Write the changed records with one UNWIND; return per-record (matched, changed) flags."""
+    label, var, fields = spec
     now = datetime.now(UTC).isoformat()
     rows: list[dict[str, Any]] = []
-    for record in records:
+    for index, record in enumerate(records):
         discogs_id = record.get(id_key)
         if discogs_id is not None:
-            rows.append({"discogs_id": str(discogs_id), **build_row(record)})
+            row = build_row(record)
+            rows.append({"idx": index, "discogs_id": str(discogs_id), **row, "mb_hash": payload_hash(row, extra_hash(record))})
 
-    matched_ids: set[str] = set()
+    outcomes: dict[int, bool] = {}
     if rows:
-        result = await tx.run(cypher, rows=rows, mb_updated_at=now)
-        matched_ids = {str(row["matched_id"]) async for row in result}
+        result = await tx.run(_gated_cypher(label, var, fields, batch=True), rows=rows, mb_updated_at=now)
+        outcomes = {int(row["idx"]): bool(row["changed"]) async for row in result}
 
-    flags = [record.get(id_key) is not None and str(record[id_key]) in matched_ids for record in records]
-    stats["entities_enriched"] += sum(flags)
-    stats["entities_skipped_no_discogs_match"] += len(flags) - sum(flags)
-    return flags
+    matched = [index in outcomes for index in range(len(records))]
+    changed = [outcomes.get(index, False) for index in range(len(records))]
+    stats["entities_enriched"] += sum(matched)
+    stats["entities_skipped_no_discogs_match"] += len(matched) - sum(matched)
+    stats["replays_skipped_unchanged"] = stats.get("replays_skipped_unchanged", 0) + sum(m and not c for m, c in zip(matched, changed, strict=True))
+    return matched, changed
 
 
 def _artist_row(record: dict[str, Any]) -> dict[str, Any]:
@@ -514,11 +494,20 @@ async def create_relationship_edges_batch(
 
 async def enrich_artists_batch(tx: Any, records: list[dict[str, Any]], stats: dict[str, int]) -> list[bool]:
     """Enrich many Artists and project their supported relationships in one transaction."""
-    flags = await _run_entity_batch(tx, ARTIST_BATCH_CYPHER, "discogs_artist_id", records, _artist_row, stats)
+    flags, changed = await _run_entity_batch(
+        tx,
+        ("Artist", "a", ARTIST_FIELDS),
+        "discogs_artist_id",
+        records,
+        _artist_row,
+        lambda record: record.get("relations") or [],
+        stats,
+    )
+    # An unchanged replay already projected its relationships; only changed records rewrite them.
     relations = [
         (str(record["discogs_artist_id"]), relation)
-        for record, matched in zip(records, flags, strict=True)
-        if matched
+        for record, was_changed in zip(records, changed, strict=True)
+        if was_changed
         for relation in record.get("relations") or []
     ]
     if relations:
@@ -539,7 +528,8 @@ def _label_row(record: dict[str, Any]) -> dict[str, Any]:
 
 async def enrich_labels_batch(tx: Any, records: list[dict[str, Any]], stats: dict[str, int]) -> list[bool]:
     """Enrich many Labels in one transaction."""
-    return await _run_entity_batch(tx, LABEL_BATCH_CYPHER, "discogs_label_id", records, _label_row, stats)
+    flags, _ = await _run_entity_batch(tx, ("Label", "l", LABEL_FIELDS), "discogs_label_id", records, _label_row, lambda _record: None, stats)
+    return flags
 
 
 def _release_row(record: dict[str, Any]) -> dict[str, Any]:
@@ -555,13 +545,13 @@ def _release_row(record: dict[str, Any]) -> dict[str, Any]:
 
 async def enrich_releases_batch(tx: Any, records: list[dict[str, Any]], stats: dict[str, int]) -> list[bool]:
     """Enrich many Releases and reconcile their media projections in one transaction."""
-    flags = await _run_entity_batch(tx, RELEASE_BATCH_CYPHER, "discogs_release_id", records, _release_row, stats)
+    flags, changed = await _run_entity_batch(tx, ("Release", "r", RELEASE_FIELDS), "discogs_release_id", records, _release_row, _media_digest, stats)
 
     # A later message for the same release replaces an earlier one, as sequential delivery would.
     summaries: dict[str, dict[str, Any]] = {}
     edges: dict[str, list[dict[str, Any]]] = {}
-    for record, matched in zip(records, flags, strict=True):
-        if not matched:
+    for record, was_changed in zip(records, changed, strict=True):
+        if not was_changed:
             continue
         media = release_media_block(record)
         if media is None:
@@ -597,7 +587,16 @@ def _release_group_row(record: dict[str, Any]) -> dict[str, Any]:
 
 async def enrich_release_groups_batch(tx: Any, records: list[dict[str, Any]], stats: dict[str, int]) -> list[bool]:
     """Enrich many Masters with release-group metadata in one transaction."""
-    return await _run_entity_batch(tx, RELEASE_GROUP_BATCH_CYPHER, "discogs_master_id", records, _release_group_row, stats)
+    flags, _ = await _run_entity_batch(
+        tx,
+        ("Master", "m", RELEASE_GROUP_FIELDS),
+        "discogs_master_id",
+        records,
+        _release_group_row,
+        lambda _record: None,
+        stats,
+    )
+    return flags
 
 
 BATCH_PROJECTIONS: dict[str, BatchProjection] = {

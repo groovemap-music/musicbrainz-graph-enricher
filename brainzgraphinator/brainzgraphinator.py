@@ -165,6 +165,7 @@ enrichment_stats = {
     "relationships_created": 0,
     "relationships_updated": 0,
     "relationships_skipped_missing_side": 0,
+    "replays_skipped_unchanged": 0,
 }
 
 # ── Telemetry ────────────────────────────────────────────────────────────

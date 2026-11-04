@@ -89,6 +89,20 @@ no `ISSUED_ON` edge from any catalog still reaches it and nothing but its own `I
 touches it. A medium Discogs, or another release, still uses is never pruned, and `MediaFamily`
 nodes never are. Orphans left by releases processed before this rule are not swept retroactively.
 
+## Replays of unchanged data
+
+Every enrichment SET is gated on `mb_hash`, a versioned SHA-256 of exactly what the event
+projects: the node properties, the supported relations (artists) and the canonical media block
+(releases). When the stored digest matches, the statement writes nothing, and neither the
+relationship nor the media statements run. A requeued or re-run message therefore costs a
+read, not a write. `replays_skipped_unchanged` counts these matches.
+
+`mb_updated_at` is stamped only when the node is written, so it records when the MusicBrainz data
+last changed in the graph. The events carry no source timestamp, so the change time is the best
+available. A node enriched before the gate existed has no digest and is rewritten once.
+Changing the projection shape means bumping `HASH_VERSION` in `_projections.py`, which rewrites
+every node once on its next event.
+
 ## Country and release events
 
 A matched release also carries MusicBrainz's regional release data, written beside `mb_barcode`:
