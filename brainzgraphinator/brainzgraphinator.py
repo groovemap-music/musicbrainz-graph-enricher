@@ -132,10 +132,14 @@ idle_mode = False
 # Driver will be initialized in main
 graph: AsyncResilientNeo4jDriver | None = None
 
-# Legacy batch knobs remain readable for environment compatibility. Processing
-# is deliberately per delivery; these values do not currently change behavior.
+# Cross-message write batching. Concurrent deliveries of one data type (prefetch is 200) share a
+# single UNWIND transaction: a flush happens when BATCH_SIZE records are waiting or when no
+# further record has arrived within BATCH_LINGER seconds, so a lone message is delayed by at most
+# BATCH_LINGER. BATCH_MODE=false restores one transaction per message.
 BATCH_MODE = os.environ.get("NEO4J_BATCH_MODE", "true").lower() == "true"
-BATCH_SIZE = int(os.environ.get("NEO4J_BATCH_SIZE", "100"))
+BATCH_SIZE = max(1, int(os.environ.get("NEO4J_BATCH_SIZE", "100")))
+BATCH_LINGER = float(os.environ.get("NEO4J_BATCH_LINGER", "0.05"))
+# Legacy knob, still readable for environment compatibility; BATCH_LINGER governs flush timing.
 BATCH_FLUSH_INTERVAL = float(os.environ.get("NEO4J_BATCH_FLUSH_INTERVAL", "5.0"))
 
 # Connection state tracking
@@ -777,6 +781,202 @@ PROCESSORS: dict[str, Any] = {
 }
 
 
+_TRANSIENT_WRITE_ERRORS = (ServiceUnavailable, SessionExpired, DatabaseUnavailableError)
+
+
+class _PendingWrite:
+    """One delivery waiting for its batch to commit."""
+
+    __slots__ = ("future", "record", "span")
+
+    def __init__(self, record: dict[str, Any], span: Any, future: asyncio.Future[bool]) -> None:
+        self.record = record
+        self.span = span
+        self.future = future
+
+
+class WriteBatcher:
+    """Coalesce concurrent deliveries of one data type into UNWIND transactions.
+
+    Each caller keeps its own delivery and settles it from its own result: ``submit`` resolves
+    to whether that record matched a Discogs node, or raises what a single-record write would
+    have raised. A transient outage fails every member (each is then requeued by the delivery
+    classifier). Any other batch failure is replayed record by record in separate transactions,
+    so one poison record is rejected alone instead of taking its neighbours with it.
+    """
+
+    def __init__(self, data_type: str, enrich_fn: _projections.Projection) -> None:
+        self.data_type = data_type
+        self.enrich_fn = enrich_fn
+        self.pending: list[_PendingWrite] = []
+        self.loop: asyncio.AbstractEventLoop | None = None
+        self.timer: asyncio.TimerHandle | None = None
+        self.flushes: set[asyncio.Task[None]] = set()
+
+    async def submit(self, record: dict[str, Any], stats: dict[str, int]) -> bool:
+        loop = asyncio.get_running_loop()
+        if self.loop is not loop:
+            # A new event loop (tests, restart) cannot resume the old loop's timer or tasks.
+            self.loop, self.pending, self.timer, self.flushes = loop, [], None, set()
+        future: asyncio.Future[bool] = loop.create_future()
+        self.pending.append(_PendingWrite(record, _delivery_span.get(), future))
+        if len(self.pending) >= BATCH_SIZE:
+            self._flush_now()
+        elif self.timer is None:
+            self.timer = loop.call_later(BATCH_LINGER, self._flush_now)
+        else:
+            # Linger restarts on every arrival so a steady stream coalesces fully.
+            self.timer.cancel()
+            self.timer = loop.call_later(BATCH_LINGER, self._flush_now)
+        matched = await future
+        stats["entities_enriched" if matched else "entities_skipped_no_discogs_match"] += 1
+        return matched
+
+    def _flush_now(self) -> None:
+        if self.timer is not None:
+            self.timer.cancel()
+            self.timer = None
+        batch, self.pending = self.pending[:BATCH_SIZE], self.pending[BATCH_SIZE:]
+        if self.pending:
+            self.timer = asyncio.get_running_loop().call_later(BATCH_LINGER, self._flush_now)
+        batch = [item for item in batch if not item.future.done()]
+        if not batch:
+            return
+        task = asyncio.get_running_loop().create_task(self._write(batch))
+        self.flushes.add(task)
+        task.add_done_callback(self.flushes.discard)
+
+    async def _write(self, batch: list[_PendingWrite]) -> None:
+        try:
+            stats = await self._commit(batch)
+        except _TRANSIENT_WRITE_ERRORS as error:
+            self._fail(batch, error)
+        except asyncio.CancelledError:
+            self._fail(batch, asyncio.CancelledError())
+            raise
+        except Exception as error:
+            if len(batch) == 1:
+                self._fail(batch, error)
+            else:
+                logger.warning(
+                    "⚠️ Batched write failed; replaying records individually",
+                    data_type=self.data_type,
+                    batch_size=len(batch),
+                    error=str(error),
+                )
+                await asyncio.gather(*(self._replay(item) for item in batch))
+        else:
+            flags, batch_stats = stats
+            await _merge_global_stats(batch_stats, entity_keys=False)
+            for item, matched in zip(batch, flags, strict=True):
+                if not item.future.done():
+                    item.future.set_result(matched)
+
+    @staticmethod
+    def _fail(batch: list[_PendingWrite], error: BaseException) -> None:
+        for item in batch:
+            if not item.future.done():
+                item.future.set_exception(error)
+
+    async def _commit(self, batch: list[_PendingWrite]) -> tuple[list[bool], dict[str, int]]:
+        if graph is None:
+            raise RuntimeError("Neo4j driver not initialized")
+        batch_projection = _projections.BATCH_PROJECTIONS[self.data_type]
+        records = [item.record for item in batch]
+        outcome: tuple[list[bool], dict[str, int]] = ([], {})
+
+        # `flush neo4j {entity}` opens OUTSIDE graph.session(...) so the driver wrapper's own
+        # `session neo4j` CLIENT span nests inside it rather than around it. The flush *metric*
+        # window still measures only the write itself. Every member's CONSUMER span is linked.
+        with flush_span(PIPELINE_STORE, self.data_type, links=flush_links(*(item.span for item in batch))) as batch_span:
+            async with graph.session(database="neo4j") as session:
+
+                async def tx_fn(tx: Any) -> bool:
+                    nonlocal outcome
+                    stats = dict.fromkeys(enrichment_stats, 0)
+                    flags = await batch_projection(tx, records, stats)
+                    outcome = (flags, stats)
+                    return True
+
+                started = time.perf_counter()
+                try:
+                    await session.execute_write(tx_fn)
+                except Exception:
+                    _set_span_attribute(batch_span, "outcome", "failed")
+                    _record_batch_flush(self.data_type, len(batch), time.perf_counter() - started, "failed")
+                    raise
+                _set_span_attribute(batch_span, "outcome", "committed")
+                _record_batch_flush(self.data_type, len(batch), time.perf_counter() - started, "committed")
+        return outcome
+
+    async def _replay(self, item: _PendingWrite) -> None:
+        """Write one record alone, so a poison record fails only its own delivery."""
+        try:
+            if graph is None:
+                raise RuntimeError("Neo4j driver not initialized")
+            stats = dict.fromkeys(enrichment_stats, 0)
+            async with graph.session(database="neo4j") as session:
+
+                async def tx_fn(tx: Any) -> bool:
+                    for key in stats:
+                        stats[key] = 0
+                    return bool(await self.enrich_fn(tx, item.record, stats))
+
+                await session.execute_write(tx_fn)
+            await _merge_global_stats(stats, entity_keys=False)
+            if not item.future.done():
+                item.future.set_result(stats["entities_enriched"] > 0)
+        except Exception as error:
+            if not item.future.done():
+                item.future.set_exception(error)
+
+
+async def _merge_global_stats(local_stats: dict[str, int], *, entity_keys: bool = True) -> None:
+    """Merge counters into the shared dict under the locks that guard it."""
+    global _stats_lock
+    if _stats_lock is None:
+        _stats_lock = asyncio.Lock()
+    async with _stats_lock:
+        with _stats_thread_lock:
+            for key, value in local_stats.items():
+                if entity_keys or not key.startswith("entities_"):
+                    enrichment_stats[key] += value
+
+
+_write_batchers: dict[str, WriteBatcher] = {}
+
+
+def _batcher_for(data_type: str, enrich_fn: _projections.Projection) -> WriteBatcher:
+    batcher = _write_batchers.get(data_type)
+    if batcher is None or batcher.enrich_fn is not enrich_fn:
+        batcher = _write_batchers[data_type] = WriteBatcher(data_type, enrich_fn)
+    return batcher
+
+
+async def _write_single(data_type: str, enrich_fn: _projections.Projection, body: dict[str, Any], local_stats: dict[str, int]) -> None:
+    """Write one record in its own transaction (NEO4J_BATCH_MODE=false)."""
+    if graph is None:
+        raise RuntimeError("Neo4j driver not initialized")
+    consumer_span = _delivery_span.get()
+    with flush_span(PIPELINE_STORE, data_type, links=flush_links(consumer_span)) as batch_span:
+        async with graph.session(database="neo4j") as session:
+
+            async def tx_fn(tx: Any) -> bool:
+                for key in local_stats:
+                    local_stats[key] = 0
+                return bool(await enrich_fn(tx, body, local_stats))
+
+            started = time.perf_counter()
+            try:
+                await session.execute_write(tx_fn)
+            except Exception:
+                _set_span_attribute(batch_span, "outcome", "failed")
+                _record_batch_flush(data_type, 1, time.perf_counter() - started, "failed")
+                raise
+            _set_span_attribute(batch_span, "outcome", "committed")
+            _record_batch_flush(data_type, 1, time.perf_counter() - started, "committed")
+
+
 def make_message_handler(data_type: str, enrich_fn: _projections.Projection) -> Any:
     """Create a RabbitMQ message handler for the given data type."""
 
@@ -836,45 +1036,16 @@ def make_message_handler(data_type: str, enrich_fn: _projections.Projection) -> 
                     "relationships_skipped_missing_side": 0,
                 }
 
-                # `flush neo4j {entity}` opens OUTSIDE graph.session(...) so the driver wrapper's
-                # own `session neo4j` CLIENT span nests inside it rather than around it. The flush
-                # *metric* window is unchanged and still measures only the write itself.
-                #
-                # One delivery is one flush, so the batch has exactly one member span: this
-                # delivery's CONSUMER span. A batching consumer would pass one context per member
-                # here, and both flush_links and common.tracing cap the list at 64.
-                consumer_span = _delivery_span.get()
-                with flush_span(PIPELINE_STORE, data_type, links=flush_links(consumer_span)) as batch_span:
-                    async with graph.session(database="neo4j") as session:
-
-                        async def tx_fn(tx: Any) -> bool:
-                            # Reset local counters on each retry attempt
-                            for key in local_stats:
-                                local_stats[key] = 0
-                            return bool(await enrich_fn(tx, body, local_stats))
-
-                        # Each message writes exactly one record, so this is a flush of batch size 1 —
-                        # still reported through the shared batch metrics so dashboards built against
-                        # batching services (graphinator et al.) read this service the same way.
-                        flush_started = time.perf_counter()
-                        try:
-                            await session.execute_write(tx_fn)
-                        except Exception:
-                            _set_span_attribute(batch_span, "outcome", "failed")
-                            _record_batch_flush(data_type, 1, time.perf_counter() - flush_started, "failed")
-                            raise
-                        _set_span_attribute(batch_span, "outcome", "committed")
-                        _record_batch_flush(data_type, 1, time.perf_counter() - flush_started, "committed")
+                if BATCH_MODE:
+                    # Concurrent deliveries of this data type share one UNWIND transaction;
+                    # this delivery still settles from its own result.
+                    await _batcher_for(data_type, enrich_fn).submit(body, local_stats)
+                else:
+                    await _write_single(data_type, enrich_fn, body, local_stats)
 
                 # Merge local counters into global stats under lock to prevent
                 # concurrent handlers from corrupting the shared dict
-                global _stats_lock
-                if _stats_lock is None:
-                    _stats_lock = asyncio.Lock()
-                async with _stats_lock:
-                    with _stats_thread_lock:
-                        for key, value in local_stats.items():
-                            enrichment_stats[key] += value
+                await _merge_global_stats(local_stats)
 
                 # entities_enriched vs. entities_skipped_no_discogs_match is exactly the
                 # per-message enrich_fn outcome (see enrich_artist/label/release/release_group):
