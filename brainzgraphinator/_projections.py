@@ -34,7 +34,14 @@ RELEASE_MEDIA_SUMMARY_CYPHER = (
     "WITH r "
     "MATCH (r)-[stale:ISSUED_ON]->(m:Medium) "
     "WHERE stale.source = $source AND NOT m.id IN $medium_ids "
-    "DELETE stale"
+    "DELETE stale "
+    # Medium is a vocabulary node shared with the Discogs enricher, so only a medium this
+    # statement just left without any ISSUED_ON edge, from any catalog, is a candidate; and only
+    # when nothing but its own IN_FAMILY edge touches it. MediaFamily nodes are never pruned.
+    "WITH DISTINCT m "
+    "WHERE NOT (m)<-[:ISSUED_ON]-() "
+    "  AND size([(m)-[other]-() WHERE type(other) <> 'IN_FAMILY' OR startNode(other) <> m | other]) = 0 "
+    "DETACH DELETE m"
 )
 
 RELEASE_MEDIA_EDGES_CYPHER = (
