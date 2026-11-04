@@ -156,7 +156,7 @@ async def test_releases_batch_projects_media_once_for_the_batch() -> None:
 
 async def test_relationship_batch_groups_by_type_and_counts_outcomes() -> None:
     tx = AsyncMock()
-    tx.run.return_value = Rows([{"matched": 3}], created=2)
+    tx.run.return_value = Rows([{"owner": "1", "matched": 3}], created=2)
     stats = dict.fromkeys(service.enrichment_stats, 0)
     relations = [
         ("1", {"type": "member of band", "target_discogs_artist_id": 2}),
@@ -166,10 +166,11 @@ async def test_relationship_batch_groups_by_type_and_counts_outcomes() -> None:
         ("1", {"type": "no such type", "target_discogs_artist_id": 9}),
     ]
 
-    await _projections.create_relationship_edges_batch(tx, relations, stats)
+    complete = await _projections.create_relationship_edges_batch(tx, relations, stats)
 
+    assert complete == {"1": False}  # one relation had no target, so the artist is not fully projected
     assert tx.run.await_count == 1
-    assert tx.run.await_args.kwargs["rows"][2] == {"source_id": "4", "target_id": "1"}
+    assert tx.run.await_args.kwargs["rows"][2] == {"owner": "1", "source_id": "4", "target_id": "1"}
     assert stats["relationships_created"] == 2
     assert stats["relationships_updated"] == 1
     assert stats["relationships_skipped_missing_side"] == 1
@@ -191,12 +192,13 @@ async def test_single_mode_still_writes_one_transaction_per_message(monkeypatch:
 
 async def test_unchanged_replay_writes_no_relationships_or_media() -> None:
     tx = AsyncMock()
+    artist = {"id": "a", "discogs_artist_id": 1, "relations": [{"type": "teacher", "target_discogs_artist_id": 2}]}
+    stored = _projections.payload_hash(artist["relations"])
     tx.run.side_effect = [
-        Rows([{"idx": 0, "changed": False}]),
+        Rows([{"idx": 0, "changed": False, "relations_hash": stored}]),
         Rows([{"idx": 0, "changed": False}]),
     ]
     stats = dict.fromkeys(service.enrichment_stats, 0)
-    artist = {"id": "a", "discogs_artist_id": 1, "relations": [{"type": "teacher", "target_discogs_artist_id": 2}]}
     release = {"id": "r", "discogs_release_id": 3, "media": {"items": [{"medium": "cd", "family": "optical", "qty": 1}]}}
 
     assert await _projections.enrich_artists_batch(tx, [artist], stats) == [True]

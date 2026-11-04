@@ -103,6 +103,21 @@ available. A node enriched before the gate existed has no digest and is rewritte
 Changing the projection shape means bumping `HASH_VERSION` in `_projections.py`, which rewrites
 every node once on its next event.
 
+### Relationships, duplicates and the override
+
+- **Relationships have their own digest.** An artist's `mb_relations_hash` is stored only after
+  every supported relation was projected. A relation whose target Artist is not in the graph yet
+  leaves the digest unset, so each replay retries it until the target appears; the node's own
+  `mb_hash` never gates it. The per-message path (`NEO4J_BATCH_MODE=false`, and the replay of a
+  failed batch) does not gate relationships at all, because its MERGEs are idempotent.
+- **Duplicates in one batch collapse to the last record.** Two events for the same Discogs id in
+  one flush leave the node exactly as sequential delivery would: the later event wins, and the
+  earlier one does not project its relations or media.
+- **Forcing a reprojection.** `MB_REPLAY_GATE=false` (read at startup) disables both gates, so every
+  event rewrites its node and re-projects its relationships and media. Use it after repairing the
+  graph by hand; remove it afterwards. Bumping `HASH_VERSION` does the same once, for a change in
+  the projection itself.
+
 ## Country and release events
 
 A matched release also carries MusicBrainz's regional release data, written beside `mb_barcode`:
