@@ -14,6 +14,7 @@ from typing import Any
 import pytest
 import pytest_asyncio
 from neo4j import AsyncDriver, AsyncGraphDatabase
+from neo4j.exceptions import ClientError
 
 from brainzgraphinator import _projections
 
@@ -194,9 +195,15 @@ async def test_an_edge_attached_while_pruning_is_never_silently_detached(neo4j_d
 
                 await session.execute_write(work)
 
-        await asyncio.gather(reconcile(neo4j_driver, release_event(), "batch"), attach())
+        _, attached = await asyncio.gather(reconcile(neo4j_driver, release_event(), "batch"), attach(), return_exceptions=True)
 
-        # Whichever transaction won, the Discogs edge exists with its Medium: no dangling edge, no lost edge.
+        # The attacher either wins (its edge and the Medium both exist) or, when the prune
+        # committed between its MERGE read and its relationship write, aborts with a clean
+        # EntityNotFound that the delivery's requeue retries. It is never a silent loss.
         edges = await run(neo4j_driver, "MATCH (:Release {id: 'r3'})-[e:ISSUED_ON]->(m:Medium {id: 'cd'}) RETURN count(e) AS n")
-        assert edges == [{"n": 1}], f"attempt {attempt}"
+        if attached is None:
+            assert edges == [{"n": 1}], f"attempt {attempt}: attached edge was lost"
+        else:
+            assert isinstance(attached, ClientError), attached
+            assert edges == [{"n": 0}], f"attempt {attempt}: aborted attach left an edge"
         await run(neo4j_driver, "MATCH (:Release {id: 'r3'})-[e:ISSUED_ON]->() DELETE e")

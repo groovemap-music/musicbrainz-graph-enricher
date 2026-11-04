@@ -189,6 +189,38 @@ async def test_single_mode_still_writes_one_transaction_per_message(monkeypatch:
     assert session.execute_write.await_count == 2
 
 
+@pytest.mark.parametrize(("serialize", "expected_peak"), [(True, 1), (False, 5)])
+async def test_serialize_flushes_limits_commits_in_flight(monkeypatch: pytest.MonkeyPatch, serialize: bool, expected_peak: int) -> None:
+    """NEO4J_SERIALIZE_FLUSHES keeps one commit in flight per data type; off, flushes overlap."""
+    monkeypatch.setattr(service, "BATCH_SIZE", 1)
+    monkeypatch.setattr(service, "SERIALIZE_FLUSHES", serialize)
+    in_flight = 0
+    peak = 0
+
+    async def execute(function: Any) -> Any:
+        nonlocal in_flight, peak
+        in_flight += 1
+        peak = max(peak, in_flight)
+        await asyncio.sleep(0.01)
+        try:
+            tx = AsyncMock()
+            tx.run.return_value = Rows([{"matched_id": "0", "idx": 0, "changed": True}])
+            return await function(tx)
+        finally:
+            in_flight -= 1
+
+    session = neo4j_session()
+    session.execute_write.side_effect = execute
+    deliveries = [Delivery({"id": f"mb{i}", "discogs_label_id": str(i)}) for i in range(5)]
+
+    with patch.object(service, "graph", neo4j_driver(session=session)):
+        results = await asyncio.gather(*(service.on_label_message(d) for d in deliveries))
+
+    assert all(r.settlement is Settlement.ACK for r in results)
+    assert session.execute_write.await_count == 5
+    assert peak == expected_peak
+
+
 async def test_unchanged_replay_writes_no_relationships_or_media() -> None:
     tx = AsyncMock()
     tx.run.side_effect = [
