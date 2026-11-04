@@ -79,9 +79,8 @@ async def seed(driver: Any) -> None:
             await (await session.run(f"UNWIND range(0, $n - 1) AS i CREATE (:{label} {{id: toString(i)}})", n=NODES)).consume()
 
 
-async def run_mode(driver: Any, batched: bool) -> dict[str, float]:
-    await seed(driver)
-    work = workload()
+async def deliver(driver: Any, batched: bool, work: list[tuple[Any, Delivery]]) -> float:
+    """Deliver every message through the real handlers and return the elapsed seconds."""
     for key in service.enrichment_stats:
         service.enrichment_stats[key] = 0
     # RabbitMQ prefetch applies per consumer, and the service runs one consumer per data type.
@@ -99,16 +98,44 @@ async def run_mode(driver: Any, batched: bool) -> dict[str, float]:
     ):
         started = time.perf_counter()
         await asyncio.gather(*(one(handler, delivery) for handler, delivery in work))
-        elapsed = time.perf_counter() - started
+        return time.perf_counter() - started
+
+
+async def graph_summary(driver: Any) -> dict[str, Any]:
     async with driver.session(database="neo4j") as session:
-        record = await (await session.run("MATCH (n) WHERE n.mbid IS NOT NULL RETURN count(n) AS enriched")).single()
+        stamps = await (await session.run("MATCH (n) WHERE n.mbid IS NOT NULL RETURN elementId(n) AS id, n.mb_updated_at AS ts")).data()
         edges = await (await session.run("MATCH ()-[r {source: 'musicbrainz'}]->() RETURN count(r) AS edges")).single()
+    return {"stamps": {row["id"]: row["ts"] for row in stamps}, "edges": edges["edges"]}
+
+
+async def run_mode(driver: Any, batched: bool) -> dict[str, float]:
+    await seed(driver)
+    elapsed = await deliver(driver, batched, workload())
+    summary = await graph_summary(driver)
     return {
         "seconds": elapsed,
         "msgs_per_s": MESSAGES / elapsed,
         "ms_per_msg": 1000 * elapsed / MESSAGES,
-        "enriched_nodes": float(record["enriched"]),
-        "mb_edges": float(edges["edges"]),
+        "enriched_nodes": float(len(summary["stamps"])),
+        "mb_edges": float(summary["edges"]),
+    }
+
+
+async def run_replay(driver: Any, batched: bool) -> dict[str, float]:
+    """Deliver the identical workload a second time and count what it rewrote."""
+    await seed(driver)
+    await deliver(driver, batched, workload())
+    first = await graph_summary(driver)
+    await asyncio.sleep(0.01)  # timestamps are wall-clock: make a rewrite distinguishable
+    elapsed = await deliver(driver, batched, workload())
+    second = await graph_summary(driver)
+    rewritten = sum(1 for key, stamp in second["stamps"].items() if first["stamps"].get(key) != stamp)
+    return {
+        "replay_seconds": elapsed,
+        "replay_ms_per_msg": 1000 * elapsed / MESSAGES,
+        "nodes_rewritten": float(rewritten),
+        "of_nodes": float(len(second["stamps"])),
+        "edges_unchanged": float(first["edges"] == second["edges"]),
     }
 
 
@@ -120,16 +147,18 @@ async def main() -> int:
     await driver.verify_connectivity()
     try:
         print(f"nodes per label={NODES} messages={MESSAGES} prefetch={PREFETCH}")
+        if os.environ.get("BENCH_REPLAY_ONLY"):
+            print("replay of unchanged data", {k: round(v, 2) for k, v in (await run_replay(driver, batched=True)).items()})
+            return 0
         before = await run_mode(driver, batched=False)
         after = await run_mode(driver, batched=True)
-        await asyncio.sleep(0)
+        replay = await run_replay(driver, batched=True)
     finally:
         await driver.close()
     for name, result in (("per-message", before), ("batched", after)):
         print(name, {key: round(value, 2) for key, value in result.items()})
-    print(
-        f"speedup {before['seconds'] / after['seconds']:.1f}x; same graph: {before['enriched_nodes'] == after['enriched_nodes'] and before['mb_edges'] == after['mb_edges']}"
-    )
+    print("replay of unchanged data (batched)", {key: round(value, 2) for key, value in replay.items()})
+    print(f"speedup {before['seconds'] / after['seconds']:.1f}x")
     return 0
 
 

@@ -65,7 +65,7 @@ def graph_with(tx: AsyncMock) -> Any:
 
 async def test_concurrent_deliveries_share_one_unwind_transaction() -> None:
     tx = AsyncMock()
-    tx.run.return_value = Rows([{"matched_id": "1"}, {"matched_id": "2"}])
+    tx.run.return_value = Rows([{"idx": 0, "changed": True}, {"idx": 1, "changed": True}])
     graph = graph_with(tx)
     deliveries = [Delivery({"id": f"mb{i}", "discogs_label_id": str(i)}) for i in (1, 2, 3)]
 
@@ -83,7 +83,7 @@ async def test_full_batch_flushes_without_waiting_for_linger(monkeypatch: pytest
     monkeypatch.setattr(service, "BATCH_SIZE", 2)
     monkeypatch.setattr(service, "BATCH_LINGER", 60.0)
     tx = AsyncMock()
-    tx.run.return_value = Rows([{"matched_id": "1"}, {"matched_id": "2"}])
+    tx.run.return_value = Rows([{"idx": 0, "changed": True}, {"idx": 1, "changed": True}])
     deliveries = [Delivery({"id": f"mb{i}", "discogs_label_id": str(i)}) for i in (1, 2)]
 
     with patch.object(service, "graph", graph_with(tx)):
@@ -134,7 +134,7 @@ async def test_poison_record_is_replayed_alone() -> None:
 
 async def test_releases_batch_projects_media_once_for_the_batch() -> None:
     tx = AsyncMock()
-    tx.run.side_effect = [Rows([{"matched_id": "10"}, {"matched_id": "11"}]), Rows([]), Rows([])]
+    tx.run.side_effect = [Rows([{"idx": 0, "changed": True}, {"idx": 1, "changed": True}]), Rows([]), Rows([])]
     media = {"items": [{"medium": "cd", "family": "optical", "qty": 1}]}
     records = [
         {"id": "a", "discogs_release_id": 10, "media": media},
@@ -219,3 +219,49 @@ async def test_serialize_flushes_limits_commits_in_flight(monkeypatch: pytest.Mo
     assert all(r.settlement is Settlement.ACK for r in results)
     assert session.execute_write.await_count == 5
     assert peak == expected_peak
+
+
+async def test_unchanged_replay_writes_no_relationships_or_media() -> None:
+    tx = AsyncMock()
+    tx.run.side_effect = [
+        Rows([{"idx": 0, "changed": False}]),
+        Rows([{"idx": 0, "changed": False}]),
+    ]
+    stats = dict.fromkeys(service.enrichment_stats, 0)
+    artist = {"id": "a", "discogs_artist_id": 1, "relations": [{"type": "teacher", "target_discogs_artist_id": 2}]}
+    release = {"id": "r", "discogs_release_id": 3, "media": {"items": [{"medium": "cd", "family": "optical", "qty": 1}]}}
+
+    assert await _projections.enrich_artists_batch(tx, [artist], stats) == [True]
+    assert await _projections.enrich_releases_batch(tx, [release], stats) == [True]
+
+    assert tx.run.await_count == 2  # the gated SETs only: no relationship or media statements
+    assert stats["replays_skipped_unchanged"] == 2
+    assert stats["entities_enriched"] == 2
+
+
+async def test_payload_hash_is_stable_and_sensitive() -> None:
+    row = {"b": 1, "a": [1, 2]}
+    assert _projections.payload_hash(row, None) == _projections.payload_hash({"a": [1, 2], "b": 1}, None)
+    assert _projections.payload_hash(row, None) != _projections.payload_hash({**row, "b": 2}, None)
+    assert _projections.payload_hash(row, [1]) != _projections.payload_hash(row, [2])
+
+
+async def test_both_write_paths_compute_the_same_digest_for_every_entity() -> None:
+    """A node written by one path must not be rewritten when the other replays it."""
+    media = {"items": [{"medium": "cd", "family": "optical", "qty": 1}]}
+    cases = [
+        (_projections.enrich_artist, _projections.enrich_artists_batch, {"id": "a", "discogs_artist_id": 1, "relations": [{"type": "teacher"}]}),
+        (_projections.enrich_label, _projections.enrich_labels_batch, {"id": "l", "discogs_label_id": 1, "label_code": 3}),
+        (_projections.enrich_release_group, _projections.enrich_release_groups_batch, {"id": "g", "discogs_master_id": 1}),
+        (_projections.enrich_release, _projections.enrich_releases_batch, {"id": "r", "discogs_release_id": 1, "media": media}),
+    ]
+    for single, batch, record in cases:
+        single_tx, batch_tx = AsyncMock(), AsyncMock()
+        single_tx.run.return_value = Rows([{"matched_id": "1", "changed": False}])
+        batch_tx.run.return_value = Rows([{"idx": 0, "changed": False}])
+        stats = dict.fromkeys(service.enrichment_stats, 0)
+        await single(single_tx, record, stats)
+        await batch(batch_tx, [record], stats)
+        single_hash = single_tx.run.await_args_list[0].kwargs["mb_hash"]
+        batch_hash = batch_tx.run.await_args_list[0].kwargs["rows"][0]["mb_hash"]
+        assert single_hash == batch_hash, single.__name__

@@ -40,4 +40,4 @@ port="${published##*:}"
 NEO4J_URI="bolt://127.0.0.1:${port}" \
 NEO4J_INTEGRATION_USER=neo4j \
 NEO4J_INTEGRATION_PASSWORD="${password}" \
-    uv run pytest -m integration tests/integration
+    uv run pytest -m integration tests/integration "$@"
