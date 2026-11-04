@@ -27,6 +27,26 @@ MB_RELATIONSHIP_MAP: dict[str, str] = {
 
 MEDIA_SOURCE = "musicbrainz"
 
+# Medium is a vocabulary node shared with the Discogs enricher, so only a medium the stale sweep
+# just left without any ISSUED_ON edge, from any catalog, is a candidate; and only when nothing
+# but its own outgoing IN_FAMILY edge touches it. MediaFamily nodes are never pruned.
+#
+# The candidate is write-locked (a no-op property write) BEFORE the orphan check, so a concurrent
+# transaction cannot attach an edge between the check and the delete: it waits for this one and
+# then re-creates the medium, rather than having its new edge silently detached. The delete is
+# plain DELETE of the node and its own IN_FAMILY edge, never DETACH, so an unexpected remaining
+# relationship aborts the transaction and the delivery is retried instead of losing data.
+PRUNE_ORPHAN_MEDIUM = (
+    "WITH DISTINCT m "
+    "SET m._prune_lock = true "
+    "REMOVE m._prune_lock "
+    "WITH m "
+    "WHERE NOT (m)<-[:ISSUED_ON]-() "
+    "  AND size([(m)-[other]-() WHERE type(other) <> 'IN_FAMILY' OR startNode(other) <> m | other]) = 0 "
+    "OPTIONAL MATCH (m)-[family_edge:IN_FAMILY]->() "
+    "DELETE family_edge, m"
+)
+
 RELEASE_MEDIA_SUMMARY_CYPHER = (
     "MATCH (r:Release {id: $discogs_id}) "
     "SET r.mb_media_families = $families, "
@@ -34,7 +54,7 @@ RELEASE_MEDIA_SUMMARY_CYPHER = (
     "WITH r "
     "MATCH (r)-[stale:ISSUED_ON]->(m:Medium) "
     "WHERE stale.source = $source AND NOT m.id IN $medium_ids "
-    "DELETE stale"
+    "DELETE stale " + PRUNE_ORPHAN_MEDIUM
 )
 
 RELEASE_MEDIA_EDGES_CYPHER = (
@@ -388,7 +408,7 @@ RELEASE_MEDIA_SUMMARY_BATCH_CYPHER = (
     "WITH r, row "
     "MATCH (r)-[stale:ISSUED_ON]->(m:Medium) "
     "WHERE stale.source = $source AND NOT m.id IN row.medium_ids "
-    "DELETE stale"
+    "DELETE stale " + PRUNE_ORPHAN_MEDIUM
 )
 
 RELEASE_MEDIA_EDGES_BATCH_CYPHER = (
