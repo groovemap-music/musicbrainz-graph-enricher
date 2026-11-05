@@ -44,13 +44,32 @@ The default is unchanged because the measurement shows no benefit, and a small c
 default sizes. Turn it on if `BATCH_SIZE` is lowered or the prefetch raised and the logs show
 `DeadlockDetected` retries.
 
-## Follow-up to file
+## Lock order (gm-musicbrainz-graph-enricher-03x2)
 
-Restore parallelism under contention by writing media in one global lock order: merge the
-`MediaFamily` rows sorted by name, then the `Medium` rows sorted by id, then the edges, and delete
-stale `ISSUED_ON` edges in `Medium` id order. Acceptance: the stress shape above shows zero
-`DeadlockDetected` retries with parallel flushes, and the prune race test still passes. This
-needs its own bead because it reshapes the media statements.
+Media writes now take their locks in one global order, in both the batch and the per-message path
+(`lock_media_in_order` in `brainzgraphinator/_projections.py`): every `MediaFamily` the write
+touches sorted by name (including the family of any medium it detaches, because deleting a pruned
+medium's `IN_FAMILY` edge locks the family), then every `Medium` it attaches or detaches sorted by
+id, then the edges. The stale `ISSUED_ON` delete runs in `Medium` id order. The set of writes is
+unchanged; only the order in which locks are taken differs.
+
+Same bench (`scripts/bench-contention.sh`, 3,000 releases, two runs per row, real Neo4j), stress
+shape prefetch 1000 / batch 20 with parallel flushes:
+
+| | Before | After |
+|---|---|---|
+| `DeadlockDetected` retries | 141, 95 | 0, 0 |
+| Time (s) | 14.38, 8.17 | 7.95, 4.19 |
+
+Defaults (prefetch 200 / batch 100) had 0 and 1 retries before and 0, 0 after. The graph is the same
+in every run (4,815 `ISSUED_ON` edges, 12 families, no duplicate `Medium`). Absolute times drift
+between runs on this laptop; the retry counts are the result. With the order fixed, parallel and
+one-at-a-time flushes take about the same time at the stress shape, so `NEO4J_SERIALIZE_FLUSHES`
+is no longer needed to avoid deadlocks; it stays as an opt-in.
+
+`test_concurrent_batches_sharing_vocabulary_never_deadlock` (real Neo4j) runs 12 concurrent raw
+transactions that rewrite and prune overlapping media. It fails with deadlocks on the previous
+statements and passes now; the prune race test still passes.
 
 ## Spike gm-musicbrainz-graph-enricher-569
 

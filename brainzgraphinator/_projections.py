@@ -50,6 +50,73 @@ PRUNE_ORPHAN_MEDIUM = (
     "DELETE family_edge, m"
 )
 
+# Global lock order for the shared media vocabulary: every MediaFamily the write touches (sorted by
+# name), then every Medium it touches (sorted by id), and only then the edges. Concurrent flushes
+# that share vocabulary nodes then queue behind one another instead of each holding one node while
+# waiting on the other's (DeadlockDetected). The families come first because deleting a pruned
+# medium's IN_FAMILY edge also locks the family; stale media (those this write detaches) are
+# locked in the same ordered pass as the media it attaches. Writes are the same as before: only
+# the order in which locks are taken changes. Items arrive sorted and deduplicated from
+# _media_lock_args.
+LOCK_MEDIA_FAMILIES_CYPHER = (
+    "UNWIND $rows AS row "
+    "OPTIONAL MATCH (:Release {id: row.discogs_id})-[stale:ISSUED_ON]->(:Medium)-[:IN_FAMILY]->(stale_family:MediaFamily) "
+    "WHERE stale.source = $source "
+    "WITH collect(DISTINCT stale_family.name) AS stale_names "
+    "UNWIND $families + stale_names AS name "
+    "WITH DISTINCT name ORDER BY name "
+    "MERGE (f:MediaFamily {name: name}) "
+    "SET f._lock = true "
+    "REMOVE f._lock"
+)
+
+LOCK_MEDIA_MEDIUMS_CYPHER = (
+    "UNWIND $rows AS row "
+    "OPTIONAL MATCH (:Release {id: row.discogs_id})-[stale:ISSUED_ON]->(stale_medium:Medium) "
+    "WHERE stale.source = $source AND NOT stale_medium.id IN row.medium_ids "
+    "WITH collect(DISTINCT stale_medium.id) AS stale_ids "
+    "UNWIND $items + [id IN stale_ids WHERE NOT id IN $item_ids | {medium: id}] AS item "
+    "WITH item ORDER BY item.medium "
+    "CALL { "
+    "    WITH item "
+    "    WITH item WHERE item.family IS NOT NULL "
+    "    MERGE (m:Medium {id: item.medium}) "
+    "        ON CREATE SET m.family = item.family, m.label = item.label "
+    "    SET m._lock = true "
+    "    REMOVE m._lock "
+    "} "
+    "CALL { "
+    "    WITH item "
+    "    WITH item WHERE item.family IS NULL "
+    "    MATCH (m:Medium {id: item.medium}) "
+    "    SET m._lock = true "
+    "    REMOVE m._lock "
+    "}"
+)
+
+
+def _media_lock_args(rows: list[dict[str, Any]], edge_rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Sorted, deduplicated media vocabulary a write needs locked, in global lock order."""
+    items: dict[str, dict[str, Any]] = {}
+    for row in edge_rows:
+        items.setdefault(row["medium"], {"medium": row["medium"], "family": row["family"], "label": row.get("label")})
+    ordered = [items[key] for key in sorted(items)]
+    return {
+        "rows": rows,
+        "items": ordered,
+        "item_ids": [item["medium"] for item in ordered],
+        "families": sorted({item["family"] for item in ordered}),
+        "source": MEDIA_SOURCE,
+    }
+
+
+async def lock_media_in_order(tx: Any, rows: list[dict[str, Any]], edge_rows: list[dict[str, Any]]) -> None:
+    """Take the media vocabulary locks in the global order before any media edge is written."""
+    arguments = _media_lock_args(rows, edge_rows)
+    await tx.run(LOCK_MEDIA_FAMILIES_CYPHER, **arguments)
+    await tx.run(LOCK_MEDIA_MEDIUMS_CYPHER, **arguments)
+
+
 RELEASE_MEDIA_SUMMARY_CYPHER = (
     "MATCH (r:Release {id: $discogs_id}) "
     "SET r.mb_media_families = $families, "
@@ -57,6 +124,7 @@ RELEASE_MEDIA_SUMMARY_CYPHER = (
     "WITH r "
     "MATCH (r)-[stale:ISSUED_ON]->(m:Medium) "
     "WHERE stale.source = $source AND NOT m.id IN $medium_ids "
+    "WITH stale, m ORDER BY m.id "
     "DELETE stale " + PRUNE_ORPHAN_MEDIUM
 )
 
@@ -125,6 +193,8 @@ async def reconcile_release_media(tx: Any, discogs_id: str, record: dict[str, An
 
     rows = media_edge_rows(media)
     items = [item for item in (media.get("items") or []) if isinstance(item, dict)]
+    summary = {"discogs_id": discogs_id, "medium_ids": [row["medium"] for row in rows]}
+    await lock_media_in_order(tx, [summary], rows)
     await tx.run(
         RELEASE_MEDIA_SUMMARY_CYPHER,
         discogs_id=discogs_id,
@@ -395,6 +465,7 @@ RELEASE_MEDIA_SUMMARY_BATCH_CYPHER = (
     "WITH r, row "
     "MATCH (r)-[stale:ISSUED_ON]->(m:Medium) "
     "WHERE stale.source = $source AND NOT m.id IN row.medium_ids "
+    "WITH stale, m ORDER BY m.id "
     "DELETE stale " + PRUNE_ORPHAN_MEDIUM
 )
 
@@ -643,8 +714,9 @@ async def enrich_releases_batch(tx: Any, records: list[dict[str, Any]], stats: d
         edges[discogs_id] = [{"discogs_id": discogs_id, **row} for row in media_rows]
 
     if summaries:
+        items_flat = sorted((row for rows in edges.values() for row in rows), key=lambda row: (row["medium"], row["discogs_id"]))
+        await lock_media_in_order(tx, list(summaries.values()), items_flat)
         await tx.run(RELEASE_MEDIA_SUMMARY_BATCH_CYPHER, rows=list(summaries.values()), source=MEDIA_SOURCE)
-        items_flat = [row for rows in edges.values() for row in rows]
         if items_flat:
             await tx.run(RELEASE_MEDIA_EDGES_BATCH_CYPHER, items=items_flat, source=MEDIA_SOURCE)
     return [outcome.matched for outcome in outcomes]

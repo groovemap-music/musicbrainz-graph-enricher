@@ -134,7 +134,7 @@ async def test_poison_record_is_replayed_alone() -> None:
 
 async def test_releases_batch_projects_media_once_for_the_batch() -> None:
     tx = AsyncMock()
-    tx.run.side_effect = [Rows([{"idx": 0, "changed": True}, {"idx": 1, "changed": True}]), Rows([]), Rows([])]
+    tx.run.side_effect = [Rows([{"idx": 0, "changed": True}, {"idx": 1, "changed": True}]), Rows([]), Rows([]), Rows([]), Rows([])]
     media = {"items": [{"medium": "cd", "family": "optical", "qty": 1}]}
     records = [
         {"id": "a", "discogs_release_id": 10, "media": media},
@@ -146,10 +146,12 @@ async def test_releases_batch_projects_media_once_for_the_batch() -> None:
     flags = await _projections.enrich_releases_batch(tx, records, stats)
 
     assert flags == [True, True, False]
-    assert tx.run.await_count == 3
-    summary_rows = tx.run.await_args_list[1].kwargs["rows"]
+    # Entity SET, then the family and medium locks in global order, then summary and edges.
+    assert tx.run.await_count == 5
+    assert [call.args[0] for call in tx.run.await_args_list[1:3]] == [_projections.LOCK_MEDIA_FAMILIES_CYPHER, _projections.LOCK_MEDIA_MEDIUMS_CYPHER]
+    summary_rows = tx.run.await_args_list[3].kwargs["rows"]
     assert [row["discogs_id"] for row in summary_rows] == ["10", "11"]
-    assert len(tx.run.await_args_list[2].kwargs["items"]) == 2
+    assert len(tx.run.await_args_list[4].kwargs["items"]) == 2
     assert stats["entities_enriched"] == 2
     assert stats["entities_skipped_no_discogs_match"] == 1
 

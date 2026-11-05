@@ -139,10 +139,10 @@ graph: AsyncResilientNeo4jDriver | None = None
 BATCH_MODE = os.environ.get("NEO4J_BATCH_MODE", "true").lower() == "true"
 BATCH_SIZE = max(1, int(os.environ.get("NEO4J_BATCH_SIZE", "100")))
 BATCH_LINGER = float(os.environ.get("NEO4J_BATCH_LINGER", "0.05"))
-# Allow only one batch per data type to commit at a time. Off by default: at the default sizes
-# (prefetch 200, batch 100) parallel flushes do not contend and are faster. With many small
-# concurrent batches, releases deadlock on the shared Medium/MediaFamily nodes and every deadlock
-# is a retried transaction; turning this on removes them (scripts/bench-contention.sh).
+# Allow only one batch per data type to commit at a time. Off by default. Media writes take their
+# Medium/MediaFamily locks in one global order (_projections.lock_media_in_order), so parallel
+# flushes no longer deadlock even with many small batches (docs/media-family-contention.md); this
+# remains as an opt-in to serialize commits.
 SERIALIZE_FLUSHES = os.environ.get("NEO4J_SERIALIZE_FLUSHES", "false").lower() == "true"
 # Legacy knob, still readable for environment compatibility; BATCH_LINGER governs flush timing.
 BATCH_FLUSH_INTERVAL = float(os.environ.get("NEO4J_BATCH_FLUSH_INTERVAL", "5.0"))

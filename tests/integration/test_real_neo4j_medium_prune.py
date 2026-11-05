@@ -207,3 +207,46 @@ async def test_an_edge_attached_while_pruning_is_never_silently_detached(neo4j_d
             assert isinstance(attached, ClientError), attached
             assert edges == [{"n": 0}], f"attempt {attempt}: aborted attach left an edge"
         await run(neo4j_driver, "MATCH (:Release {id: 'r3'})-[e:ISSUED_ON]->() DELETE e")
+
+
+@pytest.mark.asyncio
+async def test_concurrent_batches_sharing_vocabulary_never_deadlock(neo4j_driver: AsyncDriver) -> None:
+    """Many small concurrent flushes over one shared vocabulary take their locks in one order.
+
+    Each worker runs a raw transaction (no driver retry, so a DeadlockDetected surfaces) that
+    rewrites its releases' media, detaching what the previous round attached so the prune path
+    contends too. Releases are disjoint per worker; only the Medium/MediaFamily nodes are shared.
+    """
+    mediums = [(f"medium_{i:02d}", f"family_{i % 4}") for i in range(12)]
+    workers = 12
+    await run(neo4j_driver, "UNWIND range(0, $n - 1) AS i CREATE (:Release {id: 'w' + toString(i)})", n=workers)
+
+    def event(worker: int, round_: int) -> dict[str, Any]:
+        # Each worker takes a different slice, walked in a different direction per worker, so
+        # unordered locking would cross; every round shifts the slice so stale edges are pruned.
+        picked = [mediums[(worker * 3 + round_ * 5 + k) % len(mediums)] for k in range(4)]
+        if worker % 2:
+            picked.reverse()
+        return {
+            "id": f"mb-w{worker}",
+            "discogs_release_id": f"w{worker}",
+            "media": {"items": [{"medium": m, "family": f, "qty": 1} for m, f in picked]},
+        }
+
+    async def worker_run(worker: int) -> None:
+        for round_ in range(8):
+            async with neo4j_driver.session(database="neo4j") as session:
+                tx = await session.begin_transaction()
+                stats = dict.fromkeys(("entities_enriched", "entities_skipped_no_discogs_match"), 0)
+                await _projections.enrich_releases_batch(tx, [event(worker, round_)], stats)
+                await tx.commit()
+
+    results = await asyncio.gather(*(worker_run(w) for w in range(workers)), return_exceptions=True)
+
+    deadlocks = [r for r in results if isinstance(r, ClientError) or (isinstance(r, Exception) and "DeadlockDetected" in str(r))]
+    assert not deadlocks, deadlocks
+    assert all(not isinstance(r, Exception) for r in results), results
+    # Every worker's final slice is intact and nothing is attached to a missing family.
+    edges = await run(neo4j_driver, "MATCH (:Release)-[e:ISSUED_ON]->(:Medium) RETURN count(e) AS n")
+    assert edges == [{"n": workers * 4}]
+    assert await run(neo4j_driver, "MATCH (m:Medium) WHERE NOT (m)-[:IN_FAMILY]->() RETURN count(m) AS n") == [{"n": 0}]
