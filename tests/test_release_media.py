@@ -12,6 +12,7 @@ from aio_pika.abc import AbstractIncomingMessage
 from orjson import dumps
 
 import brainzgraphinator.brainzgraphinator as bgmod
+from brainzgraphinator import _projections
 from brainzgraphinator.brainzgraphinator import (
     MEDIA_SOURCE,
     enrich_release,
@@ -73,9 +74,41 @@ def media_calls(tx: AsyncMock) -> list[tuple[str, dict[str, Any]]]:
     """Return the (cypher, parameters) pairs of every media query the release enrichment ran.
 
     The first tx.run is the release property SET that predates this feature; everything after
-    it belongs to media reconciliation.
+    it belongs to media reconciliation. The two lock statements that take the shared vocabulary
+    locks in global order are excluded here; they are covered by TestLockOrder.
     """
-    return [(call.args[0], call.kwargs) for call in tx.run.call_args_list[1:]]
+    locks = {_projections.LOCK_MEDIA_FAMILIES_CYPHER, _projections.LOCK_MEDIA_MEDIUMS_CYPHER}
+    return [(call.args[0], call.kwargs) for call in tx.run.call_args_list[1:] if call.args[0] not in locks]
+
+
+class TestLockOrder:
+    @pytest.mark.asyncio
+    async def test_families_then_mediums_are_locked_in_sorted_order_before_any_edge(self) -> None:
+        tx = neo4j_transaction()
+        record = {
+            "id": "mb",
+            "discogs_release_id": "9",
+            "media": {
+                "items": [
+                    {"medium": "vinyl", "family": "analog", "qty": 1},
+                    {"medium": "cd", "family": "optical", "qty": 1},
+                    {"medium": "dvd", "family": "optical", "qty": 1},
+                ]
+            },
+        }
+
+        await reconcile_release_media(tx, "9", record)
+
+        calls = [(call.args[0], call.kwargs) for call in tx.run.call_args_list]
+        assert [c[0] for c in calls[:2]] == [_projections.LOCK_MEDIA_FAMILIES_CYPHER, _projections.LOCK_MEDIA_MEDIUMS_CYPHER]
+        assert calls[0][1]["families"] == ["analog", "optical"]
+        assert [item["medium"] for item in calls[1][1]["items"]] == ["cd", "dvd", "vinyl"]
+        assert calls[1][1]["item_ids"] == ["cd", "dvd", "vinyl"]
+        assert [c[0] for c in calls[2:]] == [_projections.RELEASE_MEDIA_SUMMARY_CYPHER, _projections.RELEASE_MEDIA_EDGES_CYPHER]
+
+    def test_stale_delete_runs_in_medium_id_order(self) -> None:
+        assert "WITH stale, m ORDER BY m.id DELETE stale" in _projections.RELEASE_MEDIA_SUMMARY_CYPHER
+        assert "WITH stale, m ORDER BY m.id DELETE stale" in _projections.RELEASE_MEDIA_SUMMARY_BATCH_CYPHER
 
 
 def matching_tx() -> AsyncMock:
