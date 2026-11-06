@@ -1,0 +1,5 @@
+{
+  "contract_sha256": "ce7cf064d7a5ed00f2ec0854a68ea1c2c811a255adeb204c26ff840e32925be6",
+  "producer_repository": "https://github.com/groovemap-music/musicbrainz-graph-enricher",
+  "producer_source": "brainzgraphinator/_projections.py MB_RELATIONSHIP_MAP"
+}

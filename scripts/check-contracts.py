@@ -24,6 +24,12 @@ with (ROOT / "pyproject.toml").open("rb") as source:
 assert digest(ROOT / "contracts/catalog-events/v1/contract.json") == catalog_source["contract_sha256"]
 assert digest(ROOT / "brainzgraphinator/catalog_contract.py") == catalog_source["binding_sha256"]
 assert digest(ROOT / "contracts/persistence/v1/compatibility.json") == persistence_source["contract_sha256"]
+relationship_types_source = json.loads((ROOT / "contracts/projections/v1/source.json").read_text())
+relationship_types = json.loads((ROOT / "contracts/projections/v1/relationship-types.json").read_text())
+assert digest(ROOT / "contracts/projections/v1/relationship-types.json") == relationship_types_source["contract_sha256"]
+assert relationship_types["contract"] == "groovemap.musicbrainz-graph-enricher.relationship-types"
+assert relationship_types["version"] == 1
+assert relationship_types["edge_types"] == sorted(set(relationship_types["relationship_types"].values()))
 assert compatibility["contract"] == "groovemap.persistence"
 assert compatibility["version"] == 1
 assert compatibility["application_runtime"]["tested_version"] == "0.1.0"
