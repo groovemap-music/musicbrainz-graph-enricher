@@ -1,0 +1,26 @@
+{
+  "contract": "groovemap.musicbrainz-graph-enricher.relationship-types",
+  "version": 1,
+  "store": "neo4j",
+  "description": "The MusicBrainz relationship types the enricher projects onto Artist-to-Artist Neo4j edges, keyed by the MusicBrainz type string it reads. A consumer that queries these edges names every type in edge_types; a type missing from its query is silently omitted.",
+  "relationship_types": {
+    "member of band": "MEMBER_OF",
+    "collaboration": "COLLABORATED_WITH",
+    "teacher": "TAUGHT",
+    "tribute": "TRIBUTE_TO",
+    "founder": "FOUNDED",
+    "supporting musician": "SUPPORTED",
+    "subgroup": "SUBGROUP_OF",
+    "artist rename": "RENAMED_TO"
+  },
+  "edge_types": [
+    "COLLABORATED_WITH",
+    "FOUNDED",
+    "MEMBER_OF",
+    "RENAMED_TO",
+    "SUBGROUP_OF",
+    "SUPPORTED",
+    "TAUGHT",
+    "TRIBUTE_TO"
+  ]
+}
