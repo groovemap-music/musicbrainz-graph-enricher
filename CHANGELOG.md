@@ -3,6 +3,29 @@
 All notable changes to this repository will be recorded here by Commitizen from
 Conventional Commits.
 
+## v0.5.0 (2026-11-06)
+
+### Release notes
+
+No schema change. Enrichment batches across messages, replayed records are skipped by payload hash, and orphan Medium nodes are pruned.
+
+### Feat
+
+- **contracts**: publish the MusicBrainz relationship types
+
+### Fix
+
+- **enricher**: keep the replay gate from dropping newer or unresolved data
+- **enricher**: prune orphan Medium nodes on the batch path and lock before deleting
+- **enricher**: prune orphan Medium nodes left by media updates
+
+### Perf
+
+- **enricher**: lock media vocabulary in one global order to allow parallel flushes
+- **enricher**: skip replayed MusicBrainz records with a payload hash
+- **enricher**: measure media lock contention and add NEO4J_SERIALIZE_FLUSHES
+- **enricher**: batch MusicBrainz enrichment with cross-message UNWIND
+
 ## v0.4.0 (2026-10-31)
 
 ### Feat
