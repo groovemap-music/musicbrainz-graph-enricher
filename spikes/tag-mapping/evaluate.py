@@ -238,6 +238,45 @@ def main() -> None:
             "full_run_usd_all_distinct": round(mean_cost * vocab["distinct_tags_in_scope"], 2),
             "stats": fc["stats"],
         }
+    # Cascade: normalized string match first; on its misses, Jev beam K=3 and flat Claude
+    # each propose, and their agreement (not separation) is the confidence signal.
+    preds = predictions()
+    if {"string_normalized", "jev_beam3", "flat_claude"} <= preds.keys():
+        sm, jb, fc = preds["string_normalized"], preds["jev_beam3"], preds["flat_claude"]
+        by_tag = {r["tag"]: r for r in rows}
+
+        def bucket(t: str) -> str:
+            if sm.get(t, ()) != ():
+                return "string"
+            if jb.get(t) == fc.get(t):
+                return "agree_none" if jb.get(t) == () else "agree_genre"
+            return "disagree"
+
+        def answer(t: str) -> tuple[str, ...]:
+            return sm[t] if bucket(t) == "string" else jb.get(t, ("__MISSING__",))
+
+        cascade: dict = {}
+        for b in ("string", "agree_genre", "agree_none", "disagree"):
+            ts = [t for t in labels if bucket(t) == b]
+            entry = {
+                "n": len(ts),
+                "jev_exact": round(sum(score(jb.get(t, ()), labels[t])["exact"] for t in ts) / len(ts), 3) if ts else None,
+                "claude_exact": round(sum(score(fc.get(t, ()), labels[t])["exact"] for t in ts) / len(ts), 3) if ts else None,
+            }
+            for scope, strata in (("tags_ge20_uses", ("head", "mid")), ("tags_ge5_uses", tuple(sizes))):
+                entry[f"est_{scope}"] = round(sum(sizes[s] * sum(by_tag[t]["stratum"] == s for t in ts) / n_by[s] for s in strata if s in sizes))
+            if b == "string":
+                entry["precision"] = round(sum(score(sm[t], labels[t])["exact"] for t in ts) / len(ts), 3) if ts else None
+            if b == "agree_none":
+                entry["missed_genre"] = sorted(t for t in ts if () not in labels[t])
+            cascade[b] = entry
+        auto = [t for t in labels if bucket(t) in ("string", "agree_genre", "agree_none")]
+        cascade["auto_precision"] = round(sum(score(answer(t), labels[t])["exact"] for t in auto) / len(auto), 3)
+        cascade["auto_use_share"] = round(sum(by_tag[t]["uses"] for t in auto) / sum(by_tag[t]["uses"] for t in labels), 3)
+        cascade["review_agree_genre_plus_disagree"] = {
+            scope: cascade["agree_genre"][f"est_{scope}"] + cascade["disagree"][f"est_{scope}"] for scope in ("tags_ge20_uses", "tags_ge5_uses")
+        }
+        summary["cascade"] = cascade
     RES.mkdir(exist_ok=True)
     (RES / "summary.json").write_text(json.dumps(summary, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
     print("| method | exact | genre-level | genre-like exact | junk exact | head | mid | tail | stratum-wtd | use-wtd |")

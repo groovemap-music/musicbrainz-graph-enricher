@@ -1,12 +1,18 @@
 # Spike: MusicBrainz tags onto the Discogs genre/style tree
 
-Bead `gm-musicbrainz-graph-enricher-569`. Status on 2026-11-02: **the key-free half is done;
-the paid half is pending.** The vocabulary (Q1, Q2), the target tree (Q7), the labelled
-sample and the string-match baseline are measured on real dumps. The Jev greedy and beam
-K=3 runs, the flat-Claude baseline, the separation analysis (Q3 to Q6) and the GO / NO-GO
-are **pending**. They wait on operator-named sources for `TYPESAFE_API_KEY` and
-`ANTHROPIC_API_KEY`. The scripts are written and cached; each paid run is one command
-(see [Pending runs](#pending-runs)).
+Bead `gm-musicbrainz-graph-enricher-569`. Status on 2026-11-10: **complete. Recommendation:
+GO, with one change to the planned design.** Every question (Q1 to Q7) is measured. The
+accuracy figures are graded against an answer key the operator reviewed in full.
+
+- Jev beam K=3 finds 80.5% of genre-like tags exactly, against 35% for normalized string
+  matching. Flat Claude finds 88.6%.
+- **Jev's separation score is not a usable auto-accept signal** (AUROC 0.64). The design
+  must not rest on it.
+- **Agreement between Jev and Claude is a usable signal.** When both name the same genre
+  or style, 39 of 40 sample answers are right.
+- The adopted design: string match first, then two offline model proposals, then a person
+  reviews every model-proposed genre. For tags with 20 or more uses (about 95% of tag
+  uses), that is about 4,200 review rows and about $55 of model calls, once.
 
 The harness, data and reproduction steps are in
 [spikes/tag-mapping/](../spikes/tag-mapping/README.md). It is throwaway code: nothing in
@@ -57,11 +63,10 @@ There are two estimates.
   carry **76.9% of uses**. Year or decade patterns carry 0.2% and obvious personal or meta
   words 0.4%. The other 213,000 unlisted tags carry the remaining 22.5%. That share mixes
   genre-like long tail ("dungeon rap", "naturewave") with junk.
-- **From the labelled sample (agent-drafted, see below):** the share of tags that are junk
-  (NONE only) is **26% in the head** (rank 1-1,000; 6% of the head's uses), **50% in the mid
-  band** (rank > 1,000 with >= 20 uses) and **70% in the tail** (5 to 19 uses). Junk is mostly
-  places, artist and label names, personal tags, formats and moods. Fifteen tags read both
-  ways ("piano", "vocal", "westcoast", "tv show").
+- **From the reviewed sample:** the share of tags that are junk (NONE only) is **21% in the
+  head** (rank 1-1,000; 4% of the head's uses), **43% in the mid band** (rank > 1,000 with
+  >= 20 uses) and **65% in the tail** (5 to 19 uses). Junk is mostly places, artist and label
+  names, personal tags, formats and moods.
 
 So the use mass is mostly genre, and most distinct tags past the head are not.
 
@@ -96,118 +101,184 @@ stays out of scope here.
 `data/sample.json` holds 200 distinct tags drawn with seed 569, stratified as 90 head, 70 mid
 and 40 tail (populations 1,000, 8,880 and 21,201). Tags with fewer than 5 uses are excluded.
 `data/labels.tsv` is the answer key, one row per tag with confidence, uses, stratum, accepted
-answers, the rule applied (R1-R6, written in the file header) and a reviewer column. Of the
-200 rows, 54 are `unsure` and come first, 50 are `medium` and 96 are `high`. The key holds
-86 NONE-only tags, 99 genre or style tags and 15 that accept both.
+answers, the rule applied (R1-R6, written in the file header) and a reviewer column.
 
-**The labels are agent-drafted (claude-opus-5-5) and pending human review.** No human labels
-existed. The team lead approved drafting them against written rules, and the operator will
-review them before the paid runs. Two caveats follow:
+The key was drafted by claude-opus-5-5 against the written rules on 2026-11-02. **The
+operator reviewed all 200 rows on 2026-11-10** (`confidence=reviewed` and a named reviewer
+on every row). The reviewed key holds 75 NONE-only tags, 123 genre or style tags and 2 that
+accept both. The draft had 86, 99 and 15. The review mostly settled the draft's ambiguous
+rows, and it accepted a genre for some person and role tags that rule R5 had sent to NONE
+("composer", "schubert", "terry riley", "singer").
 
-- Every accuracy here is against an unreviewed key.
-- The flat-Claude baseline will be graded by a key a Claude model wrote. Read its score as
-  optimistic until a person has reviewed the key.
+Grading changed accordingly. Against the draft, flat Claude scored 97.5% exact and Jev beam
+93.5%. Against the reviewed key they score 92.0% and 85.5%. The draft favoured the models,
+Claude most, so the numbers below are the ones to use.
 
-## Results: string matching (Q6, deterministic half)
+## Q3 and Q6: accuracy
 
-| Method | Exact | Genre-like tags found | Junk -> NONE | Head / mid / tail | Precision when it assigns |
-| --- | --- | --- | --- | --- | --- |
-| Case-insensitive exact name | 66.5% | 32.3% | 100% | 63.3% / 62.9% / 80.0% | 100% (35 of 35) |
-| Normalized (`&`/`n` -> `and`, punctuation and spaces removed) | 70.5% | 40.4% | 100% | 68.9% / 67.1% / 80.0% | 100% (43 of 43) |
-| Jev greedy | *pending* | | | | |
-| Jev beam K=3 | *pending* | | | | |
-| Flat Claude (claude-opus-5-5) | *pending* | | | | |
+`results/summary.json` holds every figure. Exact means the predicted path is one the key
+accepts. Genre-like means tags whose key has no NONE answer (123 tags).
 
-A non-match predicts NONE, which is why junk scores 100%. The overall figures reward that
-default, so the genre-like column is the fair comparison. Over the whole vocabulary,
-normalized matching hits 1,774 tags carrying **69.9% of all uses**, and it covers 86.8% of the
-uses of tags on MusicBrainz's genre list. In the sample it made no wrong assignment. Its
-misses are compounds and variants ("melodic black metal", "punk rock", "progressive rock",
-"conscious hip hop"), spelling outside the normalizer ("no-wave" works, "experiemental" does
-not), translations ("シンセウェイブ") and genre-like tags with no Discogs style.
+| Method | Exact | Genre-like exact | Junk -> NONE | Head / mid / tail | Use-weighted | Precision when it assigns |
+| --- | --- | --- | --- | --- | --- | --- |
+| String, case-insensitive exact name | 56.0% | 28.5% | 100% | 57.8% / 47.1% / 67.5% | 71.0% | 100% (35 of 35) |
+| String, normalized | 60.0% | 35.0% | 100% | 63.3% / 51.4% / 67.5% | 76.5% | 100% (43 of 43) |
+| Jev greedy | 83.0% | 76.4% | 94.7% | 84.4% / 80.0% / 85.0% | 94.2% | 89.5% (of 105) |
+| **Jev beam K=3** | **85.5%** | **80.5%** | 94.7% | 85.6% / 84.3% / 87.5% | 94.6% | 90.8% (of 109) |
+| Flat Claude (claude-opus-5-5, effort medium) | **92.0%** | **88.6%** | 97.3% | 93.3% / 88.6% / 95.0% | 97.7% | 96.5% (of 115) |
 
-What this means for the design: an ordinary deterministic lookup already places most tag
-uses. Any model's value is in the long tail of variants, which is exactly the part a person
-must review.
+- **Beam versus greedy:** beam K=3 gets 5 more tags right (171 against 166). All of the gain
+  is on genre-like tags, which is where the ambiguous genre step is. Genre-level accuracy
+  rises from 85.0% to 87.5%.
+- **Model versus string matching:** both models find more than twice as many genre-like tags
+  as normalized string matching. String matching never assigns a wrong genre. It just
+  misses compounds ("melodic black metal"), variants, typos, translations and tags with no
+  Discogs style of the same name.
+- **Jev versus Claude:** Claude is more accurate everywhere. It also assigns a genre to junk
+  less often (2 junk tags got a genre, against 4 for Jev).
+- **Errors that matter:** a wrong genre on a tag puts a release in the wrong place in the
+  genre tree. A wrong NONE only leaves a tag unmapped, which is today's state. Jev's 10
+  wrong genres out of 109 and Claude's 4 out of 115 are the errors a review step must catch.
 
-## Pending: Q3 to Q6 with models
+## Q4: separation, and a better signal
 
-These sections are **pending** until the paid runs complete. `evaluate.py` fills
-`results/summary.json` with every number below from the caches, with no further calls.
+Separation is the ratio of the beam's top path score to the second.
 
-- **Q3, accuracy:** greedy versus beam K=3 on the 200 tags, overall, by stratum, genre-like
-  versus junk, and genre-level versus exact.
-- **Q4, separation:** AUROC of separation (and path score) for correct versus wrong. A sweep of
-  thresholds 1.0 to 100 reports auto-accepted count and precision, review-queue size, errors
-  caught, and the review queue extrapolated to the 31,081 tags with >= 5 uses.
-- **Q5, cost and latency:** measured input tokens, requests per tag, per-request p50/p95
-  latency and wall time per tag, extrapolated to tags with >= 20 uses, >= 5 uses and all
-  distinct tags. Cache savings: greedy reuses beam's root and genre questions, so beam plus
-  greedy costs beam's requests alone. A warm replay makes zero calls.
-- **Q6, flat Claude:** one claude-opus-5-5 request per tag over all 1,292 options (NONE, 15
-  genre-only, 1,276 leaves), with the list in a cached system prompt and JSON-schema output.
+| Measure | Value |
+| --- | --- |
+| AUROC of separation, right versus wrong | **0.64** (path score 0.70) |
+| Median separation, right / wrong | 4.27 / 1.82 |
+| Threshold 2.0: auto-accepted precision, review share, queue for >= 5 uses | 90.8%, 34.5%, about 12,250 tags |
+| Threshold 5.0 | 92.9%, 58%, about 20,280 tags |
 
-### Pre-run estimates (not measurements)
+Precision barely rises as the threshold climbs (85.5% with no threshold, 90.8% at 2.0,
+92.9% at 5.0), while the review queue grows to most of the vocabulary. Against the draft
+labels the AUROC was 0.81, which made separation look useful; the reviewed key shows it is
+not. **Separation cannot set an auto-accept threshold.**
 
-These are from prompt sizes: about 3.3k input tokens per tag at most for beam K=3, and a
-10k-token cached system prompt for Claude.
+Agreement between the two models works better. `evaluate.py` scores this cascade (section
+`cascade` in `summary.json`): normalized string match first; on its misses, Jev beam K=3 and
+flat Claude each propose.
 
-| Run | Sample (200 tags) | Tags >= 5 uses (31,081) | All distinct (220,592) |
+| Bucket | Sample tags | Right (Jev / Claude) | Est. tags >= 20 uses | Est. tags >= 5 uses |
+| --- | --- | --- | --- | --- |
+| String match assigns | 43 | 100% (string) | 1,172 | 1,172 |
+| Both models name the same genre or style | 40 | **97.5%** / 97.5% | 1,987 | 5,697 |
+| Both models say NONE | 80 | 87.5% / 87.5% | 4,546 | 17,797 |
+| Models disagree | 37 | 64.9% / 86.5% | 2,174 | 6,414 |
+
+All 10 errors in the "both say NONE" bucket are missed genres, not wrong ones: "composer",
+"schubert", "terry riley", "singer", "french singer", "relax", "melodic", "post-whatever",
+"star trek", "vomir". Dropping that bucket leaves those tags unmapped, as they are today.
+When the models disagree, Claude is right more often, so it should be the reviewer's
+default suggestion.
+
+**Review queue:** a person reviews the agreed genre proposals and the disagreements. That is
+about **4,200 tags for the >= 20-uses vocabulary** and about 12,100 for >= 5 uses. The sample
+is 200 tags, so these estimates carry a wide margin (each sample tag stands for 11 to 530
+vocabulary tags, depending on stratum).
+
+## Q5: cost, latency and rate limits
+
+Measured on the 200-tag sample, cold, at list prices read 2026-11-01:
+
+| Measure | Jev `jev-1.14.0`, beam K=3 plus greedy | Flat Claude `claude-opus-5-5` |
+| --- | --- | --- |
+| Sample cost | $0.042 (657 requests, 1.00M input tokens) | $1.08 (200 requests) |
+| Per tag | 3.29 requests, 5,022 input tokens | 1 request, 53 output tokens, cached 10k-token system prompt |
+| Latency per request, p50 / p95 | 0.084 s / 0.196 s | 1.79 s / 3.73 s |
+| Wall time, whole sample | 5.8 s | 105 s |
+| Failed requests | 0 | 0 (no invalid outputs, no refusals) |
+
+Extrapolated full runs:
+
+| Scope | Tags | Jev cost / sequential time | Claude cost |
 | --- | --- | --- | --- |
-| Jev `jev-1.14.0`, beam K=3 plus greedy ($0.042 / Mtok input, output free) | <= $0.03 | <= $4.30 | <= $31 |
-| Flat Claude `claude-opus-5-5` ($4 in, $0.20 cache read, $20 out per Mtok, effort medium) | about $2-6 | about $300-900 | not sensible |
+| >= 20 uses | 9,880 | $2.08 / 0.6 h | about $53 |
+| >= 5 uses | 31,081 | $6.56 / 2.0 h | $167.58 |
+| All distinct | 220,592 | $46.53 / 14 h | $1,189.35 |
 
-Rate limits for TypeSafe are set per organization in its console. The SDK retries 429s and
-honors `retry-after`. The measured figures will replace these estimates.
+The pre-run estimate of 3.3k Jev input tokens per tag was low; the measured figure is 5.0k.
+**Caching:** greedy reuses beam's root and genre questions, so running greedy after beam made
+0 requests, a 31.7% saving over running both cold. A warm replay of either method makes no
+calls, which is what makes a committed capture reproducible. TypeSafe rate limits are set per
+organization in its console. The SDK retries 429s and honors `retry-after`, and the sample run
+had no failed requests.
 
-### Pending runs
-
-Run from `spikes/tag-mapping/`. Each writes only its cache and its results file, then run
-`python3 evaluate.py`.
-
-```sh
-TYPESAFE_API_KEY=... uv run --no-project --with typesafe-sdk python jev_beam.py --live
-ANTHROPIC_API_KEY=... uv run --no-project --with anthropic python flat_claude.py --live
-python3 evaluate.py
-```
-
-**Model pin.** The bead and the cookbook name `jev-1.12`, but
-[docs.typesafe.ai/models](https://docs.typesafe.ai/models) now lists only `jev-1.14.0` and
-`jev-1.13.0`. The harness pins the versioned `jev-1.14.0`, never an alias, and aborts if a
-response reports another model.
+Both runs are one-off offline batches, so cost does not decide between them. Jev's value is
+as a cheap independent second opinion: agreement with it is what makes Claude's proposals
+trustworthy enough to review quickly.
 
 ## GO / NO-GO
 
-**Withheld** until Q3 to Q6 are measured. The decision turns on two numbers:
+**GO, for an offline, reviewed lookup.** **NO-GO on separation-based auto-accept.**
 
-- whether beam K=3 finds clearly more of the genre-like long tail than normalized string
-  matching (40% here) at high precision;
-- whether separation makes the review queue small enough for a person, in the low thousands
-  for the >= 5-uses vocabulary.
+The two questions set before the runs:
 
-### Provisional ADR outline (only if GO)
+- *Does beam K=3 find clearly more of the genre-like long tail than normalized string
+  matching, at high precision?* Yes: 80.5% against 35.0%. When it assigns, 90.8% is right.
+  Flat Claude does better again: 88.6%, and 96.5% right when it assigns.
+- *Does separation make the review queue small enough for a person?* No. Model agreement
+  does: about 4,200 tags for the >= 20-uses vocabulary, which carries about 95% of tag uses.
+
+The adopted design changes in one way from the provisional outline: confidence comes from
+two-model agreement, not from separation. That makes the lookup depend on both TypeSafe and
+the Anthropic API, though only in an offline batch.
+
+### ADR outline
 
 - **Lookup:** `design/taxonomy/mb-tag-genre/v1/`, holding `mb-tag-genre.json` (tag ->
-  `NONE` | genre | genre/style, with method, source dump date, model id, separation and
-  reviewer), a JSON Schema, and fixtures. This is the same pattern as `media/v1` and
+  `NONE` | genre | genre/style, with method, source dump date, model ids, both proposals,
+  and reviewer), a JSON Schema, and fixtures. This is the same pattern as `media/v1` and
   `company-roles/v1` (ADR 0007/0011).
-- **Order of precedence:** normalized string match, then reviewed model proposals. Tags below
-  the auto-accept threshold, and every model-only proposal in a first version, go to a person.
-  Unreviewed rows never ship.
+- **Scope of v1:** tags with >= 20 uses in a named MusicBrainz dump (9,880 tags, about 95% of
+  uses). The 5-19-use band triples the review work for about 2% more uses; a later version
+  can add it.
+- **Order of precedence:**
+  1. Normalized string match against Discogs style and genre names. It is accepted without
+     review, since it made no wrong assignment in the sample.
+  2. Otherwise Jev beam K=3 and flat Claude each propose.
+  3. Both say NONE: the tag stays unmapped, with no review.
+  4. They agree on a genre or style, or they disagree: a person reviews it, with Claude's
+     answer as the default suggestion.
+
+  Unreviewed model rows never ship.
 - **Versioning:** a new `vN` when the Discogs tree or the tag vocabulary drifts. The tree is
   frozen from a named dump with the share >= 0.20 rule.
-- **Drift check:** a script that diffs the current dump's tags with >= N uses against the
+- **Drift check:** a script that diffs the current dump's tags with >= 20 uses against the
   lookup, and lists new tags and tree changes as review work. It runs offline in CI, with no
   model calls.
-- **TypeSafe dependency:** offline and batch only, from a pinned versioned model, with captures
-  cached and committed so a rerun is reproducible. Ingest and the enricher never call it.
+- **Model dependency:** offline and batch only. It uses pinned versioned models
+  (`jev-1.14.0`, `claude-opus-5-5`), never an alias, and the captures are cached and
+  committed so a rerun is reproducible. Ingest and the enricher never call a model.
 
-### Candidate follow-up beads (for a replan, if GO)
+### Follow-up beads (for a replan)
 
-1. Human review of `data/labels.tsv`, then run and score the paid methods.
-2. A deterministic Discogs tree export (share >= 0.20, releases plus masters) as a versioned
+1. A deterministic Discogs tree export (share >= 0.20, releases plus masters) as a versioned
    design artifact.
-3. A string-match-first lookup generator plus review workflow for `mb-tag-genre/v1`.
-4. Offline Jev batch over the >= 5-uses residue, with a review queue at the chosen threshold.
-5. An enricher projection of MusicBrainz tags through the frozen lookup (plain lookup, no model).
-6. A drift-check script and a CI job.
+2. A lookup generator for `mb-tag-genre/v1`: string match first, then the two-model cascade
+   over the >= 20-uses vocabulary, writing the review queue. It runs offline with committed
+   captures.
+3. The review workflow and the person's pass over about 4,200 rows, with Claude's answer as
+   the default suggestion.
+4. An enricher projection of MusicBrainz tags through the frozen lookup (a plain lookup, no
+   model).
+5. A drift-check script and a CI job.
+6. Optional, later: extend to the 5-19-use band once the v1 review pace is known.
+
+## Reproduce
+
+From `spikes/tag-mapping/`, with the committed caches, these make no network calls:
+
+```sh
+python3 string_match.py
+uv run --no-project --with typesafe-sdk python jev_beam.py
+uv run --no-project --with anthropic python flat_claude.py
+python3 evaluate.py
+```
+
+`--live` on `jev_beam.py` (with `TYPESAFE_API_KEY`) or `flat_claude.py` (with Anthropic
+credentials) allows paid calls on cache misses. **Model pin:** the bead and the cookbook name
+`jev-1.12`, but [docs.typesafe.ai/models](https://docs.typesafe.ai/models) lists only
+`jev-1.14.0` and `jev-1.13.0`. The harness pins `jev-1.14.0` and aborts if a response reports
+another model.

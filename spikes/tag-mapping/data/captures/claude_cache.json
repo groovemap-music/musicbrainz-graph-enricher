@@ -1,0 +1,3134 @@
+{
+"d458149e23c28a62876b667470a8b268bb9f77cb2f9b4d51c3f0dd05c382d2f5": {
+"tag": "black metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1100,
+"path": [
+"Rock",
+"Black Metal"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 18901,
+"cache_read_input_tokens": 0,
+"output_tokens": 9,
+"latency_s": 4.2702,
+"at": "2026-11-10T19:03:58+00:00"
+},
+"aaa3c2bba790652d910d4fb13cf743dc1372ca856a5dcef20a569e62d9795e7c": {
+"tag": "ebm",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 178,
+"path": [
+"Electronic",
+"EBM"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.3828,
+"at": "2026-11-10T19:03:59+00:00"
+},
+"9b17f7fe14ed08a66d2c676c8aba8bbb42541e21092c99bd3d475e42d588f342": {
+"tag": "shoegaze",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1135,
+"path": [
+"Rock",
+"Shoegaze"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 2.2231,
+"at": "2026-11-10T19:04:00+00:00"
+},
+"9cba282042c3a24dbe6c4b641dc6ed751efe040ae254a77845bc6d51894c858f": {
+"tag": "soul",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 607,
+"path": [
+"Funk / Soul",
+"Soul"
+],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.6959,
+"at": "2026-11-10T19:04:01+00:00"
+},
+"e0990f1f475ebb401099e19ac10f14f700c0e47d2a7d32865f1eeae073fc49bc": {
+"tag": "hard rock",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1101,
+"path": [
+"Rock",
+"Hard Rock"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 2.8659,
+"at": "2026-11-10T19:04:01+00:00"
+},
+"1cbb976749d9fb0b00768a57010c0310122ce586973626be26880da3ada32c85": {
+"tag": "progressive rock",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1109,
+"path": [
+"Rock",
+"Prog Rock"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.7864,
+"at": "2026-11-10T19:04:01+00:00"
+},
+"6d9d84494a933b3d95b9d4ee210978c029ea90d8ce62e43b3aa0165c6247fd1b": {
+"tag": "dark wave",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 194,
+"path": [
+"Electronic",
+"Darkwave"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7376,
+"at": "2026-11-10T19:04:02+00:00"
+},
+"490548c57ef4faebb7884bdb41faabe7e974945aa5e32917f28b211063c41b2c": {
+"tag": "punk rock",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1092,
+"path": [
+"Rock",
+"Punk"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.9631,
+"at": "2026-11-10T19:04:03+00:00"
+},
+"5cf0fa84cf5344236b85672e893049696200225d4338d5ced12da6f22a8ee024": {
+"tag": "hip-hop/rap",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 655,
+"path": [
+"Hip Hop",
+"Hip Hop"
+],
+"input_tokens": 26,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7994,
+"at": "2026-11-10T19:04:03+00:00"
+},
+"add08543d67c4fbe71fcca02ea6a27863f29aa97ae5970218dc3b7d9df37b612": {
+"tag": "jungle",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 177,
+"path": [
+"Electronic",
+"Jungle"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7178,
+"at": "2026-11-10T19:04:03+00:00"
+},
+"989af26917f8408f10ed867d6bb933f7d136ef57902f305c54c2d6e1ce54b228": {
+"tag": "pop punk",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1145,
+"path": [
+"Rock",
+"Pop Punk"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.7866,
+"at": "2026-11-10T19:04:04+00:00"
+},
+"dee4478ecef16d74546804d6badaef93cfa90ca2be3335c1d7c1e9feb5d3751b": {
+"tag": "easy listening",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 710,
+"path": [
+"Jazz",
+"Easy Listening"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6482,
+"at": "2026-11-10T19:04:04+00:00"
+},
+"4bcb014f4f88e4e33c5876db8459f99e4a9ed31d866dc178e77bd823084e8446": {
+"tag": "breaks",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 165,
+"path": [
+"Electronic",
+"Breaks"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6453,
+"at": "2026-11-10T19:04:04+00:00"
+},
+"6d92cb4eed27f59160785148895e58218a80ba6a1f81be7689500b4847dc41ae": {
+"tag": "modern classical",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 50,
+"path": [
+"Classical",
+"Modern Classical"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7415,
+"at": "2026-11-10T19:04:05+00:00"
+},
+"d6f45c5a221e3807222a9e702169af06c6e12024d8c7f7d5839c7f3f210fd7b2": {
+"tag": "post-hardcore",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1152,
+"path": [
+"Rock",
+"Post-Hardcore"
+],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.7119,
+"at": "2026-11-10T19:04:05+00:00"
+},
+"786cd5283340ce74a8bcd7bf4b556d05309c26752c8cf2be14c4c5bdef93b0e7": {
+"tag": "americana",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 381,
+"path": [
+"Folk, World, & Country",
+"Country"
+],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6826,
+"at": "2026-11-10T19:04:06+00:00"
+},
+"d3cbdf6b0491f5ce083ba30fe2893da85a2a0870d8dfe1f27d3eab7fd45adbee": {
+"tag": "stoner metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1136,
+"path": [
+"Rock",
+"Stoner Rock"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.712,
+"at": "2026-11-10T19:04:06+00:00"
+},
+"4cae8851eae1c5c566703e1d70417ad889f9348d83364b81fff1bd62d8c66081": {
+"tag": "bluegrass",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 394,
+"path": [
+"Folk, World, & Country",
+"Bluegrass"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.038,
+"at": "2026-11-10T19:04:06+00:00"
+},
+"0d5dbd39e202e2f04680db75f13904a2239b669e91919aabb987ce8ca63cf177": {
+"tag": "jazz rock",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 719,
+"path": [
+"Jazz",
+"Jazz-Rock"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.9138,
+"at": "2026-11-10T19:04:07+00:00"
+},
+"fbceae22699fe245e22a844ca03ec0cb24c6d01a2224e0301f10bf0c694c4423": {
+"tag": "power electronics",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 216,
+"path": [
+"Electronic",
+"Power Electronics"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6123,
+"at": "2026-11-10T19:04:08+00:00"
+},
+"bf39f173f543ef023876c39e16c8b780547ac037f990ef4ebed369b4e6be86d7": {
+"tag": "composer",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6772,
+"at": "2026-11-10T19:04:08+00:00"
+},
+"f27c16c4403a36edc5e0d156d066a57a3532fc8ed6cd142ee18c9785aea308ff": {
+"tag": "symphonic metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1180,
+"path": [
+"Rock",
+"Symphonic Metal"
+],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.8092,
+"at": "2026-11-10T19:04:09+00:00"
+},
+"3e17881268432cc2b549b1676c057869572bb81d6e68bfa1e2b97595f92922db": {
+"tag": "piano",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 54,
+"path": [
+"Classical",
+"Piano"
+],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 214,
+"latency_s": 3.6039,
+"at": "2026-11-10T19:04:10+00:00"
+},
+"4fe32140267b1abd2799e3c20066ba0989136d3dcd51061c6f86b322b7a16a72": {
+"tag": "k-pop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 962,
+"path": [
+"Pop",
+"K-pop"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7358,
+"at": "2026-11-10T19:04:10+00:00"
+},
+"5e4d7feecbea0963f270ce600903b493ab0d44017fd2811285e74962d69ef9c7": {
+"tag": "salsa",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 767,
+"path": [
+"Latin",
+"Salsa"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.9785,
+"at": "2026-11-10T19:04:10+00:00"
+},
+"0033d3b5fd237f1905497ec35194e7ecd4da1c000b075a6c14a369359b71860b": {
+"tag": "latin jazz",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 720,
+"path": [
+"Jazz",
+"Latin Jazz"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.4957,
+"at": "2026-11-10T19:04:11+00:00"
+},
+"b89c73985a9721f1b361903c855846e12ab10348e8c0dc888ea774f6a9fe402f": {
+"tag": "hard bop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 731,
+"path": [
+"Jazz",
+"Hard Bop"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7211,
+"at": "2026-11-10T19:04:11+00:00"
+},
+"f07d56c83e91eb2eeb37ba06d37b49538b287bc67e8cf6e8b02665688f88aad5": {
+"tag": "folk metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1185,
+"path": [
+"Rock",
+"Folk Metal"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.4297,
+"at": "2026-11-10T19:04:12+00:00"
+},
+"06142ef1cea5aa373bd735da53bcbdca0d0c2d64871de59e994e410df1023408": {
+"tag": "brutal death metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1230,
+"path": [
+"Rock",
+"Brutal Death Metal"
+],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 2.3355,
+"at": "2026-11-10T19:04:12+00:00"
+},
+"f3fe1dfdfe98ae2b80c94b275d792479aa50dc0eab3373024fc1efc535ac7d41": {
+"tag": "folk pop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 380,
+"path": [
+"Folk, World, & Country",
+"Folk"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 177,
+"latency_s": 3.1806,
+"at": "2026-11-10T19:04:13+00:00"
+},
+"92676176f63bf0a6cc50fd79df4fadd2d5133be934bf4400c42f6e2b755cb295": {
+"tag": "cool jazz",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 726,
+"path": [
+"Jazz",
+"Cool Jazz"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7249,
+"at": "2026-11-10T19:04:13+00:00"
+},
+"17299a7f16bf7aa248052e340b75949c04c0711436f4508b91e5b185057921e5": {
+"tag": "vocal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 905,
+"path": [
+"Pop",
+"Vocal"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7467,
+"at": "2026-11-10T19:04:14+00:00"
+},
+"5b0276bd5e5c216ae549326374c08918721b9f6a877aa79d2b5d2e14940f0738": {
+"tag": "desert rock",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1136,
+"path": [
+"Rock",
+"Stoner Rock"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 2.0965,
+"at": "2026-11-10T19:04:14+00:00"
+},
+"fb9cc1df24a13c975d3378653f535a7ee60aaed01515972bf7bc38014218a8eb": {
+"tag": "arena rock",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1165,
+"path": [
+"Rock",
+"Arena Rock"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.7757,
+"at": "2026-11-10T19:04:15+00:00"
+},
+"026b07465e83d66fb4b2c0a9d2a1b4e2e322f09070430c6b79e23d70f24f7497": {
+"tag": "toronto",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7068,
+"at": "2026-11-10T19:04:16+00:00"
+},
+"b555835e64c319badb6a2a3fc9559b9d7cb7cdbf16797c5a2faa1958a193bb02": {
+"tag": "psychedelic pop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 958,
+"path": [
+"Pop",
+"Psychedelic"
+],
+"input_tokens": 25,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.6868,
+"at": "2026-11-10T19:04:16+00:00"
+},
+"f47dcdfb2db9e8a6173a77098354c6d1c4a09781e699aca574e28552429c89de": {
+"tag": "san francisco",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.108,
+"at": "2026-11-10T19:04:17+00:00"
+},
+"dbc40074cf827e75d8cbc441627dc3d31241bd683dba933c472f169b8dfda700": {
+"tag": "conscious hip hop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 654,
+"path": [
+"Hip Hop",
+"Conscious"
+],
+"input_tokens": 25,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.0472,
+"at": "2026-11-10T19:04:17+00:00"
+},
+"2f8690e6642deb57ded8c8e6f6ab5014d211eeacd4092e1337c2deac9d73e4e6": {
+"tag": "groove metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1212,
+"path": [
+"Rock",
+"Groove Metal"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.8119,
+"at": "2026-11-10T19:04:17+00:00"
+},
+"de5e3b886852ad67873bae92b239f3bcd04ca3f2ee7860e448fa8bcd18e2df27": {
+"tag": "melodic",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6582,
+"at": "2026-11-10T19:04:17+00:00"
+},
+"76bb6680ca60d4d07f4cf1bf9b98b3f1ac91811bdde5881ae7da53e7bdb449e6": {
+"tag": "melodic black metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1100,
+"path": [
+"Rock",
+"Black Metal"
+],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.1668,
+"at": "2026-11-10T19:04:18+00:00"
+},
+"b2471644bcf4cb460460511dff12f5375ccdcbe81e09966c8dc3bf0d13b64757": {
+"tag": "surf rock",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1141,
+"path": [
+"Rock",
+"Surf"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.6737,
+"at": "2026-11-10T19:04:19+00:00"
+},
+"66bcc79e0b76ad3f52a1f361a7a242c6ccb845568e62100a09c56c4ee1bb9a15": {
+"tag": "acid rock",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1188,
+"path": [
+"Rock",
+"Acid Rock"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.7184,
+"at": "2026-11-10T19:04:19+00:00"
+},
+"08b172c6e402c22938a4e37bb2ec4720aa736c8f685b21bf716891b74ddd6dc6": {
+"tag": "poetry",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 875,
+"path": [
+"Non-Music",
+"Poetry"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.9209,
+"at": "2026-11-10T19:04:20+00:00"
+},
+"0bf27cc83aaba14d53c34dd024ebf563a5c90388b3156b21ca59ab441af3b7cd": {
+"tag": "adult contemporary",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 922,
+"path": [
+"Pop",
+"Soft Rock"
+],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 221,
+"latency_s": 3.148,
+"at": "2026-11-10T19:04:20+00:00"
+},
+"7aeb563b160ce86ce57332522d3f61fdbf905526ba0bc4548685d6a72638648c": {
+"tag": "futurepop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 346,
+"path": [
+"Electronic",
+"Future Pop"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.0579,
+"at": "2026-11-10T19:04:20+00:00"
+},
+"2462d4144f27d52b477c48737773d25e0c1f2f72ab04cf44dd0da3ee60817148": {
+"tag": "mod",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1156,
+"path": [
+"Rock",
+"Mod"
+],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.6965,
+"at": "2026-11-10T19:04:21+00:00"
+},
+"152ad5ccbe5555084e82f9cb2e9030c8339b4b86270f9076748f8bd08f642230": {
+"tag": "manchester",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.819,
+"at": "2026-11-10T19:04:22+00:00"
+},
+"b6cd008f57fbffdc19308e3eedefd4a0c4ee89e7fac78207ce48e82100b40e6d": {
+"tag": "singer",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6391,
+"at": "2026-11-10T19:04:22+00:00"
+},
+"ac97d459e1d30100f8717b70c794526cce6f05c4ee48079b98198c73c0a5d253": {
+"tag": "experiemental",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 132,
+"path": [
+"Electronic",
+"Experimental"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.714,
+"at": "2026-11-10T19:04:23+00:00"
+},
+"d6cd19242ccc89d35fec18910c7a99832a30c117ce2c2b8da72e5beb92b02e59": {
+"tag": "oldies",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 122,
+"latency_s": 3.1559,
+"at": "2026-11-10T19:04:23+00:00"
+},
+"9f0e5f4238ef2d5124ae1e3b3308412015bfada2a42b20462cc775902c46661e": {
+"tag": "merengue",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 777,
+"path": [
+"Latin",
+"Merengue"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.5355,
+"at": "2026-11-10T19:04:23+00:00"
+},
+"b33da02e110dd7dd2fc25dd492268a8da24234bbfc92ef7f166f09ebc173ed43": {
+"tag": "psybient",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 135,
+"path": [
+"Electronic",
+"Ambient"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6253,
+"at": "2026-11-10T19:04:23+00:00"
+},
+"0e6209330cd3531d45e23becc85acfd77e1bb6be98649e2061261d3a401a59b9": {
+"tag": "jazz hop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 661,
+"path": [
+"Hip Hop",
+"Jazzy Hip-Hop"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.566,
+"at": "2026-11-10T19:04:24+00:00"
+},
+"87ba457cb9bfc8400e63b4a6d2d860849de19e23e8e74cab1b841dc9c4c4b0a7": {
+"tag": "epic",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.9542,
+"at": "2026-11-10T19:04:25+00:00"
+},
+"8b149a29770eb6300a2d5d8947f18909ddb334b45c6c3b952f144cb331351979": {
+"tag": "alternative dance",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 130,
+"path": [
+"Electronic"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 139,
+"latency_s": 2.1166,
+"at": "2026-11-10T19:04:25+00:00"
+},
+"9a9098c71c052ed7daffc7b1ef12bedb38735e56b84522d2a70508b644e47be4": {
+"tag": "belgium",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.9,
+"at": "2026-11-10T19:04:25+00:00"
+},
+"e88e46ad50410efb1a67316d5a94d300d4b3023d80e7427b4a516536b34a1bfe": {
+"tag": "delta blues",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 9,
+"path": [
+"Blues",
+"Delta Blues"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6869,
+"at": "2026-11-10T19:04:26+00:00"
+},
+"38c304575f016ca701b994443d5e964920dc0854dd4323c3c21bfd809f3663a9": {
+"tag": "funk / soul",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 606,
+"path": [
+"Funk / Soul"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6489,
+"at": "2026-11-10T19:04:27+00:00"
+},
+"0f868307f375a3fd0b26ef6f24e0b3698fd3faaedcffb65ecf623b74f8ba24b3": {
+"tag": "nerdcore",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 649,
+"path": [
+"Hip Hop"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 96,
+"latency_s": 2.1075,
+"at": "2026-11-10T19:04:27+00:00"
+},
+"72685d0b90ce4a8911ee1cc3e79f5af01b866a1abb785497bab4f0e8b591f9ad": {
+"tag": "funk metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1197,
+"path": [
+"Rock",
+"Funk Metal"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 2.3668,
+"at": "2026-11-10T19:04:29+00:00"
+},
+"18c8b48853ca11d2413e2272dd6e97e10e79883398601023093e9f37e32a9498": {
+"tag": "post-internet",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 130,
+"path": [
+"Electronic"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 216,
+"latency_s": 3.7248,
+"at": "2026-11-10T19:04:30+00:00"
+},
+"70ee3beba2f10dc53f6ab9330b3b32dc3932a2597d29505b379cdd1a4355aa41": {
+"tag": "ambient pop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 135,
+"path": [
+"Electronic",
+"Ambient"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 281,
+"latency_s": 5.3534,
+"at": "2026-11-10T19:04:30+00:00"
+},
+"b0aecd0f4aaa85b66e9b3a672d0a6ec26919ccf9fafb84c5b21cd5b9bc919008": {
+"tag": "space music",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 135,
+"path": [
+"Electronic",
+"Ambient"
+],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 173,
+"latency_s": 3.1182,
+"at": "2026-11-10T19:04:30+00:00"
+},
+"2822e127c0a51a3f77f9f8e5aa522abcd663f4891c67506911f4e61042b96478": {
+"tag": "death-doom metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1119,
+"path": [
+"Rock",
+"Doom Metal"
+],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.6929,
+"at": "2026-11-10T19:04:31+00:00"
+},
+"838952e4bb0f0df334e45afa30edab9f8d61612c5ebdbf812ce80c61d7f213e9": {
+"tag": "amsterdam",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6678,
+"at": "2026-11-10T19:04:31+00:00"
+},
+"dd592a3832b8e094e0c0857f8b52dae8d4cfbcf4468a01d23f37925d881caef6": {
+"tag": "greek",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.295,
+"at": "2026-11-10T19:04:31+00:00"
+},
+"93cc5d71ce0a13039553c21799f1883ea4c8c14e0ed5950043100f164624d22d": {
+"tag": "ireland",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.1534,
+"at": "2026-11-10T19:04:33+00:00"
+},
+"90f5744caf31264cafb32a10e1a7e7032d025d224345d11ef18a01f5f597bbc8": {
+"tag": "neo-soul",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 624,
+"path": [
+"Funk / Soul",
+"Neo Soul"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.277,
+"at": "2026-11-10T19:04:33+00:00"
+},
+"a0e853ce9fb818ce2390bc502139dc865bcd8a4eb6f467c66aada13184f6e2af": {
+"tag": "c64 remix",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 231,
+"path": [
+"Electronic",
+"Video Game Music"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 125,
+"latency_s": 2.3297,
+"at": "2026-11-10T19:04:33+00:00"
+},
+"0f0b0c78166675c3fd7dcbd811304f14665488ee280157415296d2aa0a66dc6f": {
+"tag": "video game soundtrack",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1273,
+"path": [
+"Stage & Screen",
+"Video Game Music"
+],
+"input_tokens": 25,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.1935,
+"at": "2026-11-10T19:04:34+00:00"
+},
+"ee228c206fd93bc43c8766460e544615eda4a31b762a3197ad8e56df52696b08": {
+"tag": "filmi",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1272,
+"path": [
+"Stage & Screen",
+"Bollywood"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 2.3599,
+"at": "2026-11-10T19:04:35+00:00"
+},
+"00de4210981802096bcb7a015d17c226c532afb0e74737f1389718055dfbf231": {
+"tag": "glam metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1143,
+"path": [
+"Rock",
+"Glam"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 338,
+"latency_s": 4.0496,
+"at": "2026-11-10T19:04:35+00:00"
+},
+"0fa91cddc20d4bf776cdd4a59f28a05bfdb0dcb887b5307f2ed6dd4e9dbe45f5": {
+"tag": "jazz pop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 709,
+"path": [
+"Jazz"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 256,
+"latency_s": 3.9612,
+"at": "2026-11-10T19:04:37+00:00"
+},
+"62bddec6ecac2b9aa6f6249cc8683371c611b0ac69f83f1d08913d778088a1bd": {
+"tag": "houston",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.8605,
+"at": "2026-11-10T19:04:37+00:00"
+},
+"f88df27f8bde40479f1be619260cdb200ac9a23906e91ce992b5811377ba288e": {
+"tag": "dance-punk",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1118,
+"path": [
+"Rock",
+"Post-Punk"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 144,
+"latency_s": 2.5362,
+"at": "2026-11-10T19:04:37+00:00"
+},
+"94b8e0cbc2902462dce4ee4bfa30be7b5c916a349fd3cbdf62bc56c7152419e2": {
+"tag": "analog",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.0828,
+"at": "2026-11-10T19:04:38+00:00"
+},
+"cfb26b9e9aa57dd47c023bb2601675a172e8842354b96cb49224511f3f2f59d0": {
+"tag": "singer songwriter",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 380,
+"path": [
+"Folk, World, & Country",
+"Folk"
+],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 369,
+"latency_s": 4.7876,
+"at": "2026-11-10T19:04:39+00:00"
+},
+"f95262fe2ee70c21c221ee12476d81e541f02328e19f4c86aad403d6bbaf9d4c": {
+"tag": "relax",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.9377,
+"at": "2026-11-10T19:04:39+00:00"
+},
+"7615c7f2879c584cdfb315fc20d3e0ac47490ea9786b3221e36c0694a6d9a23e": {
+"tag": "female vocal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.0717,
+"at": "2026-11-10T19:04:39+00:00"
+},
+"373eccca97e357905449afc66cf7c273b4e67afccc97cd369a33e4a754c73b8b": {
+"tag": "edinburgh",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6813,
+"at": "2026-11-10T19:04:39+00:00"
+},
+"0ae397a0636994225121ffe98895fa74635fec0ce0d9ed84ac9d7462fe0963c4": {
+"tag": "rome",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.886,
+"at": "2026-11-10T19:04:40+00:00"
+},
+"7d2924ba82340cb09370a78a3f33f00ae8217da0d0364bdf62b0b27b935c2a67": {
+"tag": "jazzthing.de",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 25,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 98,
+"latency_s": 1.7942,
+"at": "2026-11-10T19:04:41+00:00"
+},
+"828488ebff1152a5ca2819b993fc2ad4da4a8c8c559bba91f46d3950f7cbcd34": {
+"tag": "alliteration",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7862,
+"at": "2026-11-10T19:04:41+00:00"
+},
+"fec50434535ca5d8987f4e579cbd7b1ae8a5770219888c4f34517cc446a5b858": {
+"tag": "praise & worship",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 926,
+"path": [
+"Pop",
+"Religious"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 123,
+"latency_s": 2.4599,
+"at": "2026-11-10T19:04:42+00:00"
+},
+"e78d7d7a20e41bdc461daaf9a817f363da2df5ac91b09e1c9cf7c6b910f8127c": {
+"tag": "smooth soul",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 607,
+"path": [
+"Funk / Soul",
+"Soul"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 47,
+"latency_s": 1.7049,
+"at": "2026-11-10T19:04:42+00:00"
+},
+"d01d8921a287f3a67b2440340b6e0df778cfd7498d7099c1085167929b363ff2": {
+"tag": "eclectic",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.1256,
+"at": "2026-11-10T19:04:43+00:00"
+},
+"b003d107daf58ad60aa8d2110f2ec504b096b7a5f69ed9a2b03170e1c36e03f7": {
+"tag": "leipzig",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.768,
+"at": "2026-11-10T19:04:43+00:00"
+},
+"62aa6f294457b499511111c5e5df887f5cffed87d0c400ddcb95ab2d49f66754": {
+"tag": "drum&bass",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 143,
+"path": [
+"Electronic",
+"Drum n Bass"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.8503,
+"at": "2026-11-10T19:04:44+00:00"
+},
+"6baba96a8cb979f131feaa3a09515d181956f60b5cae9f387e0cff992a764590": {
+"tag": "massachusetts",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.8464,
+"at": "2026-11-10T19:04:45+00:00"
+},
+"f0338cb9518e6321415bd7e25c3ffa7d39edc67eae269e4fe55b9c7d731d1339": {
+"tag": "italo",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 185,
+"path": [
+"Electronic",
+"Italo-Disco"
+],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.2511,
+"at": "2026-11-10T19:04:45+00:00"
+},
+"a2b5f7fe707a04456fb6cdcec5b607f982a65d0b00f4f455410b31070fa4e6f5": {
+"tag": "crossover",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1239,
+"path": [
+"Rock",
+"Crossover thrash"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 276,
+"latency_s": 4.1741,
+"at": "2026-11-10T19:04:45+00:00"
+},
+"c1dc79f74b0fa38168e4366ee088c9357d4c3ae5f42ac1ca5c58f8faa1412887": {
+"tag": "louisville",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6653,
+"at": "2026-11-10T19:04:46+00:00"
+},
+"918a1334620951379982b258fde468e4016f411f67044a4f2b66244ecf2bb578": {
+"tag": "1980s",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.9522,
+"at": "2026-11-10T19:04:47+00:00"
+},
+"1529f6fb0db93effbfbade493e1be51358a17be1a0233397a8aceab559d55d85": {
+"tag": "future beat",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 325,
+"path": [
+"Electronic",
+"Future Bass"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 124,
+"latency_s": 2.7686,
+"at": "2026-11-10T19:04:47+00:00"
+},
+"465128b698ec1e2c9db9a75bb160ec5eaa5c12082a43f9670e882f83d0952500": {
+"tag": "hawaii",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 78,
+"latency_s": 1.6061,
+"at": "2026-11-10T19:04:48+00:00"
+},
+"ca4d76d60cfc39137a7cbb8e7888142b3085c1ec868511600e704d3a0f51cd42": {
+"tag": "raw punk",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1092,
+"path": [
+"Rock",
+"Punk"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.9118,
+"at": "2026-11-10T19:04:49+00:00"
+},
+"d0ff004d9f5ee063a0bb3070d015af6c22f399b98f8598c25f8d03d56ad2164c": {
+"tag": "terrorcore",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 252,
+"path": [
+"Electronic",
+"Speedcore"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 298,
+"latency_s": 3.8032,
+"at": "2026-11-10T19:04:49+00:00"
+},
+"bf8ee98a1ed0e6eb5ab00e6374b2e982a6a92cbfe148c6fe72209930f06f5e62": {
+"tag": "hard",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.8197,
+"at": "2026-11-10T19:04:50+00:00"
+},
+"21161cac9eb287937239240ca15ebf9bf001a03c34f234c7ae2446429b0d2701": {
+"tag": "naturewave",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 135,
+"path": [
+"Electronic",
+"Ambient"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 283,
+"latency_s": 4.1019,
+"at": "2026-11-10T19:04:50+00:00"
+},
+"72fbdee7c0f32a99efbe069a74a4e2b49e9251a0440bd6a8bf67406a0b92c993": {
+"tag": "go-go",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 633,
+"path": [
+"Funk / Soul",
+"Go-Go"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7659,
+"at": "2026-11-10T19:04:50+00:00"
+},
+"2a6e3ee48f88b7f625b773104f3c96697b8f5b1a1024d605d047696285f62089": {
+"tag": "post-whatever",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 75,
+"latency_s": 2.7735,
+"at": "2026-11-10T19:04:51+00:00"
+},
+"643d3998dc2f9cb7dd6032a10d9668c54d1a520c1e2a335b6d322a33d01ccaa2": {
+"tag": "industrial black metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1100,
+"path": [
+"Rock",
+"Black Metal"
+],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.8441,
+"at": "2026-11-10T19:04:52+00:00"
+},
+"88d223ed7dc11271ee2f410eeedc4d3c22a5179205b447519113bd42b8f439cb": {
+"tag": "anthem",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 248,
+"latency_s": 3.2532,
+"at": "2026-11-10T19:04:53+00:00"
+},
+"0777559b9ee85543030d654b9129d1325de95ccaf6b6c94649dfb72f3c1dbb96": {
+"tag": "romanian band",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.086,
+"at": "2026-11-10T19:04:53+00:00"
+},
+"3e4f3df554a7ae2c40881d710206d4c4ecdc5244168c2391c3e9e95dc9e7c981": {
+"tag": "tropical rock",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1090,
+"path": [
+"Rock"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 177,
+"latency_s": 2.9709,
+"at": "2026-11-10T19:04:53+00:00"
+},
+"6d69ea0bf3392400a42625811661466fbb09d3228293bf15edad750d70a5073e": {
+"tag": "horror metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1208,
+"path": [
+"Rock",
+"Horror Rock"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 127,
+"latency_s": 2.3346,
+"at": "2026-11-10T19:04:54+00:00"
+},
+"351aaec1bc4b097e50c5a5bb672feb5821f06973adee3544e1d9a73951b1270f": {
+"tag": "contralto",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.2355,
+"at": "2026-11-10T19:04:54+00:00"
+},
+"24f15e278ce3c128eda2db619b04404d9c1de1ea6e76f6323ab276a8299e7175": {
+"tag": "von records",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7994,
+"at": "2026-11-10T19:04:55+00:00"
+},
+"ab56165a9b9a809d9d39210a8037f68ae8c03f5563796cf6da3a8296cc76ac34": {
+"tag": "harpist",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.8041,
+"at": "2026-11-10T19:04:55+00:00"
+},
+"c4f711ad0a6f394fe5886a393a564a26a8c7ec3288f6d1380eeb90dd256b5df5": {
+"tag": "french singer",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7583,
+"at": "2026-11-10T19:04:57+00:00"
+},
+"9f9ed4cd8cbf28f2b3c591fcbcea602e477a298030e40dedc4b61f0dd2e49155": {
+"tag": "folk black metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1100,
+"path": [
+"Rock",
+"Black Metal"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 269,
+"latency_s": 3.242,
+"at": "2026-11-10T19:04:58+00:00"
+},
+"87a67a6f2bfda2f6643d0905278665b394d69a81b324696ddc990b100ff7137f": {
+"tag": "deutschpop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 903,
+"path": [
+"Pop"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 125,
+"latency_s": 2.7383,
+"at": "2026-11-10T19:04:58+00:00"
+},
+"4efaf61f36b09e5a60f7bde1ad968e21057b031ae9a203508acd1b25a0760bc9": {
+"tag": "westcoast",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1149,
+"path": [
+"Rock",
+"AOR"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 425,
+"latency_s": 5.2213,
+"at": "2026-11-10T19:04:59+00:00"
+},
+"7072e901246e759ecc15f87fe47d803a67843866c338ff6862c58ca47c0fbe40": {
+"tag": "progressive deathcore",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1186,
+"path": [
+"Rock",
+"Deathcore"
+],
+"input_tokens": 25,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.8281,
+"at": "2026-11-10T19:05:00+00:00"
+},
+"c5ccd619d1a23627617f4bd6dc8faf8734c0c7b6493152d7ce3025bbdc896e2d": {
+"tag": "beatbox",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 694,
+"path": [
+"Hip Hop",
+"Beatbox"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 98,
+"latency_s": 2.2632,
+"at": "2026-11-10T19:05:00+00:00"
+},
+"1dd00a08e009ce713ae7790c64008f88d81de16c22c0818e4fdc4d86d800be0b": {
+"tag": "sound healing",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 278,
+"path": [
+"Electronic",
+"Therapy"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 227,
+"latency_s": 3.4028,
+"at": "2026-11-10T19:05:00+00:00"
+},
+"b9c554071802a664fd216493e1276d7801b53fb579caeba224345ce027a67f5f": {
+"tag": "stupid",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.8783,
+"at": "2026-11-10T19:05:01+00:00"
+},
+"4b3ebe12c88c2983c253de04d2009c10604bf4695bdbc198585015ac87cd9a49": {
+"tag": "michel banabila",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6086,
+"at": "2026-11-10T19:05:01+00:00"
+},
+"76ec7be858d7681f97cf0ee4347e222f3aaf38b77a3b834443446b9ef61ba4e2": {
+"tag": "contemporary reggae",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1066,
+"path": [
+"Reggae",
+"Reggae"
+],
+"input_tokens": 25,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.2142,
+"at": "2026-11-10T19:05:02+00:00"
+},
+"726e513827c74592713add24d404cb897a08033da50897ab15423cca7c49e5c2": {
+"tag": "heart",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.0866,
+"at": "2026-11-10T19:05:02+00:00"
+},
+"e7309824fae678cb58442ac0ac166c5fea967d5d9dd4de6f5934bc1a3472b5d3": {
+"tag": "protest song",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 421,
+"path": [
+"Folk, World, & Country",
+"Political"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 63,
+"latency_s": 1.5675,
+"at": "2026-11-10T19:05:02+00:00"
+},
+"1e739cb6eb07fbe45645d9d3423c3c984eaa91a60b1f8c015eb2b9b5b5fa8faf": {
+"tag": "emanuel brown",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.1489,
+"at": "2026-11-10T19:05:03+00:00"
+},
+"973e6696afa60b8492ce3c2c9a5a5c73b9230df8f186a3f8821fb40564d95459": {
+"tag": "star trek",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.0694,
+"at": "2026-11-10T19:05:03+00:00"
+},
+"330ec0a82e1e617262e44f8f8efb04bccaacfb4ef3680de27c8beff033f644ae": {
+"tag": "dungeon rap",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 688,
+"path": [
+"Hip Hop",
+"Memphis Rap"
+],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 288,
+"latency_s": 3.6291,
+"at": "2026-11-10T19:05:04+00:00"
+},
+"30a9bcc7385b1e9763ad8edbc376221f62ddc21d65253c0156b119032eb502e6": {
+"tag": "royalty free tracks",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 25,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 69,
+"latency_s": 1.4994,
+"at": "2026-11-10T19:05:04+00:00"
+},
+"17c76a098376610648fcb4dfc9cae1fd3fd6b90cb92c2d20b3b328b78286e1f1": {
+"tag": "reims",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.0957,
+"at": "2026-11-10T19:05:04+00:00"
+},
+"9dd5ca06abde0fe991fd65b4560157bbaa3e3ec8c6e9a29a16361b37e64ad723": {
+"tag": "melodic pop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 903,
+"path": [
+"Pop"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.4554,
+"at": "2026-11-10T19:05:05+00:00"
+},
+"b46108059c6daad227391075f403160ae078380690a8d26b2655263708c41255": {
+"tag": "gold coast",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.403,
+"at": "2026-11-10T19:05:05+00:00"
+},
+"4220aa89e810af968d11a17f85d34dd4fe109cc517fb3dd3cef2d13967a14c63": {
+"tag": "bubblegrunge",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1240,
+"path": [
+"Rock",
+"Post-Grunge"
+],
+"input_tokens": 25,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 128,
+"latency_s": 2.461,
+"at": "2026-11-10T19:05:06+00:00"
+},
+"844240daee41f869b329a0dbf47e719441214b168e7605fe4da3a7f6e222fb88": {
+"tag": "dance hall",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1067,
+"path": [
+"Reggae",
+"Dancehall"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.1271,
+"at": "2026-11-10T19:05:06+00:00"
+},
+"02d8bb062394e3fcedb81248e982fae3f0aecb225ab53421544ec33caa4052d8": {
+"tag": "tv show",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1267,
+"path": [
+"Stage & Screen",
+"Soundtrack"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 195,
+"latency_s": 3.0001,
+"at": "2026-11-10T19:05:07+00:00"
+},
+"692aa0ae1df232ec8b8fa722bb4e175fde3372c667a2d477df6f06e102563cbb": {
+"tag": "chiang rai",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.0746,
+"at": "2026-11-10T19:05:07+00:00"
+},
+"a1d5e04399e3b92744a912c03f37a7758ea97e713231bd91087a5ad9d7d728fd": {
+"tag": "old school metal",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1103,
+"path": [
+"Rock",
+"Heavy Metal"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 48,
+"latency_s": 1.9236,
+"at": "2026-11-10T19:05:07+00:00"
+},
+"bbd5c79c76c5f4ec4c7572945c2e6318cb4fc4defcd4f5617bc643c5f731bb32": {
+"tag": "illuminated paths",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.2634,
+"at": "2026-11-10T19:05:08+00:00"
+},
+"6980f04a2132a0d3ebd905c44e6431bbfc84f75d168ced317edf6b7dc56a8e3e": {
+"tag": "musical theater",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1270,
+"path": [
+"Stage & Screen",
+"Musical"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.21,
+"at": "2026-11-10T19:05:08+00:00"
+},
+"55126f77a52cdfec72e51e1dc4e49944f0d445b62a0b41e97a8b2b52bb565e5d": {
+"tag": "ukgarage",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 199,
+"path": [
+"Electronic",
+"UK Garage"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6895,
+"at": "2026-11-10T19:05:09+00:00"
+},
+"a1265802ad92717060782b4b53ee8df13891fb6b203870bc5aa0b2d72f6fd4b0": {
+"tag": "character: 鬼人正邪",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 28,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.2131,
+"at": "2026-11-10T19:05:09+00:00"
+},
+"98c9d0baf61e8cd6424aacce5a049b7fbe91ef4d61c55e090fdf35f0e978c163": {
+"tag": "hariton zoe",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 64,
+"latency_s": 1.6732,
+"at": "2026-11-10T19:05:09+00:00"
+},
+"ee7c7243fa01db6452f6d5b1be6acc2b99fe46b193cffb8cf656309dc93458f3": {
+"tag": "iconic",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.0146,
+"at": "2026-11-10T19:05:10+00:00"
+},
+"afe8b9f7cca4145b6fcc7a6be72bafa17055140ab2abca8406235646008cbaf8": {
+"tag": "beck",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6918,
+"at": "2026-11-10T19:05:10+00:00"
+},
+"798dfe9d477f5239c0a7105364efbc60e0ccaaad9f128434e59b89a20080eab1": {
+"tag": "lithuanian dream pop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1172,
+"path": [
+"Rock",
+"Dream Pop"
+],
+"input_tokens": 27,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.6193,
+"at": "2026-11-10T19:05:10+00:00"
+},
+"7ebf0eaa1d5fc510c330623e46121e056e89cbd90c787bf39fc1dec7f27355f3": {
+"tag": "fergana",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 65,
+"latency_s": 1.4605,
+"at": "2026-11-10T19:05:11+00:00"
+},
+"c5178296795cf7d69483c99cb99f25ac81b1521e61d6d8ecdd12bce127185110": {
+"tag": "no-wave",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1198,
+"path": [
+"Rock",
+"No Wave"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.602,
+"at": "2026-11-10T19:05:12+00:00"
+},
+"dad597eebc664accd4ecaeafeb9f7cfa42d83182dacdf30d3d34950f69600e3b": {
+"tag": "mobile",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 3.5658,
+"at": "2026-11-10T19:05:12+00:00"
+},
+"9c39c4ae139e6591665a27104d0526dd2c9a6295bc7407ee02fc84772bb04669": {
+"tag": "early",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 89,
+"path": [
+"Classical",
+"Early"
+],
+"input_tokens": 19,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 140,
+"latency_s": 2.1604,
+"at": "2026-11-10T19:05:13+00:00"
+},
+"1b3b9f0044f33c82bdbb7b3b07c7262f7a919a6691c11216accb36e926759a34": {
+"tag": "6\" flexi-disc",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 27,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.7607,
+"at": "2026-11-10T19:05:13+00:00"
+},
+"364a70aa63fcd54705f38f47acd20681eab0d30529eb5b57c775c68fdf43090b": {
+"tag": "indie-rock / avantgarde",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1096,
+"path": [
+"Rock",
+"Indie Rock"
+],
+"input_tokens": 29,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.2599,
+"at": "2026-11-10T19:05:13+00:00"
+},
+"1ce6e3740d1832b9ec1cd8e0c88bffe191d821a5d3f4cf265a8d7323b4511274": {
+"tag": "musique concrète instrumentale",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 225,
+"path": [
+"Electronic",
+"Musique Concrète"
+],
+"input_tokens": 28,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.1369,
+"at": "2026-11-10T19:05:14+00:00"
+},
+"b9dd531e11e905a76a727328e0889cc0a9b2230c92f79ccf9db703f48c136bf0": {
+"tag": "south portland",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.2092,
+"at": "2026-11-10T19:05:14+00:00"
+},
+"a4e479166342613797b781ac043d2b6c0c75555b9ea8b529ce582365b5f6dae7": {
+"tag": "dirt",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6295,
+"at": "2026-11-10T19:05:15+00:00"
+},
+"caa8ac64e13ee1d901c17a3dd0c642375216a01b69031f563fce7f57841f3bb6": {
+"tag": "runescape",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1273,
+"path": [
+"Stage & Screen",
+"Video Game Music"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 194,
+"latency_s": 3.0782,
+"at": "2026-11-10T19:05:16+00:00"
+},
+"4b0e27b38e6ade89e42c4d3f9c6d174144a0b3a44d458e2728e4a19fe0f5ad68": {
+"tag": "voice actor europa",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.8784,
+"at": "2026-11-10T19:05:16+00:00"
+},
+"d3d3dd9474d8e0a8a88ed1817e7a0534bfe256987f3de077ac907c4d9db56950": {
+"tag": "シンセウェイブ",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 190,
+"path": [
+"Electronic",
+"Synthwave"
+],
+"input_tokens": 26,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 0.9665,
+"at": "2026-11-10T19:05:17+00:00"
+},
+"56f9260404276a35cbec5aa3cb9f42b3d525608b36b35d2eede7aa310302f767": {
+"tag": "terry riley",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.1115,
+"at": "2026-11-10T19:05:18+00:00"
+},
+"31954e5207aac0d85e2d07bf54ced551539f702185452a16f342c1e7c92d8594": {
+"tag": "disco rap",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 649,
+"path": [
+"Hip Hop"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 165,
+"latency_s": 3.3247,
+"at": "2026-11-10T19:05:18+00:00"
+},
+"a6b8f7b9f4b7116b2feab1978bab7a6dbba2655f940f39afa53c18159425e8ce": {
+"tag": "sub-bass",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 188,
+"latency_s": 3.0068,
+"at": "2026-11-10T19:05:18+00:00"
+},
+"46bf6e62736437a1af60ab982eb52a8fd1c2af42631aa4dd11a7c9ec05fa7d13": {
+"tag": "#thril",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 67,
+"latency_s": 2.2015,
+"at": "2026-11-10T19:05:18+00:00"
+},
+"87168acd93d342dfcd9765e4add587fdec8b7d3cc85b1a2d6f310c19df8378cf": {
+"tag": "schubert",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.0005,
+"at": "2026-11-10T19:05:20+00:00"
+},
+"2f1e981dffb110193ed5003ba77e6a3a1ef05c43c5fd44dbe03d82efb0b1cc6b": {
+"tag": "tübingen",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.5698,
+"at": "2026-11-10T19:05:20+00:00"
+},
+"5b04f9fcd906069e687154ff019ca469521ef006d8ad78e18d55e19fd0c9feca": {
+"tag": "tar",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 41,
+"latency_s": 1.7731,
+"at": "2026-11-10T19:05:20+00:00"
+},
+"763ae01e54b37f4567e0ce80d1f8c56d27f0dcabfdeab444bc09e910ee570efd": {
+"tag": "starmania",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 133,
+"latency_s": 2.6737,
+"at": "2026-11-10T19:05:20+00:00"
+},
+"d1d8983ce4caa31c356cfc932139a688978a435af2dc2f3b8ae144f1f0b08cc9": {
+"tag": "israeli indie",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1096,
+"path": [
+"Rock",
+"Indie Rock"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 41,
+"latency_s": 1.4006,
+"at": "2026-11-10T19:05:21+00:00"
+},
+"09de281de90d62f29e4c97e3b268465f0497137ace35da2d74e48ed15c7a220a": {
+"tag": "country ballad",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 381,
+"path": [
+"Folk, World, & Country",
+"Country"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.1573,
+"at": "2026-11-10T19:05:22+00:00"
+},
+"d131e87a31aafbe85fc8873e08929609be6337d85ef7fdfc7e996b82e6f66a20": {
+"tag": "chill music",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 140,
+"path": [
+"Electronic",
+"Downtempo"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 91,
+"latency_s": 1.942,
+"at": "2026-11-10T19:05:22+00:00"
+},
+"6151684f44aaa6e4e625db854c46eec664cdef1153feb6fac16ef381465f96ca": {
+"tag": "j.r.r. tolkien",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 28,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.0554,
+"at": "2026-11-10T19:05:23+00:00"
+},
+"a14707498c51d715f09430c7deb87fe2e3bde32e2a7358aea2c6d1559c5459b5": {
+"tag": "sugar",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6629,
+"at": "2026-11-10T19:05:23+00:00"
+},
+"888ac4c35d874cb088901f1a4762b235900f16c4cbf6504ab69b50116291ab7a": {
+"tag": "independiente",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1096,
+"path": [
+"Rock",
+"Indie Rock"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 225,
+"latency_s": 3.5131,
+"at": "2026-11-10T19:05:23+00:00"
+},
+"a966c1170eb95d89f58a303df8f38c37f9406c2924eeae809bdddbfa030370a6": {
+"tag": "raydeoworld",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 46,
+"latency_s": 1.8865,
+"at": "2026-11-10T19:05:24+00:00"
+},
+"873d6aba779420c8938feceae9c2dfbdff980894efa4c8e83e6a7143985d7861": {
+"tag": "thee oh sees",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6364,
+"at": "2026-11-10T19:05:25+00:00"
+},
+"d5b0fc5a3fda66dbbf8cc27be2015fe7bfe79f4756d9790a3906105b91fbc12d": {
+"tag": "electronic horror",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 130,
+"path": [
+"Electronic"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 90,
+"latency_s": 1.7261,
+"at": "2026-11-10T19:05:25+00:00"
+},
+"ce690984190a185459bff0d27ac450588f1d5556392943a97188406539b022b5": {
+"tag": "santur",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 40,
+"latency_s": 1.8512,
+"at": "2026-11-10T19:05:26+00:00"
+},
+"2c7fd74b47755ad014e4a7ba18a72f19a5a2b83c41228e0b08761a641c61d744": {
+"tag": "amy",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.1847,
+"at": "2026-11-10T19:05:27+00:00"
+},
+"3181eb3022c8c2f9c5019cc002a9656cd1645a833083c2490ab3c38b89debe30": {
+"tag": "isle of eigg",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 4.5524,
+"at": "2026-11-10T19:05:28+00:00"
+},
+"0ccd979889d5a1d428afa4cf4a73a698241d45e56793242334c5331cb4991949": {
+"tag": "nightdrive",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 190,
+"path": [
+"Electronic",
+"Synthwave"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 182,
+"latency_s": 2.9649,
+"at": "2026-11-10T19:05:28+00:00"
+},
+"e5f218dc7f4d4889a235127387d3744962ab258f96f8c0b2c49106960930266f": {
+"tag": "sub pop records",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.3522,
+"at": "2026-11-10T19:05:28+00:00"
+},
+"c156e24f838048c5fb50a970e3d96e93d8d3e9f72b30412a11607452957e7886": {
+"tag": "urine",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 2.3351,
+"at": "2026-11-10T19:05:29+00:00"
+},
+"ee6c9cdd2b1e694747ac27a5b5e93a11249e0b3ac569f15f4f7990c7dddeb512": {
+"tag": "nardcore",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1094,
+"path": [
+"Rock",
+"Hardcore"
+],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 47,
+"latency_s": 1.2755,
+"at": "2026-11-10T19:05:29+00:00"
+},
+"dff55364fca84d448ff7db161e7074fa1eb193845175abac9225e2b4467696fa": {
+"tag": "#dance",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 130,
+"path": [
+"Electronic"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 90,
+"latency_s": 1.5019,
+"at": "2026-11-10T19:05:29+00:00"
+},
+"f5d226bccf1cda1041ecd76acc5435fae4d4d14f5c1dc3818fae40c9c36c9a24": {
+"tag": "counting crows",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.8698,
+"at": "2026-11-10T19:05:30+00:00"
+},
+"fcd639d76c34b83852b8a1a056ea2c831a4919479a519ae35341fd3a8de19dfd": {
+"tag": "brutal deathgrind",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1230,
+"path": [
+"Rock",
+"Brutal Death Metal"
+],
+"input_tokens": 26,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 117,
+"latency_s": 2.3386,
+"at": "2026-11-10T19:05:30+00:00"
+},
+"d82beaa60e85f57e448c8757618b3072f5f0572aadec0828aae84fabdecbc756": {
+"tag": "aedtpworld",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 90,
+"latency_s": 2.204,
+"at": "2026-11-10T19:05:31+00:00"
+},
+"285c4ca4856113aa8d717888ac2f0c2c365da3463dde64d1922e556a4d377302": {
+"tag": "panart",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 20,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 46,
+"latency_s": 2.228,
+"at": "2026-11-10T19:05:32+00:00"
+},
+"7072f7b8bd441ec9f818e724e64aea8fa4d1457414e6bc29a37adb1ec313e4de": {
+"tag": "lucenec",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.5458,
+"at": "2026-11-10T19:05:32+00:00"
+},
+"23ff0fd263222c37d4ef51fa4c0bee74628321ed5d73eb526499d53f963302e5": {
+"tag": "blues/soul",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1,
+"path": [
+"Blues"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 139,
+"latency_s": 2.062,
+"at": "2026-11-10T19:05:33+00:00"
+},
+"16234fef57da1130fe0eaacfad66b5a326fc9e515d9bfe458a30e89a040a5d01": {
+"tag": "deutscher rap",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 655,
+"path": [
+"Hip Hop",
+"Hip Hop"
+],
+"input_tokens": 24,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.705,
+"at": "2026-11-10T19:05:33+00:00"
+},
+"3020b784a8f33a0d3054784ea47fe707efa48fdaba265d16be5a58f2f3abbd3e": {
+"tag": "leagueoflyons",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 25,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.335,
+"at": "2026-11-10T19:05:33+00:00"
+},
+"fccd16126214946cd10ae5418316ec8939a75cf148919a0ad7529444d3302f52": {
+"tag": "john wetton",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.0361,
+"at": "2026-11-10T19:05:34+00:00"
+},
+"1a380430d82ef18679c0120c681b706847a117470249edd3c3ba428f82ddfdc4": {
+"tag": "battle music",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1273,
+"path": [
+"Stage & Screen",
+"Video Game Music"
+],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 215,
+"latency_s": 2.8895,
+"at": "2026-11-10T19:05:35+00:00"
+},
+"d3608e0367c2bb0b2b1029e2b41b2c1513f3014ae351c3c37cba7beae0bc07aa": {
+"tag": "robocop",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.642,
+"at": "2026-11-10T19:05:35+00:00"
+},
+"f3cc0178736efb96c5281074527bd49262c2251eb5b018baf1a73c1636fa31e0": {
+"tag": "dance anthem",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 130,
+"path": [
+"Electronic"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 120,
+"latency_s": 1.9733,
+"at": "2026-11-10T19:05:35+00:00"
+},
+"e6c648b2fcb99d5da364cabb965de123ee7d65105f009470176ee8d982e38bdf": {
+"tag": "vomir",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 21,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 118,
+"latency_s": 2.4239,
+"at": "2026-11-10T19:05:35+00:00"
+},
+"c930ede58d3fd3fa428d780c7a474d0dc98f2490ff5a5a01a9db27ce91422229": {
+"tag": "vinyl release",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.4904,
+"at": "2026-11-10T19:05:36+00:00"
+},
+"5f56846ad2442b20db0d8fc0e4fe9e3b13debc745f541e68eae4b3452c7125ee": {
+"tag": "all hardware",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 22,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.057,
+"at": "2026-11-10T19:05:36+00:00"
+},
+"341d130a6580e9f288cb60242be0ade0bc995bf3cc1bc89f83231c8f616deebd": {
+"tag": "indie lofi",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 1127,
+"path": [
+"Rock",
+"Lo-Fi"
+],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 9,
+"latency_s": 1.1617,
+"at": "2026-11-10T19:05:36+00:00"
+},
+"28b2cd00c5ad3450c7607b1438a14ae13724964f127a9d6b1f3573ff7750861e": {
+"tag": "blagoveshchensk",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 26,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.6337,
+"at": "2026-11-10T19:05:37+00:00"
+},
+"4e00ccce67932a9eb8eae64f486c04fb645f2ae304d2b9ada73e52007f12f208": {
+"tag": "jester on cover",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.0723,
+"at": "2026-11-10T19:05:37+00:00"
+},
+"68ebbaaf66856824657c726bb479d279190eb9cc1ded51f7679dbeb9bf3e111f": {
+"tag": "chefboy tyree",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 25,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.034,
+"at": "2026-11-10T19:05:37+00:00"
+},
+"d5a9af57097541080def15824edce537ffb0b1cb52f2810902afa3ee45f51c83": {
+"tag": "guns n roses",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 23,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 8,
+"latency_s": 1.0626,
+"at": "2026-11-10T19:05:38+00:00"
+},
+"54bba796c53b32b7277843aead68976fe7fbdd46293fc41d6ec8837c1a11c3ef": {
+"tag": "veedel kaztro",
+"model": "claude-opus-5-5",
+"effort": "medium",
+"stop_reason": "end_turn",
+"option": 0,
+"path": [],
+"input_tokens": 25,
+"cache_creation_input_tokens": 0,
+"cache_read_input_tokens": 18901,
+"output_tokens": 41,
+"latency_s": 2.6719,
+"at": "2026-11-10T19:05:39+00:00"
+}
+}
