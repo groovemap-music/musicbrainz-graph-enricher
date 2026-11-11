@@ -8,7 +8,7 @@
 - [Integration testing](integration-testing.md): disposable real-Neo4j delivery checks
 - [Release compliance](release-compliance.md): validation and publication boundaries
 - [History rewrite approval gate](history-rewrite-gate.md): private-history sanitation procedure
-- [MusicBrainz tag mapping](tag-mapping-spike.md): dated, blocked prerequisite audit (2026-10-03)
+- [MusicBrainz tag mapping](tag-mapping-spike.md): spike write-up and GO recommendation for an offline, reviewed lookup (2026-11-10)
 
 Historical implementation plans and migration recipes are preserved in the private
 `planning-archive` repository rather than this future-public repository.

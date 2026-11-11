@@ -1,0 +1,10011 @@
+{
+ "model": "jev-1.14.0",
+ "beam_width": 3,
+ "wall_s": 5.81,
+ "cache_stats": {
+  "hits": 305,
+  "misses": 657,
+  "failures": 0
+ },
+ "tags": {
+  "hard rock": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Hard Rock"
+    ],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Hard Rock"
+      ],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Rock",
+       "AOR"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Hard Rock"
+    ],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.5176,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "dark wave": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Darkwave"
+    ],
+    "score": 0.7243617880589782,
+    "separation": 1.1290621511271521,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Darkwave"
+      ],
+      "score": 0.724362
+     },
+     {
+      "path": [
+       "Rock",
+       "Darkwave"
+      ],
+      "score": 0.641561
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.117473
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.53
+     ],
+     [
+      "Rock",
+      0.42
+     ],
+     [
+      "Pop",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Darkwave"
+    ],
+    "score": 0.7243617880589782
+   },
+   "wall_beam_s": 0.5694,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "progressive rock": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Prog Rock"
+    ],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Prog Rock"
+      ],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Rock",
+       "AOR"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Prog Rock"
+    ],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.5707,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "black metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Black Metal"
+    ],
+    "score": 0.9849873095629202,
+    "separation": 9.949874371066198,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Black Metal"
+      ],
+      "score": 0.984987
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.098995
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.096437
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.98
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "__NONE__",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Black Metal"
+    ],
+    "score": 0.9849873095629202
+   },
+   "wall_beam_s": 0.5871,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "punk rock": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Punk"
+    ],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Punk"
+      ],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Rock",
+       "AOR"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Punk"
+    ],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.7249,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "soul": {
+   "beam": {
+    "path": [
+     "Funk / Soul",
+     "Soul"
+    ],
+    "score": 0.99498743710662,
+    "separation": 9.949874371066198,
+    "top3": [
+     {
+      "path": [
+       "Funk / Soul",
+       "Soul"
+      ],
+      "score": 0.994987
+     },
+     {
+      "path": [
+       "Funk / Soul"
+      ],
+      "score": 0.1
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Funk / Soul",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Funk / Soul",
+     "Soul"
+    ],
+    "score": 0.99498743710662
+   },
+   "wall_beam_s": 0.7274,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "hip-hop/rap": {
+   "beam": {
+    "path": [
+     "Hip Hop"
+    ],
+    "score": 0.9110433579144299,
+    "separation": 2.277608394786075,
+    "top3": [
+     {
+      "path": [
+       "Hip Hop"
+      ],
+      "score": 0.911043
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Hip Hop"
+      ],
+      "score": 0.4
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Hardcore Hip-Hop"
+      ],
+      "score": 0.1
+     }
+    ],
+    "root_top3": [
+     [
+      "Hip Hop",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Hip Hop"
+    ],
+    "score": 0.9110433579144299
+   },
+   "wall_beam_s": 0.2103,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "easy listening": {
+   "beam": {
+    "path": [
+     "Pop",
+     "Easy Listening"
+    ],
+    "score": 0.8602325267042626,
+    "separation": 3.2843830488634858,
+    "top3": [
+     {
+      "path": [
+       "Pop",
+       "Easy Listening"
+      ],
+      "score": 0.860233
+     },
+     {
+      "path": [
+       "Jazz",
+       "Easy Listening"
+      ],
+      "score": 0.261916
+     },
+     {
+      "path": [],
+      "score": 0.11
+     }
+    ],
+    "root_top3": [
+     [
+      "Pop",
+      0.74
+     ],
+     [
+      "__NONE__",
+      0.11
+     ],
+     [
+      "Jazz",
+      0.07
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Pop",
+     "Easy Listening"
+    ],
+    "score": 0.8602325267042626
+   },
+   "wall_beam_s": 0.2216,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "shoegaze": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Shoegaze"
+    ],
+    "score": 0.9899494936611666,
+    "separation": 12.278812270298404,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Shoegaze"
+      ],
+      "score": 0.989949
+     },
+     {
+      "path": [
+       "Electronic",
+       "Shoegaze"
+      ],
+      "score": 0.080623
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.074833
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.98
+     ],
+     [
+      "Electronic",
+      0.01
+     ],
+     [
+      "Pop",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Shoegaze"
+    ],
+    "score": 0.9899494936611666
+   },
+   "wall_beam_s": 0.8149,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "ebm": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "EBM"
+    ],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "EBM"
+      ],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Blues"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Electronic",
+       "Abstract"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "EBM"
+    ],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.8187,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "jungle": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Jungle"
+    ],
+    "score": 0.9899494936611666,
+    "separation": 10.737509843863185,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Jungle"
+      ],
+      "score": 0.989949
+     },
+     {
+      "path": [
+       "Hip Hop"
+      ],
+      "score": 0.092195
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Ragga HipHop"
+      ],
+      "score": 0.02
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.98
+     ],
+     [
+      "Hip Hop",
+      0.01
+     ],
+     [
+      "__NONE__",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Jungle"
+    ],
+    "score": 0.9899494936611666
+   },
+   "wall_beam_s": 0.3053,
+   "wall_greedy_after_beam_s": 0.0004
+  },
+  "pop punk": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Pop Punk"
+    ],
+    "score": 0.916515138991168,
+    "separation": 3.307189138830738,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Pop Punk"
+      ],
+      "score": 0.916515
+     },
+     {
+      "path": [
+       "Pop",
+       "Pop Rock"
+      ],
+      "score": 0.277128
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.246577
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.84
+     ],
+     [
+      "Pop",
+      0.16
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Pop Punk"
+    ],
+    "score": 0.916515138991168
+   },
+   "wall_beam_s": 0.3104,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "breaks": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Breaks"
+    ],
+    "score": 0.9697937925146768,
+    "separation": 7.2284161474004796,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Breaks"
+      ],
+      "score": 0.969794
+     },
+     {
+      "path": [
+       "Hip Hop"
+      ],
+      "score": 0.134164
+     },
+     {
+      "path": [
+       "Electronic",
+       "Breakbeat"
+      ],
+      "score": 0.097468
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.95
+     ],
+     [
+      "Hip Hop",
+      0.03
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Breaks"
+    ],
+    "score": 0.9697937925146768
+   },
+   "wall_beam_s": 0.1808,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "modern classical": {
+   "beam": {
+    "path": [
+     "Classical",
+     "Modern Classical"
+    ],
+    "score": 0.9799489782636644,
+    "separation": 9.8488578017961,
+    "top3": [
+     {
+      "path": [
+       "Classical",
+       "Modern Classical"
+      ],
+      "score": 0.979949
+     },
+     {
+      "path": [
+       "Classical",
+       "Contemporary"
+      ],
+      "score": 0.099499
+     },
+     {
+      "path": [
+       "Classical",
+       "Modern"
+      ],
+      "score": 0.099499
+     }
+    ],
+    "root_top3": [
+     [
+      "Classical",
+      0.99
+     ],
+     [
+      "__NONE__",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Classical",
+     "Modern Classical"
+    ],
+    "score": 0.9799489782636644
+   },
+   "wall_beam_s": 0.1994,
+   "wall_greedy_after_beam_s": 0.0004
+  },
+  "post-hardcore": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Post-Hardcore"
+    ],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Post-Hardcore"
+      ],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Rock",
+       "AOR"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Post-Hardcore"
+    ],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.2088,
+   "wall_greedy_after_beam_s": 0.0006
+  },
+  "stoner metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Stoner Rock"
+    ],
+    "score": 0.944351629426243,
+    "separation": 4.769696007084728,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Stoner Rock"
+      ],
+      "score": 0.944352
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.19799
+     },
+     {
+      "path": [
+       "Rock",
+       "Doom Metal"
+      ],
+      "score": 0.171464
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.98
+     ],
+     [
+      "Blues",
+      0.01
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Stoner Rock"
+    ],
+    "score": 0.944351629426243
+   },
+   "wall_beam_s": 0.1637,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "americana": {
+   "beam": {
+    "path": [
+     "Folk, World, & Country"
+    ],
+    "score": 0.7511990415329348,
+    "separation": 1.541103500742244,
+    "top3": [
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.751199
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Country"
+      ],
+      "score": 0.487442
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Country Rock"
+      ],
+      "score": 0.281425
+     }
+    ],
+    "root_top3": [
+     [
+      "Folk, World, & Country",
+      0.99
+     ],
+     [
+      "Rock",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Folk, World, & Country"
+    ],
+    "score": 0.7511990415329348
+   },
+   "wall_beam_s": 0.2003,
+   "wall_greedy_after_beam_s": 0.0004
+  },
+  "piano": {
+   "beam": {
+    "path": [],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Blues",
+       "Piano Blues"
+      ],
+      "score": 2.9e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.1657,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "bluegrass": {
+   "beam": {
+    "path": [
+     "Folk, World, & Country",
+     "Bluegrass"
+    ],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Bluegrass"
+      ],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Aboriginal"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Folk, World, & Country",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Folk, World, & Country",
+     "Bluegrass"
+    ],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.2482,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "symphonic metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Symphonic Metal"
+    ],
+    "score": 0.99,
+    "separation": 9.949874371066196,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Symphonic Metal"
+      ],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Rock",
+       "Symphonic Rock"
+      ],
+      "score": 0.099499
+     },
+     {
+      "path": [],
+      "score": 0.01
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.99
+     ],
+     [
+      "__NONE__",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Symphonic Metal"
+    ],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.1801,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "power electronics": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Power Electronics"
+    ],
+    "score": 0.9539392014169457,
+    "separation": 5.150787536377128,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Power Electronics"
+      ],
+      "score": 0.953939
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.185203
+     },
+     {
+      "path": [
+       "Rock",
+       "Noise"
+      ],
+      "score": 0.134907
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.91
+     ],
+     [
+      "Rock",
+      0.07
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Power Electronics"
+    ],
+    "score": 0.9539392014169457
+   },
+   "wall_beam_s": 0.1943,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "composer": {
+   "beam": {
+    "path": [],
+    "score": 0.94,
+    "separation": 4.723677731718296,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.94
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.198997
+     },
+     {
+      "path": [
+       "Classical"
+      ],
+      "score": 0.13784
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.94
+     ],
+     [
+      "Non-Music",
+      0.04
+     ],
+     [
+      "Classical",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.94
+   },
+   "wall_beam_s": 0.2147,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "k-pop": {
+   "beam": {
+    "path": [
+     "Pop",
+     "K-pop"
+    ],
+    "score": 0.9899494936611666,
+    "separation": 49.49747468305833,
+    "top3": [
+     {
+      "path": [
+       "Pop",
+       "K-pop"
+      ],
+      "score": 0.989949
+     },
+     {
+      "path": [],
+      "score": 0.02
+     },
+     {
+      "path": [
+       "Blues"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Pop",
+      0.98
+     ],
+     [
+      "__NONE__",
+      0.02
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Pop",
+     "K-pop"
+    ],
+    "score": 0.9899494936611666
+   },
+   "wall_beam_s": 0.268,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "folk pop": {
+   "beam": {
+    "path": [
+     "Folk, World, & Country"
+    ],
+    "score": 0.5385164807134504,
+    "separation": 1.166286903258776,
+    "top3": [
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.538516
+     },
+     {
+      "path": [
+       "Pop",
+       "Folk Rock"
+      ],
+      "score": 0.461736
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.424735
+     }
+    ],
+    "root_top3": [
+     [
+      "Folk, World, & Country",
+      0.58
+     ],
+     [
+      "Pop",
+      0.41
+     ],
+     [
+      "Rock",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Folk, World, & Country"
+    ],
+    "score": 0.5385164807134504
+   },
+   "wall_beam_s": 0.2307,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "latin jazz": {
+   "beam": {
+    "path": [
+     "Jazz",
+     "Latin Jazz"
+    ],
+    "score": 0.8426149773176358,
+    "separation": 1.5923926292577106,
+    "top3": [
+     {
+      "path": [
+       "Jazz",
+       "Latin Jazz"
+      ],
+      "score": 0.842615
+     },
+     {
+      "path": [
+       "Latin",
+       "Latin Jazz"
+      ],
+      "score": 0.52915
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.09
+     }
+    ],
+    "root_top3": [
+     [
+      "Jazz",
+      0.71
+     ],
+     [
+      "Latin",
+      0.28
+     ],
+     [
+      "Folk, World, & Country",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Jazz",
+     "Latin Jazz"
+    ],
+    "score": 0.8426149773176358
+   },
+   "wall_beam_s": 0.2487,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "brutal death metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Brutal Death Metal"
+    ],
+    "score": 0.9899494936611666,
+    "separation": 9.899494936611664,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Brutal Death Metal"
+      ],
+      "score": 0.989949
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.1
+     },
+     {
+      "path": [],
+      "score": 0.01
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.98
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "__NONE__",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Brutal Death Metal"
+    ],
+    "score": 0.9899494936611666
+   },
+   "wall_beam_s": 0.2087,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "hard bop": {
+   "beam": {
+    "path": [
+     "Jazz",
+     "Hard Bop"
+    ],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [
+       "Jazz",
+       "Hard Bop"
+      ],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Jazz",
+       "Acid Jazz"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Jazz",
+       "Afro-Cuban"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Jazz",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Jazz",
+     "Hard Bop"
+    ],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.2305,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "folk metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Folk Metal"
+    ],
+    "score": 0.8831760866327847,
+    "separation": 2.0667926800904235,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Folk Metal"
+      ],
+      "score": 0.883176
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.427317
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Folk"
+      ],
+      "score": 0.114891
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.78
+     ],
+     [
+      "Folk, World, & Country",
+      0.22
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Folk Metal"
+    ],
+    "score": 0.8831760866327847
+   },
+   "wall_beam_s": 0.2308,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "salsa": {
+   "beam": {
+    "path": [
+     "Latin",
+     "Salsa"
+    ],
+    "score": 0.99498743710662,
+    "separation": 13.667203548282604,
+    "top3": [
+     {
+      "path": [
+       "Latin",
+       "Salsa"
+      ],
+      "score": 0.994987
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.072801
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Afro-Cuban"
+      ],
+      "score": 0.056569
+     }
+    ],
+    "root_top3": [
+     [
+      "Latin",
+      0.99
+     ],
+     [
+      "Folk, World, & Country",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Latin",
+     "Salsa"
+    ],
+    "score": 0.99498743710662
+   },
+   "wall_beam_s": 0.4224,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "vocal": {
+   "beam": {
+    "path": [],
+    "score": 0.98,
+    "separation": 7.264243303278792,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.98
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.134907
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Spoken Word"
+      ],
+      "score": 0.037417
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.98
+     ],
+     [
+      "Non-Music",
+      0.02
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.98
+   },
+   "wall_beam_s": 0.1804,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "jazz rock": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Jazz-Rock"
+    ],
+    "score": 0.7348469228349535,
+    "separation": 1.1262765836674167,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Jazz-Rock"
+      ],
+      "score": 0.734847
+     },
+     {
+      "path": [
+       "Jazz",
+       "Jazz-Rock"
+      ],
+      "score": 0.652457
+     },
+     {
+      "path": [
+       "Funk / Soul"
+      ],
+      "score": 0.12
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.54
+     ],
+     [
+      "Jazz",
+      0.43
+     ],
+     [
+      "Funk / Soul",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Jazz-Rock"
+    ],
+    "score": 0.7348469228349535
+   },
+   "wall_beam_s": 0.6274,
+   "wall_greedy_after_beam_s": 0.0005
+  },
+  "desert rock": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Stoner Rock"
+    ],
+    "score": 0.8021845174272563,
+    "separation": 1.4034589305344742,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Stoner Rock"
+      ],
+      "score": 0.802185
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.571577
+     },
+     {
+      "path": [
+       "Rock",
+       "Desert Blues"
+      ],
+      "score": 0.140712
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.99
+     ],
+     [
+      "Blues",
+      0.01
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Stoner Rock"
+    ],
+    "score": 0.8021845174272563
+   },
+   "wall_beam_s": 0.2296,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "arena rock": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Arena Rock"
+    ],
+    "score": 0.99498743710662,
+    "separation": 99.49874371066194,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Arena Rock"
+      ],
+      "score": 0.994987
+     },
+     {
+      "path": [],
+      "score": 0.01
+     },
+     {
+      "path": [
+       "Rock",
+       "AOR"
+      ],
+      "score": 3.1e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.99
+     ],
+     [
+      "__NONE__",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Arena Rock"
+    ],
+    "score": 0.99498743710662
+   },
+   "wall_beam_s": 0.1979,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "toronto": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 9.949874371066196,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.099499
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Field Recording"
+      ],
+      "score": 0.01
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.2005,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "cool jazz": {
+   "beam": {
+    "path": [
+     "Jazz",
+     "Cool Jazz"
+    ],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [
+       "Jazz",
+       "Cool Jazz"
+      ],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Jazz",
+       "Acid Jazz"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Jazz",
+       "Afro-Cuban"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Jazz",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Jazz",
+     "Cool Jazz"
+    ],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.3449,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "san francisco": {
+   "beam": {
+    "path": [],
+    "score": 0.97,
+    "separation": 8.379523728139194,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.97
+     },
+     {
+      "path": [
+       "Jazz"
+      ],
+      "score": 0.115758
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.097468
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.97
+     ],
+     [
+      "Jazz",
+      0.02
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.97
+   },
+   "wall_beam_s": 0.1819,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "psychedelic pop": {
+   "beam": {
+    "path": [
+     "Pop",
+     "Psychedelic"
+    ],
+    "score": 0.8674099376880576,
+    "separation": 2.387467277262665,
+    "top3": [
+     {
+      "path": [
+       "Pop",
+       "Psychedelic"
+      ],
+      "score": 0.86741
+     },
+     {
+      "path": [
+       "Rock",
+       "Psychedelic"
+      ],
+      "score": 0.363318
+     },
+     {
+      "path": [
+       "Rock",
+       "Pop Rock"
+      ],
+      "score": 0.219089
+     }
+    ],
+    "root_top3": [
+     [
+      "Pop",
+      0.76
+     ],
+     [
+      "Rock",
+      0.24
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Pop",
+     "Psychedelic"
+    ],
+    "score": 0.8674099376880576
+   },
+   "wall_beam_s": 0.3085,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "conscious hip hop": {
+   "beam": {
+    "path": [
+     "Hip Hop",
+     "Conscious"
+    ],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [
+       "Hip Hop",
+       "Conscious"
+      ],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Blues"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Hip Hop",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Hip Hop",
+     "Conscious"
+    ],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.2041,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "melodic": {
+   "beam": {
+    "path": [],
+    "score": 0.68,
+    "separation": 3.0532901344551737,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.68
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.222711
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.198997
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.68
+     ],
+     [
+      "Pop",
+      0.09
+     ],
+     [
+      "Rock",
+      0.08
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.68
+   },
+   "wall_beam_s": 0.2493,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "groove metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Groove Metal"
+    ],
+    "score": 0.99498743710662,
+    "separation": 9.949874371066198,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Groove Metal"
+      ],
+      "score": 0.994987
+     },
+     {
+      "path": [
+       "Funk / Soul"
+      ],
+      "score": 0.1
+     },
+     {
+      "path": [
+       "Blues"
+      ],
+      "score": 3.1e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.99
+     ],
+     [
+      "Funk / Soul",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Groove Metal"
+    ],
+    "score": 0.99498743710662
+   },
+   "wall_beam_s": 0.274,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "melodic black metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Black Metal"
+    ],
+    "score": 0.9495261976375375,
+    "separation": 4.2895221179054435,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Black Metal"
+      ],
+      "score": 0.949526
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.221359
+     },
+     {
+      "path": [
+       "Rock",
+       "Atmospheric Black Metal"
+      ],
+      "score": 0.171464
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.98
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "__NONE__",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Black Metal"
+    ],
+    "score": 0.9495261976375375
+   },
+   "wall_beam_s": 0.2513,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "adult contemporary": {
+   "beam": {
+    "path": [
+     "Pop",
+     "Easy Listening"
+    ],
+    "score": 0.762889244910426,
+    "separation": 1.9364916731037083,
+    "top3": [
+     {
+      "path": [
+       "Pop",
+       "Easy Listening"
+      ],
+      "score": 0.762889
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.393954
+     },
+     {
+      "path": [
+       "Pop",
+       "Soft Rock"
+      ],
+      "score": 0.368511
+     }
+    ],
+    "root_top3": [
+     [
+      "Pop",
+      0.97
+     ],
+     [
+      "__NONE__",
+      0.02
+     ],
+     [
+      "Funk / Soul",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Pop",
+     "Easy Listening"
+    ],
+    "score": 0.762889244910426
+   },
+   "wall_beam_s": 0.2262,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "surf rock": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Surf"
+    ],
+    "score": 0.99498743710662,
+    "separation": 9.949874371066198,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Surf"
+      ],
+      "score": 0.994987
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.1
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Surf"
+    ],
+    "score": 0.99498743710662
+   },
+   "wall_beam_s": 0.2445,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "acid rock": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Acid Rock"
+    ],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Acid Rock"
+      ],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Rock",
+       "AOR"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Acid Rock"
+    ],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.2576,
+   "wall_greedy_after_beam_s": 0.0008
+  },
+  "poetry": {
+   "beam": {
+    "path": [],
+    "score": 0.63,
+    "separation": 1.1560119533826787,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.63
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Poetry"
+      ],
+      "score": 0.544977
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.135647
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.63
+     ],
+     [
+      "Non-Music",
+      0.3
+     ],
+     [
+      "Folk, World, & Country",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.63
+   },
+   "wall_beam_s": 0.2152,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "futurepop": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Future Pop"
+    ],
+    "score": 0.9848857801796105,
+    "separation": 5.7148869332588434,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Future Pop"
+      ],
+      "score": 0.984886
+     },
+     {
+      "path": [
+       "Pop",
+       "Future Pop"
+      ],
+      "score": 0.172337
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.017321
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.97
+     ],
+     [
+      "Pop",
+      0.03
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Future Pop"
+    ],
+    "score": 0.9848857801796105
+   },
+   "wall_beam_s": 0.2263,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "singer": {
+   "beam": {
+    "path": [],
+    "score": 0.98,
+    "separation": 7.035989954453833,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.98
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.139284
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Spoken Word"
+      ],
+      "score": 0.02
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.98
+     ],
+     [
+      "Non-Music",
+      0.02
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.98
+   },
+   "wall_beam_s": 0.1289,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "oldies": {
+   "beam": {
+    "path": [],
+    "score": 0.52,
+    "separation": 1.0097563285948026,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.52
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.514976
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.261916
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.52
+     ],
+     [
+      "Pop",
+      0.34
+     ],
+     [
+      "Non-Music",
+      0.07
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.52
+   },
+   "wall_beam_s": 0.1501,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "mod": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Mod"
+    ],
+    "score": 0.4358898943540674,
+    "separation": 1.131513786983955,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Mod"
+      ],
+      "score": 0.43589
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.385227
+     },
+     {
+      "path": [],
+      "score": 0.25
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.28
+     ],
+     [
+      "__NONE__",
+      0.25
+     ],
+     [
+      "Rock",
+      0.19
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.38522720568516444
+   },
+   "wall_beam_s": 0.1744,
+   "wall_greedy_after_beam_s": 0.0004
+  },
+  "experiemental": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Experimental"
+    ],
+    "score": 0.6465291950097846,
+    "separation": 1.1604522758545834,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Experimental"
+      ],
+      "score": 0.646529
+     },
+     {
+      "path": [
+       "Rock",
+       "Experimental"
+      ],
+      "score": 0.557136
+     },
+     {
+      "path": [],
+      "score": 0.14
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.44
+     ],
+     [
+      "Rock",
+      0.32
+     ],
+     [
+      "__NONE__",
+      0.14
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Experimental"
+    ],
+    "score": 0.6465291950097846
+   },
+   "wall_beam_s": 0.1684,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "psybient": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Ambient"
+    ],
+    "score": 0.5291502622129182,
+    "separation": 1.0801234497346435,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Ambient"
+      ],
+      "score": 0.52915
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.489898
+     },
+     {
+      "path": [
+       "Electronic",
+       "Psychedelic"
+      ],
+      "score": 0.4
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Ambient"
+    ],
+    "score": 0.5291502622129182
+   },
+   "wall_beam_s": 0.1508,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "manchester": {
+   "beam": {
+    "path": [],
+    "score": 0.97,
+    "separation": 8.442766313851346,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.97
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.114891
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.099499
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.97
+     ],
+     [
+      "Rock",
+      0.02
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.97
+   },
+   "wall_beam_s": 0.2527,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "jazz hop": {
+   "beam": {
+    "path": [
+     "Jazz"
+    ],
+    "score": 0.6572670690061994,
+    "separation": 1.1928641587313162,
+    "top3": [
+     {
+      "path": [
+       "Jazz"
+      ],
+      "score": 0.657267
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Jazzy Hip-Hop"
+      ],
+      "score": 0.550999
+     },
+     {
+      "path": [
+       "Jazz",
+       "Jazz-Funk"
+      ],
+      "score": 0.3
+     }
+    ],
+    "root_top3": [
+     [
+      "Jazz",
+      0.6
+     ],
+     [
+      "Hip Hop",
+      0.33
+     ],
+     [
+      "Electronic",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Jazz"
+    ],
+    "score": 0.6572670690061994
+   },
+   "wall_beam_s": 0.1597,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "epic": {
+   "beam": {
+    "path": [],
+    "score": 0.72,
+    "separation": 3.1012595442284256,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.72
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.232164
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.220227
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.72
+     ],
+     [
+      "Rock",
+      0.11
+     ],
+     [
+      "Non-Music",
+      0.05
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.72
+   },
+   "wall_beam_s": 0.1669,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "merengue": {
+   "beam": {
+    "path": [
+     "Latin",
+     "Merengue"
+    ],
+    "score": 0.9695359714832658,
+    "separation": 4.7308511264837305,
+    "top3": [
+     {
+      "path": [
+       "Latin",
+       "Merengue"
+      ],
+      "score": 0.969536
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.204939
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Baila"
+      ],
+      "score": 0.08124
+     }
+    ],
+    "root_top3": [
+     [
+      "Latin",
+      0.94
+     ],
+     [
+      "Folk, World, & Country",
+      0.06
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Latin",
+     "Merengue"
+    ],
+    "score": 0.9695359714832658
+   },
+   "wall_beam_s": 0.2242,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "belgium": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 9.899999999999999,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.1
+     },
+     {
+      "path": [
+       "Blues"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.1507,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "alternative dance": {
+   "beam": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.60398675482166,
+    "separation": 1.9595917942265424,
+    "top3": [
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.603987
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.308221
+     },
+     {
+      "path": [
+       "Electronic",
+       "Dance-pop"
+      ],
+      "score": 0.275681
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.76
+     ],
+     [
+      "Rock",
+      0.19
+     ],
+     [
+      "Pop",
+      0.05
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.60398675482166
+   },
+   "wall_beam_s": 0.2048,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "nerdcore": {
+   "beam": {
+    "path": [
+     "Hip Hop"
+    ],
+    "score": 0.9119210492142398,
+    "separation": 3.055050463303894,
+    "top3": [
+     {
+      "path": [
+       "Hip Hop"
+      ],
+      "score": 0.911921
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Conscious"
+      ],
+      "score": 0.298496
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Britcore"
+      ],
+      "score": 0.172337
+     }
+    ],
+    "root_top3": [
+     [
+      "Hip Hop",
+      0.99
+     ],
+     [
+      "__NONE__",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Hip Hop"
+    ],
+    "score": 0.9119210492142398
+   },
+   "wall_beam_s": 0.1416,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "delta blues": {
+   "beam": {
+    "path": [
+     "Blues",
+     "Delta Blues"
+    ],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [
+       "Blues",
+       "Delta Blues"
+      ],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Blues",
+       "Bayou Funk"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Blues",
+       "Blues Rock"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Blues",
+      1.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ],
+     [
+      "Children's",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Blues",
+     "Delta Blues"
+    ],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.1685,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "funk / soul": {
+   "beam": {
+    "path": [
+     "Funk / Soul"
+    ],
+    "score": 0.99498743710662,
+    "separation": 9.949874371066198,
+    "top3": [
+     {
+      "path": [
+       "Funk / Soul"
+      ],
+      "score": 0.994987
+     },
+     {
+      "path": [
+       "Funk / Soul",
+       "Funk"
+      ],
+      "score": 0.1
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "Funk / Soul",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Funk / Soul"
+    ],
+    "score": 0.99498743710662
+   },
+   "wall_beam_s": 0.2301,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "ambient pop": {
+   "beam": {
+    "path": [
+     "Pop"
+    ],
+    "score": 0.680294054067798,
+    "separation": 1.126185012742946,
+    "top3": [
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.680294
+     },
+     {
+      "path": [
+       "Pop",
+       "Dream Pop"
+      ],
+      "score": 0.60407
+     },
+     {
+      "path": [
+       "Electronic",
+       "Ambient"
+      ],
+      "score": 0.207364
+     }
+    ],
+    "root_top3": [
+     [
+      "Pop",
+      0.89
+     ],
+     [
+      "Electronic",
+      0.1
+     ],
+     [
+      "Rock",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Pop"
+    ],
+    "score": 0.680294054067798
+   },
+   "wall_beam_s": 0.2759,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "space music": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Ambient"
+    ],
+    "score": 0.7674633541739957,
+    "separation": 1.6787441193290351,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Ambient"
+      ],
+      "score": 0.767463
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.457165
+     },
+     {
+      "path": [
+       "Electronic",
+       "Space Rock"
+      ],
+      "score": 0.292404
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.95
+     ],
+     [
+      "__NONE__",
+      0.03
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Ambient"
+    ],
+    "score": 0.7674633541739957
+   },
+   "wall_beam_s": 0.1997,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "funk metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Funk Metal"
+    ],
+    "score": 0.9,
+    "separation": 2.2136353557447683,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Funk Metal"
+      ],
+      "score": 0.9
+     },
+     {
+      "path": [
+       "Funk / Soul"
+      ],
+      "score": 0.406571
+     },
+     {
+      "path": [
+       "Funk / Soul",
+       "Funk"
+      ],
+      "score": 0.144568
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.81
+     ],
+     [
+      "Funk / Soul",
+      0.19
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Funk Metal"
+    ],
+    "score": 0.9
+   },
+   "wall_beam_s": 0.2078,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "post-internet": {
+   "beam": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.594810894318522,
+    "separation": 1.516210864825432,
+    "top3": [
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.594811
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.392301
+     },
+     {
+      "path": [
+       "Electronic",
+       "Hyperpop"
+      ],
+      "score": 0.246982
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.61
+     ],
+     [
+      "Pop",
+      0.27
+     ],
+     [
+      "__NONE__",
+      0.06
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.594810894318522
+   },
+   "wall_beam_s": 0.2279,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "greek": {
+   "beam": {
+    "path": [],
+    "score": 0.93,
+    "separation": 4.673425840955336,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.93
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.198997
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.099499
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.93
+     ],
+     [
+      "Folk, World, & Country",
+      0.06
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.93
+   },
+   "wall_beam_s": 0.2013,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "amsterdam": {
+   "beam": {
+    "path": [],
+    "score": 0.98,
+    "separation": 9.950392418309466,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.98
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098489
+     },
+     {
+      "path": [
+       "Jazz"
+      ],
+      "score": 0.093808
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.98
+     ],
+     [
+      "Jazz",
+      0.01
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.98
+   },
+   "wall_beam_s": 0.2063,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "death-doom metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Doom Metal"
+    ],
+    "score": 0.86867715521936,
+    "separation": 2.345207879911715,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Doom Metal"
+      ],
+      "score": 0.868677
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.370405
+     },
+     {
+      "path": [
+       "Rock",
+       "Death Metal"
+      ],
+      "score": 0.221359
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.98
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "__NONE__",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Doom Metal"
+    ],
+    "score": 0.86867715521936
+   },
+   "wall_beam_s": 0.2914,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "ireland": {
+   "beam": {
+    "path": [],
+    "score": 1.0,
+    "separation": 31622.776601683785,
+    "top3": [
+     {
+      "path": [],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Blues"
+      ],
+      "score": 3.2e-05
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 2.8e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.1743,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "neo-soul": {
+   "beam": {
+    "path": [
+     "Funk / Soul",
+     "Neo Soul"
+    ],
+    "score": 0.9899494936611666,
+    "separation": 10.265298051494728,
+    "top3": [
+     {
+      "path": [
+       "Funk / Soul",
+       "Neo Soul"
+      ],
+      "score": 0.989949
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Neo Soul"
+      ],
+      "score": 0.096437
+     },
+     {
+      "path": [
+       "Jazz",
+       "Soul-Jazz"
+      ],
+      "score": 0.072801
+     }
+    ],
+    "root_top3": [
+     [
+      "Funk / Soul",
+      0.98
+     ],
+     [
+      "Hip Hop",
+      0.01
+     ],
+     [
+      "Jazz",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Funk / Soul",
+     "Neo Soul"
+    ],
+    "score": 0.9899494936611666
+   },
+   "wall_beam_s": 0.1813,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "glam metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Glam"
+    ],
+    "score": 0.9899494936611666,
+    "separation": 9.899494936611664,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Glam"
+      ],
+      "score": 0.989949
+     },
+     {
+      "path": [
+       "Rock",
+       "Hard Rock"
+      ],
+      "score": 0.1
+     },
+     {
+      "path": [
+       "Rock",
+       "Heavy Metal"
+      ],
+      "score": 0.1
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Glam"
+    ],
+    "score": 0.9899494936611666
+   },
+   "wall_beam_s": 0.1991,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "c64 remix": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Chiptune"
+    ],
+    "score": 0.5772347875864725,
+    "separation": 1.4596008983995234,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Chiptune"
+      ],
+      "score": 0.577235
+     },
+     {
+      "path": [
+       "Electronic",
+       "Video Game Music"
+      ],
+      "score": 0.395474
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.34
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.68
+     ],
+     [
+      "__NONE__",
+      0.22
+     ],
+     [
+      "Non-Music",
+      0.07
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Chiptune"
+    ],
+    "score": 0.5772347875864725
+   },
+   "wall_beam_s": 0.2058,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "video game soundtrack": {
+   "beam": {
+    "path": [
+     "Stage & Screen",
+     "Video Game Music"
+    ],
+    "score": 0.758946638440411,
+    "separation": 2.1710790607558197,
+    "top3": [
+     {
+      "path": [
+       "Stage & Screen",
+       "Video Game Music"
+      ],
+      "score": 0.758947
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.349571
+     },
+     {
+      "path": [],
+      "score": 0.22
+     }
+    ],
+    "root_top3": [
+     [
+      "Stage & Screen",
+      0.6
+     ],
+     [
+      "__NONE__",
+      0.22
+     ],
+     [
+      "Non-Music",
+      0.13
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Stage & Screen",
+     "Video Game Music"
+    ],
+    "score": 0.758946638440411
+   },
+   "wall_beam_s": 0.2041,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "filmi": {
+   "beam": {
+    "path": [
+     "Stage & Screen"
+    ],
+    "score": 0.593295878967653,
+    "separation": 1.4474937289114915,
+    "top3": [
+     {
+      "path": [
+       "Stage & Screen"
+      ],
+      "score": 0.593296
+     },
+     {
+      "path": [
+       "Stage & Screen",
+       "Soundtrack"
+      ],
+      "score": 0.409878
+     },
+     {
+      "path": [
+       "Stage & Screen",
+       "Bollywood"
+      ],
+      "score": 0.368782
+     }
+    ],
+    "root_top3": [
+     [
+      "Stage & Screen",
+      0.8
+     ],
+     [
+      "__NONE__",
+      0.15
+     ],
+     [
+      "Non-Music",
+      0.03
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Stage & Screen"
+    ],
+    "score": 0.593295878967653
+   },
+   "wall_beam_s": 0.1511,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "jazz pop": {
+   "beam": {
+    "path": [
+     "Pop"
+    ],
+    "score": 0.5585696017507576,
+    "separation": 1.1522411095200888,
+    "top3": [
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.55857
+     },
+     {
+      "path": [
+       "Jazz"
+      ],
+      "score": 0.484768
+     },
+     {
+      "path": [
+       "Jazz",
+       "Easy Listening"
+      ],
+      "score": 0.412311
+     }
+    ],
+    "root_top3": [
+     [
+      "Jazz",
+      0.5
+     ],
+     [
+      "Pop",
+      0.48
+     ],
+     [
+      "Funk / Soul",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Jazz"
+    ],
+    "score": 0.4847679857416329
+   },
+   "wall_beam_s": 0.1661,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "singer songwriter": {
+   "beam": {
+    "path": [
+     "Folk, World, & Country"
+    ],
+    "score": 0.5223025942880238,
+    "separation": 1.191366794362541,
+    "top3": [
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.522303
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Folk"
+      ],
+      "score": 0.438406
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Acoustic"
+      ],
+      "score": 0.261151
+     }
+    ],
+    "root_top3": [
+     [
+      "Folk, World, & Country",
+      0.62
+     ],
+     [
+      "__NONE__",
+      0.18
+     ],
+     [
+      "Pop",
+      0.1
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Folk, World, & Country"
+    ],
+    "score": 0.5223025942880238
+   },
+   "wall_beam_s": 0.1916,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "dance-punk": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Punk"
+    ],
+    "score": 0.5336665625650534,
+    "separation": 1.0504514628777806,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Punk"
+      ],
+      "score": 0.533667
+     },
+     {
+      "path": [
+       "Rock",
+       "Post-Punk"
+      ],
+      "score": 0.508035
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.40025
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.89
+     ],
+     [
+      "Electronic",
+      0.05
+     ],
+     [
+      "Funk / Soul",
+      0.03
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Punk"
+    ],
+    "score": 0.5336665625650534
+   },
+   "wall_beam_s": 0.1888,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "female vocal": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 10.051927034822828,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098489
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Spoken Word"
+      ],
+      "score": 0.014142
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.1556,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "edinburgh": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 9.949874371066196,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.099499
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Field Recording"
+      ],
+      "score": 0.01
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.1794,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "rome": {
+   "beam": {
+    "path": [],
+    "score": 0.97,
+    "separation": 7.0003720139242125,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.97
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.138564
+     },
+     {
+      "path": [
+       "Stage & Screen"
+      ],
+      "score": 0.095394
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.97
+     ],
+     [
+      "Non-Music",
+      0.02
+     ],
+     [
+      "Stage & Screen",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.97
+   },
+   "wall_beam_s": 0.1421,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "analog": {
+   "beam": {
+    "path": [],
+    "score": 0.68,
+    "separation": 1.7675758326941235,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.68
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.384708
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.3
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.68
+     ],
+     [
+      "Electronic",
+      0.2
+     ],
+     [
+      "Non-Music",
+      0.1
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.68
+   },
+   "wall_beam_s": 0.1899,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "houston": {
+   "beam": {
+    "path": [],
+    "score": 0.79,
+    "separation": 1.8594670549735095,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.79
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Screw"
+      ],
+      "score": 0.424853
+     },
+     {
+      "path": [
+       "Hip Hop"
+      ],
+      "score": 0.087178
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.79
+     ],
+     [
+      "Hip Hop",
+      0.19
+     ],
+     [
+      "Funk / Soul",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.79
+   },
+   "wall_beam_s": 0.2107,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "relax": {
+   "beam": {
+    "path": [],
+    "score": 0.98,
+    "separation": 10.629592433114151,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.98
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.092195
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.053852
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.98
+     ],
+     [
+      "Electronic",
+      0.01
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.98
+   },
+   "wall_beam_s": 0.322,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "leipzig": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 9.899999999999999,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.1
+     },
+     {
+      "path": [
+       "Blues"
+      ],
+      "score": 3.1e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.209,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "smooth soul": {
+   "beam": {
+    "path": [
+     "Funk / Soul",
+     "Soul"
+    ],
+    "score": 0.7707139547199077,
+    "separation": 1.5191090506254996,
+    "top3": [
+     {
+      "path": [
+       "Funk / Soul",
+       "Soul"
+      ],
+      "score": 0.770714
+     },
+     {
+      "path": [
+       "Funk / Soul"
+      ],
+      "score": 0.507346
+     },
+     {
+      "path": [
+       "Funk / Soul",
+       "Contemporary R&B"
+      ],
+      "score": 0.243721
+     }
+    ],
+    "root_top3": [
+     [
+      "Funk / Soul",
+      0.99
+     ],
+     [
+      "__NONE__",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Funk / Soul",
+     "Soul"
+    ],
+    "score": 0.7707139547199077
+   },
+   "wall_beam_s": 0.2177,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "jazzthing.de": {
+   "beam": {
+    "path": [
+     "Jazz"
+    ],
+    "score": 0.6954135460285484,
+    "separation": 1.6557465381632106,
+    "top3": [
+     {
+      "path": [
+       "Jazz"
+      ],
+      "score": 0.695414
+     },
+     {
+      "path": [],
+      "score": 0.42
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.238747
+     }
+    ],
+    "root_top3": [
+     [
+      "Jazz",
+      0.52
+     ],
+     [
+      "__NONE__",
+      0.42
+     ],
+     [
+      "Non-Music",
+      0.06
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Jazz"
+    ],
+    "score": 0.6954135460285484
+   },
+   "wall_beam_s": 0.2938,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "crossover": {
+   "beam": {
+    "path": [
+     "Pop"
+    ],
+    "score": 0.49839743177508444,
+    "separation": 1.4735428976886527,
+    "top3": [
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.498397
+     },
+     {
+      "path": [
+       "Jazz",
+       "Fusion"
+      ],
+      "score": 0.338231
+     },
+     {
+      "path": [
+       "Jazz"
+      ],
+      "score": 0.292916
+     }
+    ],
+    "root_top3": [
+     [
+      "Pop",
+      0.36
+     ],
+     [
+      "Jazz",
+      0.26
+     ],
+     [
+      "Classical",
+      0.08
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Pop"
+    ],
+    "score": 0.49839743177508444
+   },
+   "wall_beam_s": 0.2249,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "eclectic": {
+   "beam": {
+    "path": [],
+    "score": 0.48,
+    "separation": 1.1357964582727225,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.48
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.422611
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.385357
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.48
+     ],
+     [
+      "Pop",
+      0.19
+     ],
+     [
+      "Non-Music",
+      0.15
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.48
+   },
+   "wall_beam_s": 0.2341,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "alliteration": {
+   "beam": {
+    "path": [],
+    "score": 0.91,
+    "separation": 4.201989578510451,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.91
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.216564
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Poetry"
+      ],
+      "score": 0.10247
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.91
+     ],
+     [
+      "Non-Music",
+      0.07
+     ],
+     [
+      "Hip Hop",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.91
+   },
+   "wall_beam_s": 0.2584,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "praise & worship": {
+   "beam": {
+    "path": [
+     "Pop",
+     "Religious"
+    ],
+    "score": 0.5912698199637794,
+    "separation": 1.7330425344222915,
+    "top3": [
+     {
+      "path": [
+       "Pop",
+       "Religious"
+      ],
+      "score": 0.59127
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.341174
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.332265
+     }
+    ],
+    "root_top3": [
+     [
+      "Pop",
+      0.46
+     ],
+     [
+      "Folk, World, & Country",
+      0.19
+     ],
+     [
+      "Rock",
+      0.12
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Pop",
+     "Religious"
+    ],
+    "score": 0.5912698199637794
+   },
+   "wall_beam_s": 0.259,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "drum&bass": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Drum n Bass"
+    ],
+    "score": 0.99498743710662,
+    "separation": 10.373461122121869,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Drum n Bass"
+      ],
+      "score": 0.994987
+     },
+     {
+      "path": [
+       "Hip Hop"
+      ],
+      "score": 0.095917
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Bass Music"
+      ],
+      "score": 0.022361
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.99
+     ],
+     [
+      "Hip Hop",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Drum n Bass"
+    ],
+    "score": 0.99498743710662
+   },
+   "wall_beam_s": 0.172,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "massachusetts": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 10.000510191066883,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098995
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Political"
+      ],
+      "score": 0.014142
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.1344,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "1980s": {
+   "beam": {
+    "path": [],
+    "score": 1.0,
+    "separation": 31782.086308186426,
+    "top3": [
+     {
+      "path": [],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.1e-05
+     },
+     {
+      "path": [
+       "Blues"
+      ],
+      "score": 3.1e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.1247,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "italo": {
+   "beam": {
+    "path": [
+     "Pop",
+     "Italo-Disco"
+    ],
+    "score": 0.5972436688655645,
+    "separation": 1.3272081530345876,
+    "top3": [
+     {
+      "path": [
+       "Pop",
+       "Italo-Disco"
+      ],
+      "score": 0.597244
+     },
+     {
+      "path": [],
+      "score": 0.45
+     },
+     {
+      "path": [
+       "Electronic",
+       "Italo-Disco"
+      ],
+      "score": 0.181108
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.45
+     ],
+     [
+      "Pop",
+      0.41
+     ],
+     [
+      "Electronic",
+      0.08
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.45
+   },
+   "wall_beam_s": 0.1629,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "future beat": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Future Bass"
+    ],
+    "score": 0.5596427431853289,
+    "separation": 1.0606601717798212,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Future Bass"
+      ],
+      "score": 0.559643
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.527636
+     },
+     {
+      "path": [
+       "Electronic",
+       "Future House"
+      ],
+      "score": 0.336303
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.87
+     ],
+     [
+      "Hip Hop",
+      0.09
+     ],
+     [
+      "__NONE__",
+      0.03
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Future Bass"
+    ],
+    "score": 0.5596427431853289
+   },
+   "wall_beam_s": 0.1692,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "louisville": {
+   "beam": {
+    "path": [],
+    "score": 0.97,
+    "separation": 6.928571428571428,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.97
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.14
+     },
+     {
+      "path": [
+       "Jazz"
+      ],
+      "score": 0.083666
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.97
+     ],
+     [
+      "Non-Music",
+      0.02
+     ],
+     [
+      "Jazz",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.97
+   },
+   "wall_beam_s": 0.2361,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "hawaii": {
+   "beam": {
+    "path": [],
+    "score": 0.9,
+    "separation": 3.015113445777637,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.9
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Hawaiian"
+      ],
+      "score": 0.298496
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098489
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.9
+     ],
+     [
+      "Folk, World, & Country",
+      0.09
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.9
+   },
+   "wall_beam_s": 0.1847,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "terrorcore": {
+   "beam": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.4989989979949859,
+    "separation": 1.1952286093343936,
+    "top3": [
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.498999
+     },
+     {
+      "path": [
+       "Electronic",
+       "Hardcore"
+      ],
+      "score": 0.417493
+     },
+     {
+      "path": [
+       "Electronic",
+       "Speedcore"
+      ],
+      "score": 0.364417
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.83
+     ],
+     [
+      "Hip Hop",
+      0.09
+     ],
+     [
+      "Rock",
+      0.06
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.4989989979949859
+   },
+   "wall_beam_s": 0.2768,
+   "wall_greedy_after_beam_s": 0.0004
+  },
+  "hard": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Hard Rock"
+    ],
+    "score": 0.7664202502543889,
+    "separation": 2.9832867780352594,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Hard Rock"
+      ],
+      "score": 0.76642
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.256905
+     },
+     {
+      "path": [],
+      "score": 0.24
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.66
+     ],
+     [
+      "__NONE__",
+      0.24
+     ],
+     [
+      "Non-Music",
+      0.06
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Hard Rock"
+    ],
+    "score": 0.7664202502543889
+   },
+   "wall_beam_s": 0.1649,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "go-go": {
+   "beam": {
+    "path": [
+     "Funk / Soul",
+     "Go-Go"
+    ],
+    "score": 0.9591663046625439,
+    "separation": 5.593971487843206,
+    "top3": [
+     {
+      "path": [
+       "Funk / Soul",
+       "Go-Go"
+      ],
+      "score": 0.959166
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Go-Go"
+      ],
+      "score": 0.171464
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.162481
+     }
+    ],
+    "root_top3": [
+     [
+      "Funk / Soul",
+      0.92
+     ],
+     [
+      "Hip Hop",
+      0.03
+     ],
+     [
+      "Rock",
+      0.03
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Funk / Soul",
+     "Go-Go"
+    ],
+    "score": 0.9591663046625439
+   },
+   "wall_beam_s": 0.1451,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "post-whatever": {
+   "beam": {
+    "path": [],
+    "score": 0.61,
+    "separation": 1.4674319341902988,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.61
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.415692
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.307896
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.61
+     ],
+     [
+      "Non-Music",
+      0.18
+     ],
+     [
+      "Rock",
+      0.12
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.61
+   },
+   "wall_beam_s": 0.1599,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "raw punk": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Punk"
+    ],
+    "score": 0.9699484522385713,
+    "separation": 6.928203230275509,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Punk"
+      ],
+      "score": 0.969948
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.14
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098995
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.98
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "__NONE__",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Punk"
+    ],
+    "score": 0.9699484522385713
+   },
+   "wall_beam_s": 0.1977,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "naturewave": {
+   "beam": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.5996665740225979,
+    "separation": 1.9204700279372047,
+    "top3": [
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.599667
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.31225
+     },
+     {
+      "path": [
+       "Electronic",
+       "Chillwave"
+      ],
+      "score": 0.294958
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.58
+     ],
+     [
+      "__NONE__",
+      0.22
+     ],
+     [
+      "Non-Music",
+      0.13
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.5996665740225979
+   },
+   "wall_beam_s": 0.409,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "anthem": {
+   "beam": {
+    "path": [],
+    "score": 0.5,
+    "separation": 1.538643637241659,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.5
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.324962
+     },
+     {
+      "path": [
+       "Rock",
+       "Arena Rock"
+      ],
+      "score": 0.2755
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.5
+     ],
+     [
+      "Pop",
+      0.24
+     ],
+     [
+      "Rock",
+      0.11
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.5
+   },
+   "wall_beam_s": 0.1975,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "von records": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 10.051927034822828,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098489
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Promotional"
+      ],
+      "score": 0.014142
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.1974,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "horror metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Horror Rock"
+    ],
+    "score": 0.6640783086353597,
+    "separation": 1.0476454436543674,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Horror Rock"
+      ],
+      "score": 0.664078
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.633877
+     },
+     {
+      "path": [
+       "Rock",
+       "Heavy Metal"
+      ],
+      "score": 0.296985
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.98
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "__NONE__",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Horror Rock"
+    ],
+    "score": 0.6640783086353597
+   },
+   "wall_beam_s": 0.2545,
+   "wall_greedy_after_beam_s": 0.0004
+  },
+  "tropical rock": {
+   "beam": {
+    "path": [
+     "Rock"
+    ],
+    "score": 0.93,
+    "separation": 5.567764362830022,
+    "top3": [
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.93
+     },
+     {
+      "path": [
+       "Rock",
+       "Pop Rock"
+      ],
+      "score": 0.167033
+     },
+     {
+      "path": [
+       "Latin"
+      ],
+      "score": 0.15
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.93
+     ],
+     [
+      "Latin",
+      0.03
+     ],
+     [
+      "Folk, World, & Country",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock"
+    ],
+    "score": 0.93
+   },
+   "wall_beam_s": 0.2605,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "contralto": {
+   "beam": {
+    "path": [],
+    "score": 1.0,
+    "separation": 31782.086308186426,
+    "top3": [
+     {
+      "path": [],
+      "score": 1.0
+     },
+     {
+      "path": [
+       "Blues"
+      ],
+      "score": 3.1e-05
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 3.1e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 1.0
+   },
+   "wall_beam_s": 0.2353,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "westcoast": {
+   "beam": {
+    "path": [
+     "Hip Hop",
+     "G-Funk"
+    ],
+    "score": 0.589915248150105,
+    "separation": 1.427399988088593,
+    "top3": [
+     {
+      "path": [
+       "Hip Hop",
+       "G-Funk"
+      ],
+      "score": 0.589915
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.41328
+     },
+     {
+      "path": [
+       "Rock",
+       "Surf"
+      ],
+      "score": 0.253772
+     }
+    ],
+    "root_top3": [
+     [
+      "Hip Hop",
+      0.4
+     ],
+     [
+      "Rock",
+      0.28
+     ],
+     [
+      "__NONE__",
+      0.22
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Hip Hop",
+     "G-Funk"
+    ],
+    "score": 0.589915248150105
+   },
+   "wall_beam_s": 0.1489,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "industrial black metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Black Metal"
+    ],
+    "score": 0.7549834435270749,
+    "separation": 1.6151457061744965,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Black Metal"
+      ],
+      "score": 0.754983
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.46744
+     },
+     {
+      "path": [
+       "Rock",
+       "Industrial"
+      ],
+      "score": 0.292404
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.95
+     ],
+     [
+      "Electronic",
+      0.03
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Black Metal"
+    ],
+    "score": 0.7549834435270749
+   },
+   "wall_beam_s": 0.327,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "romanian band": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 9.899999999999999,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.1
+     },
+     {
+      "path": [
+       "Blues"
+      ],
+      "score": 3.2e-05
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.296,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "harpist": {
+   "beam": {
+    "path": [],
+    "score": 0.98,
+    "separation": 9.849370589540275,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.98
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.099499
+     },
+     {
+      "path": [
+       "Classical"
+      ],
+      "score": 0.095394
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.98
+     ],
+     [
+      "Classical",
+      0.01
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.98
+   },
+   "wall_beam_s": 0.1883,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "folk black metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Black Metal"
+    ],
+    "score": 0.8060397012554654,
+    "separation": 2.2060522810365732,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Black Metal"
+      ],
+      "score": 0.80604
+     },
+     {
+      "path": [
+       "Rock",
+       "Folk Metal"
+      ],
+      "score": 0.365377
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.298329
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.89
+     ],
+     [
+      "Folk, World, & Country",
+      0.09
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Black Metal"
+    ],
+    "score": 0.8060397012554654
+   },
+   "wall_beam_s": 0.1576,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "french singer": {
+   "beam": {
+    "path": [],
+    "score": 0.97,
+    "separation": 8.710857148298581,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.97
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.111355
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.099499
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.97
+     ],
+     [
+      "Pop",
+      0.02
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.97
+   },
+   "wall_beam_s": 0.1532,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "sound healing": {
+   "beam": {
+    "path": [
+     "Non-Music",
+     "Therapy"
+    ],
+    "score": 0.4384062043356595,
+    "separation": 1.0195493124085104,
+    "top3": [
+     {
+      "path": [
+       "Non-Music",
+       "Therapy"
+      ],
+      "score": 0.438406
+     },
+     {
+      "path": [],
+      "score": 0.43
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.344964
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.43
+     ],
+     [
+      "Non-Music",
+      0.31
+     ],
+     [
+      "Folk, World, & Country",
+      0.14
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.43
+   },
+   "wall_beam_s": 0.1822,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "progressive deathcore": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Deathcore"
+    ],
+    "score": 0.9126883367283708,
+    "separation": 3.2596012026013246,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Deathcore"
+      ],
+      "score": 0.912688
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.28
+     },
+     {
+      "path": [
+       "Rock",
+       "Progressive Metal"
+      ],
+      "score": 0.242487
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.98
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "__NONE__",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Deathcore"
+    ],
+    "score": 0.9126883367283708
+   },
+   "wall_beam_s": 0.1429,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "beatbox": {
+   "beam": {
+    "path": [
+     "Hip Hop",
+     "Beatbox"
+    ],
+    "score": 0.8144323176298937,
+    "separation": 2.908686848678191,
+    "top3": [
+     {
+      "path": [
+       "Hip Hop",
+       "Beatbox"
+      ],
+      "score": 0.814432
+     },
+     {
+      "path": [],
+      "score": 0.28
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.178885
+     }
+    ],
+    "root_top3": [
+     [
+      "Hip Hop",
+      0.67
+     ],
+     [
+      "__NONE__",
+      0.28
+     ],
+     [
+      "Non-Music",
+      0.04
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Hip Hop",
+     "Beatbox"
+    ],
+    "score": 0.8144323176298937
+   },
+   "wall_beam_s": 0.1409,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "deutschpop": {
+   "beam": {
+    "path": [
+     "Pop",
+     "Europop"
+    ],
+    "score": 0.6674578638386096,
+    "separation": 1.0229915092057102,
+    "top3": [
+     {
+      "path": [
+       "Pop",
+       "Europop"
+      ],
+      "score": 0.667458
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.652457
+     },
+     {
+      "path": [
+       "Pop",
+       "Schlager"
+      ],
+      "score": 0.298496
+     }
+    ],
+    "root_top3": [
+     [
+      "Pop",
+      0.99
+     ],
+     [
+      "__NONE__",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Pop",
+     "Europop"
+    ],
+    "score": 0.6674578638386096
+   },
+   "wall_beam_s": 0.1926,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "stupid": {
+   "beam": {
+    "path": [],
+    "score": 0.96,
+    "separation": 5.059644256269406,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.96
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.189737
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Comedy"
+      ],
+      "score": 0.06
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.96
+     ],
+     [
+      "Non-Music",
+      0.04
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.96
+   },
+   "wall_beam_s": 0.131,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "michel banabila": {
+   "beam": {
+    "path": [],
+    "score": 0.91,
+    "separation": 4.718130211023435,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.91
+     },
+     {
+      "path": [
+       "Jazz"
+      ],
+      "score": 0.192873
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.137113
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.91
+     ],
+     [
+      "Jazz",
+      0.06
+     ],
+     [
+      "Non-Music",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.91
+   },
+   "wall_beam_s": 0.1386,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "dungeon rap": {
+   "beam": {
+    "path": [
+     "Hip Hop"
+    ],
+    "score": 0.8918520056601319,
+    "separation": 3.4226138716316963,
+    "top3": [
+     {
+      "path": [
+       "Hip Hop"
+      ],
+      "score": 0.891852
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Horrorcore"
+      ],
+      "score": 0.260576
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Gangsta"
+      ],
+      "score": 0.139284
+     }
+    ],
+    "root_top3": [
+     [
+      "Hip Hop",
+      0.97
+     ],
+     [
+      "__NONE__",
+      0.02
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Hip Hop"
+    ],
+    "score": 0.8918520056601319
+   },
+   "wall_beam_s": 0.1357,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "contemporary reggae": {
+   "beam": {
+    "path": [
+     "Reggae"
+    ],
+    "score": 0.8888194417315589,
+    "separation": 2.2949219304078006,
+    "top3": [
+     {
+      "path": [
+       "Reggae"
+      ],
+      "score": 0.888819
+     },
+     {
+      "path": [
+       "Reggae",
+       "Reggae-Pop"
+      ],
+      "score": 0.387298
+     },
+     {
+      "path": [
+       "Reggae",
+       "Reggae"
+      ],
+      "score": 0.173205
+     }
+    ],
+    "root_top3": [
+     [
+      "Reggae",
+      1.0
+     ],
+     [
+      "Blues",
+      0.0
+     ],
+     [
+      "Brass & Military",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Reggae"
+    ],
+    "score": 0.8888194417315589
+   },
+   "wall_beam_s": 0.253,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "emanuel brown": {
+   "beam": {
+    "path": [],
+    "score": 0.93,
+    "separation": 6.746929126023109,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.93
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.13784
+     },
+     {
+      "path": [
+       "Funk / Soul"
+      ],
+      "score": 0.133417
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.93
+     ],
+     [
+      "Funk / Soul",
+      0.02
+     ],
+     [
+      "Non-Music",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.93
+   },
+   "wall_beam_s": 0.2219,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "reims": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 10.051927034822828,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098489
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Field Recording"
+      ],
+      "score": 0.014142
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.1916,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "heart": {
+   "beam": {
+    "path": [],
+    "score": 0.82,
+    "separation": 3.4346020479919033,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.82
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.238747
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.165831
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.82
+     ],
+     [
+      "Non-Music",
+      0.06
+     ],
+     [
+      "Pop",
+      0.05
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.82
+   },
+   "wall_beam_s": 0.2257,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "star trek": {
+   "beam": {
+    "path": [],
+    "score": 0.52,
+    "separation": 1.4494861506789576,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.52
+     },
+     {
+      "path": [
+       "Stage & Screen"
+      ],
+      "score": 0.358748
+     },
+     {
+      "path": [
+       "Stage & Screen",
+       "Theme"
+      ],
+      "score": 0.324962
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.52
+     ],
+     [
+      "Stage & Screen",
+      0.33
+     ],
+     [
+      "Non-Music",
+      0.14
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.52
+   },
+   "wall_beam_s": 0.222,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "protest song": {
+   "beam": {
+    "path": [],
+    "score": 0.65,
+    "separation": 1.5320646925708532,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.65
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Political"
+      ],
+      "score": 0.424264
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Political"
+      ],
+      "score": 0.218403
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.65
+     ],
+     [
+      "Folk, World, & Country",
+      0.24
+     ],
+     [
+      "Non-Music",
+      0.09
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.65
+   },
+   "wall_beam_s": 0.2303,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "royalty free tracks": {
+   "beam": {
+    "path": [],
+    "score": 0.89,
+    "separation": 3.767670434338985,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.89
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.23622
+     },
+     {
+      "path": [
+       "Stage & Screen"
+      ],
+      "score": 0.196214
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.89
+     ],
+     [
+      "Non-Music",
+      0.06
+     ],
+     [
+      "Stage & Screen",
+      0.05
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.89
+   },
+   "wall_beam_s": 0.2255,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "bubblegrunge": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Grunge"
+    ],
+    "score": 0.7151922818375489,
+    "separation": 1.3110110602126892,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Grunge"
+      ],
+      "score": 0.715192
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.545527
+     },
+     {
+      "path": [
+       "Rock",
+       "Bubblegum"
+      ],
+      "score": 0.255147
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.93
+     ],
+     [
+      "__NONE__",
+      0.03
+     ],
+     [
+      "Non-Music",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Grunge"
+    ],
+    "score": 0.7151922818375489
+   },
+   "wall_beam_s": 0.2782,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "tv show": {
+   "beam": {
+    "path": [
+     "Stage & Screen"
+    ],
+    "score": 0.45442271070007045,
+    "separation": 1.0120798167909264,
+    "top3": [
+     {
+      "path": [
+       "Stage & Screen"
+      ],
+      "score": 0.454423
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.448999
+     },
+     {
+      "path": [],
+      "score": 0.41
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.41
+     ],
+     [
+      "Stage & Screen",
+      0.35
+     ],
+     [
+      "Non-Music",
+      0.24
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.41
+   },
+   "wall_beam_s": 0.1545,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "melodic pop": {
+   "beam": {
+    "path": [
+     "Pop"
+    ],
+    "score": 0.7771100308193171,
+    "separation": 2.0873770280289223,
+    "top3": [
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.77711
+     },
+     {
+      "path": [
+       "Pop",
+       "Pop Rock"
+      ],
+      "score": 0.37229
+     },
+     {
+      "path": [
+       "Pop",
+       "Power Pop"
+      ],
+      "score": 0.33
+     }
+    ],
+    "root_top3": [
+     [
+      "Pop",
+      0.99
+     ],
+     [
+      "__NONE__",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Pop"
+    ],
+    "score": 0.7771100308193171
+   },
+   "wall_beam_s": 0.1727,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "old school metal": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Heavy Metal"
+    ],
+    "score": 0.8337865434270333,
+    "separation": 2.155703788448082,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Heavy Metal"
+      ],
+      "score": 0.833787
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.386782
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.141421
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.88
+     ],
+     [
+      "__NONE__",
+      0.1
+     ],
+     [
+      "Non-Music",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Heavy Metal"
+    ],
+    "score": 0.8337865434270333
+   },
+   "wall_beam_s": 0.1718,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "illuminated paths": {
+   "beam": {
+    "path": [],
+    "score": 0.9,
+    "separation": 4.266409168259795,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.9
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.21095
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.144914
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.9
+     ],
+     [
+      "Non-Music",
+      0.05
+     ],
+     [
+      "Electronic",
+      0.03
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.9
+   },
+   "wall_beam_s": 0.1784,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "gold coast": {
+   "beam": {
+    "path": [],
+    "score": 0.96,
+    "separation": 5.656854249492381,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.96
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.169706
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.082462
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.96
+     ],
+     [
+      "Non-Music",
+      0.03
+     ],
+     [
+      "Electronic",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.96
+   },
+   "wall_beam_s": 0.1971,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "chiang rai": {
+   "beam": {
+    "path": [],
+    "score": 0.98,
+    "separation": 10.002083116364641,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.98
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.09798
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.080623
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.98
+     ],
+     [
+      "Folk, World, & Country",
+      0.01
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.98
+   },
+   "wall_beam_s": 0.1961,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "dance hall": {
+   "beam": {
+    "path": [],
+    "score": 0.77,
+    "separation": 3.350994877147184,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.77
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.229783
+     },
+     {
+      "path": [
+       "Jazz"
+      ],
+      "score": 0.164317
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.77
+     ],
+     [
+      "Jazz",
+      0.06
+     ],
+     [
+      "Non-Music",
+      0.06
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.77
+   },
+   "wall_beam_s": 0.2115,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "musical theater": {
+   "beam": {
+    "path": [
+     "Stage & Screen",
+     "Musical"
+    ],
+    "score": 0.9038805230781334,
+    "separation": 2.6770630673681683,
+    "top3": [
+     {
+      "path": [
+       "Stage & Screen",
+       "Musical"
+      ],
+      "score": 0.903881
+     },
+     {
+      "path": [
+       "Stage & Screen"
+      ],
+      "score": 0.337639
+     },
+     {
+      "path": [
+       "Stage & Screen",
+       "Score"
+      ],
+      "score": 0.13784
+     }
+    ],
+    "root_top3": [
+     [
+      "Stage & Screen",
+      0.95
+     ],
+     [
+      "__NONE__",
+      0.02
+     ],
+     [
+      "Classical",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Stage & Screen",
+     "Musical"
+    ],
+    "score": 0.9038805230781334
+   },
+   "wall_beam_s": 0.1773,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "hariton zoe": {
+   "beam": {
+    "path": [],
+    "score": 0.92,
+    "separation": 6.014228144237645,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.92
+     },
+     {
+      "path": [
+       "Classical"
+      ],
+      "score": 0.152971
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.114891
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.92
+     ],
+     [
+      "Classical",
+      0.03
+     ],
+     [
+      "Folk, World, & Country",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.92
+   },
+   "wall_beam_s": 0.1716,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "beck": {
+   "beam": {
+    "path": [],
+    "score": 0.97,
+    "separation": 8.507462787278184,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.97
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.114018
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098995
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.97
+     ],
+     [
+      "Rock",
+      0.02
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.97
+   },
+   "wall_beam_s": 0.1557,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "ukgarage": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "UK Garage"
+    ],
+    "score": 0.99498743710662,
+    "separation": 10.317539091431918,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "UK Garage"
+      ],
+      "score": 0.994987
+     },
+     {
+      "path": [
+       "Hip Hop"
+      ],
+      "score": 0.096437
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Grime"
+      ],
+      "score": 0.017321
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.99
+     ],
+     [
+      "Hip Hop",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "UK Garage"
+    ],
+    "score": 0.99498743710662
+   },
+   "wall_beam_s": 0.2092,
+   "wall_greedy_after_beam_s": 0.0004
+  },
+  "lithuanian dream pop": {
+   "beam": {
+    "path": [
+     "Pop",
+     "Dream Pop"
+    ],
+    "score": 0.714142842854285,
+    "separation": 1.3883218797250714,
+    "top3": [
+     {
+      "path": [
+       "Pop",
+       "Dream Pop"
+      ],
+      "score": 0.714143
+     },
+     {
+      "path": [
+       "Rock",
+       "Dream Pop"
+      ],
+      "score": 0.514393
+     },
+     {
+      "path": [],
+      "score": 0.2
+     }
+    ],
+    "root_top3": [
+     [
+      "Pop",
+      0.51
+     ],
+     [
+      "Rock",
+      0.27
+     ],
+     [
+      "__NONE__",
+      0.2
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Pop",
+     "Dream Pop"
+    ],
+    "score": 0.714142842854285
+   },
+   "wall_beam_s": 0.1766,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "mobile": {
+   "beam": {
+    "path": [],
+    "score": 0.69,
+    "separation": 1.9331447606478138,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.69
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.356931
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.254558
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.69
+     ],
+     [
+      "Non-Music",
+      0.14
+     ],
+     [
+      "Electronic",
+      0.08
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.69
+   },
+   "wall_beam_s": 0.1679,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "iconic": {
+   "beam": {
+    "path": [],
+    "score": 0.97,
+    "separation": 6.893489828831403,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.97
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.140712
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.1
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.97
+     ],
+     [
+      "Non-Music",
+      0.02
+     ],
+     [
+      "Pop",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.97
+   },
+   "wall_beam_s": 0.2087,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "character: 鬼人正邪": {
+   "beam": {
+    "path": [],
+    "score": 0.95,
+    "separation": 5.063517013445748,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.95
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.187617
+     },
+     {
+      "path": [
+       "Stage & Screen"
+      ],
+      "score": 0.081854
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.95
+     ],
+     [
+      "Non-Music",
+      0.04
+     ],
+     [
+      "Stage & Screen",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.95
+   },
+   "wall_beam_s": 0.2203,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "fergana": {
+   "beam": {
+    "path": [],
+    "score": 0.97,
+    "separation": 7.716905656504581,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.97
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.125698
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.097468
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.97
+     ],
+     [
+      "Folk, World, & Country",
+      0.02
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.97
+   },
+   "wall_beam_s": 0.2168,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "early": {
+   "beam": {
+    "path": [],
+    "score": 0.92,
+    "separation": 4.177504804515798,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.92
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.220227
+     },
+     {
+      "path": [
+       "Jazz"
+      ],
+      "score": 0.129615
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.92
+     ],
+     [
+      "Non-Music",
+      0.05
+     ],
+     [
+      "Jazz",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.92
+   },
+   "wall_beam_s": 0.1859,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "6\" flexi-disc": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 10.435516278555648,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.094868
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Promotional"
+      ],
+      "score": 0.024495
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.247,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "voice actor europa": {
+   "beam": {
+    "path": [],
+    "score": 0.86,
+    "separation": 4.027318989801285,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.86
+     },
+     {
+      "path": [
+       "Stage & Screen"
+      ],
+      "score": 0.213542
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.206398
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.86
+     ],
+     [
+      "Stage & Screen",
+      0.08
+     ],
+     [
+      "Non-Music",
+      0.06
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.86
+   },
+   "wall_beam_s": 0.2144,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "musique concrète instrumentale": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Musique Concrète"
+    ],
+    "score": 0.8181075723888638,
+    "separation": 2.0007474679784076,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Musique Concrète"
+      ],
+      "score": 0.818108
+     },
+     {
+      "path": [
+       "Classical"
+      ],
+      "score": 0.408901
+     },
+     {
+      "path": [
+       "Classical",
+       "Modern Classical"
+      ],
+      "score": 0.162481
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.69
+     ],
+     [
+      "Classical",
+      0.22
+     ],
+     [
+      "Non-Music",
+      0.04
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Musique Concrète"
+    ],
+    "score": 0.8181075723888638
+   },
+   "wall_beam_s": 0.2455,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "no-wave": {
+   "beam": {
+    "path": [
+     "Rock",
+     "No Wave"
+    ],
+    "score": 0.9797958971132712,
+    "separation": 9.94832006747614,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "No Wave"
+      ],
+      "score": 0.979796
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098489
+     },
+     {
+      "path": [
+       "Electronic",
+       "No Wave"
+      ],
+      "score": 0.08
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.96
+     ],
+     [
+      "Electronic",
+      0.01
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "No Wave"
+    ],
+    "score": 0.9797958971132712
+   },
+   "wall_beam_s": 0.2743,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "indie-rock / avantgarde": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Indie Rock"
+    ],
+    "score": 0.8223138087129511,
+    "separation": 1.5986105077709063,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Indie Rock"
+      ],
+      "score": 0.822314
+     },
+     {
+      "path": [
+       "Rock",
+       "Avantgarde"
+      ],
+      "score": 0.514393
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.171464
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.98
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "__NONE__",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Indie Rock"
+    ],
+    "score": 0.8223138087129511
+   },
+   "wall_beam_s": 0.2521,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "runescape": {
+   "beam": {
+    "path": [],
+    "score": 0.62,
+    "separation": 1.507271578811577,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.62
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.411339
+     },
+     {
+      "path": [
+       "Stage & Screen",
+       "Video Game Music"
+      ],
+      "score": 0.411339
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.62
+     ],
+     [
+      "Non-Music",
+      0.18
+     ],
+     [
+      "Stage & Screen",
+      0.18
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.62
+   },
+   "wall_beam_s": 0.2605,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "south portland": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 10.051927034822828,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098489
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Field Recording"
+      ],
+      "score": 0.017321
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.146,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "dirt": {
+   "beam": {
+    "path": [],
+    "score": 0.45,
+    "separation": 1.2131186985386821,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.45
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.370945
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.354965
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.45
+     ],
+     [
+      "Rock",
+      0.21
+     ],
+     [
+      "Non-Music",
+      0.16
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.45
+   },
+   "wall_beam_s": 0.1718,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "disco rap": {
+   "beam": {
+    "path": [
+     "Hip Hop"
+    ],
+    "score": 0.6979971346646059,
+    "separation": 1.439245834257849,
+    "top3": [
+     {
+      "path": [
+       "Hip Hop"
+      ],
+      "score": 0.697997
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Hip-House"
+      ],
+      "score": 0.484974
+     },
+     {
+      "path": [
+       "Funk / Soul",
+       "Disco"
+      ],
+      "score": 0.226495
+     }
+    ],
+    "root_top3": [
+     [
+      "Hip Hop",
+      0.84
+     ],
+     [
+      "Funk / Soul",
+      0.09
+     ],
+     [
+      "Electronic",
+      0.04
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Hip Hop"
+    ],
+    "score": 0.6979971346646059
+   },
+   "wall_beam_s": 0.1545,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "sub-bass": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Bass Music"
+    ],
+    "score": 0.540740233383831,
+    "separation": 1.3385315336840844,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Bass Music"
+      ],
+      "score": 0.54074
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.40398
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.260576
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.68
+     ],
+     [
+      "__NONE__",
+      0.23
+     ],
+     [
+      "Non-Music",
+      0.07
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Bass Music"
+    ],
+    "score": 0.540740233383831
+   },
+   "wall_beam_s": 0.1572,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "terry riley": {
+   "beam": {
+    "path": [],
+    "score": 0.98,
+    "separation": 10.107928213336177,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.98
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.096954
+     },
+     {
+      "path": [
+       "Classical",
+       "Minimalism"
+      ],
+      "score": 0.089443
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.98
+     ],
+     [
+      "Classical",
+      0.01
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.98
+   },
+   "wall_beam_s": 0.1548,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "#thril": {
+   "beam": {
+    "path": [],
+    "score": 0.67,
+    "separation": 2.430345437868539,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.67
+     },
+     {
+      "path": [
+       "Rock",
+       "Thrash"
+      ],
+      "score": 0.275681
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.263249
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.67
+     ],
+     [
+      "Rock",
+      0.1
+     ],
+     [
+      "Non-Music",
+      0.09
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.67
+   },
+   "wall_beam_s": 0.2069,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "schubert": {
+   "beam": {
+    "path": [],
+    "score": 0.87,
+    "separation": 3.001785183139241,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.87
+     },
+     {
+      "path": [
+       "Classical",
+       "Romantic"
+      ],
+      "score": 0.289828
+     },
+     {
+      "path": [
+       "Classical"
+      ],
+      "score": 0.142829
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.87
+     ],
+     [
+      "Classical",
+      0.12
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.87
+   },
+   "wall_beam_s": 0.1833,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "シンセウェイブ": {
+   "beam": {
+    "path": [
+     "Electronic",
+     "Synthwave"
+    ],
+    "score": 0.99498743710662,
+    "separation": 11.645447108469657,
+    "top3": [
+     {
+      "path": [
+       "Electronic",
+       "Synthwave"
+      ],
+      "score": 0.994987
+     },
+     {
+      "path": [
+       "Pop",
+       "Synth-pop"
+      ],
+      "score": 0.08544
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.041231
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.99
+     ],
+     [
+      "Pop",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic",
+     "Synthwave"
+    ],
+    "score": 0.99498743710662
+   },
+   "wall_beam_s": 0.2097,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "tübingen": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 10.000510191066883,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098995
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Education"
+      ],
+      "score": 0.014142
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.142,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "tar": {
+   "beam": {
+    "path": [],
+    "score": 0.66,
+    "separation": 1.7261170771876069,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.66
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.382361
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.167332
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.66
+     ],
+     [
+      "Non-Music",
+      0.17
+     ],
+     [
+      "Folk, World, & Country",
+      0.04
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.66
+   },
+   "wall_beam_s": 0.1604,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "j.r.r. tolkien": {
+   "beam": {
+    "path": [],
+    "score": 0.96,
+    "separation": 7.8383671769061705,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.96
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.122474
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Audiobook"
+      ],
+      "score": 0.108167
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.96
+     ],
+     [
+      "Non-Music",
+      0.03
+     ],
+     [
+      "Stage & Screen",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.96
+   },
+   "wall_beam_s": 0.2021,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "country ballad": {
+   "beam": {
+    "path": [
+     "Folk, World, & Country",
+     "Country"
+    ],
+    "score": 0.9697937925146768,
+    "separation": 4.873397172404482,
+    "top3": [
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Country"
+      ],
+      "score": 0.969794
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.198997
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Hillbilly"
+      ],
+      "score": 0.099499
+     }
+    ],
+    "root_top3": [
+     [
+      "Folk, World, & Country",
+      0.99
+     ],
+     [
+      "__NONE__",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Folk, World, & Country",
+     "Country"
+    ],
+    "score": 0.9697937925146768
+   },
+   "wall_beam_s": 0.28,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "sugar": {
+   "beam": {
+    "path": [],
+    "score": 0.55,
+    "separation": 1.5903660629071605,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.55
+     },
+     {
+      "path": [
+       "Pop",
+       "Bubblegum"
+      ],
+      "score": 0.345832
+     },
+     {
+      "path": [
+       "Pop"
+      ],
+      "score": 0.334365
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.55
+     ],
+     [
+      "Pop",
+      0.26
+     ],
+     [
+      "Non-Music",
+      0.1
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.55
+   },
+   "wall_beam_s": 0.2106,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "starmania": {
+   "beam": {
+    "path": [
+     "Stage & Screen",
+     "Rock Opera"
+    ],
+    "score": 0.5249761899362675,
+    "separation": 1.1510864433221337,
+    "top3": [
+     {
+      "path": [
+       "Stage & Screen",
+       "Rock Opera"
+      ],
+      "score": 0.524976
+     },
+     {
+      "path": [
+       "Stage & Screen",
+       "Musical"
+      ],
+      "score": 0.45607
+     },
+     {
+      "path": [],
+      "score": 0.32
+     }
+    ],
+    "root_top3": [
+     [
+      "Stage & Screen",
+      0.52
+     ],
+     [
+      "__NONE__",
+      0.32
+     ],
+     [
+      "Rock",
+      0.08
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Stage & Screen",
+     "Rock Opera"
+    ],
+    "score": 0.5249761899362675
+   },
+   "wall_beam_s": 0.3755,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "independiente": {
+   "beam": {
+    "path": [],
+    "score": 0.79,
+    "separation": 2.5235624317497627,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.79
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.31305
+     },
+     {
+      "path": [
+       "Rock",
+       "Indie Rock"
+      ],
+      "score": 0.210713
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.79
+     ],
+     [
+      "Non-Music",
+      0.1
+     ],
+     [
+      "Rock",
+      0.06
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.79
+   },
+   "wall_beam_s": 0.2651,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "israeli indie": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Indie Rock"
+    ],
+    "score": 0.6540642170307133,
+    "separation": 1.3916259936823687,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Indie Rock"
+      ],
+      "score": 0.654064
+     },
+     {
+      "path": [],
+      "score": 0.47
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.172337
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.47
+     ],
+     [
+      "Rock",
+      0.46
+     ],
+     [
+      "Non-Music",
+      0.03
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.47
+   },
+   "wall_beam_s": 0.2146,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "chill music": {
+   "beam": {
+    "path": [],
+    "score": 0.65,
+    "separation": 1.9706019534202053,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.65
+     },
+     {
+      "path": [
+       "Electronic",
+       "Chillwave"
+      ],
+      "score": 0.329848
+     },
+     {
+      "path": [
+       "Electronic",
+       "Downtempo"
+      ],
+      "score": 0.299333
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.65
+     ],
+     [
+      "Electronic",
+      0.32
+     ],
+     [
+      "Non-Music",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.65
+   },
+   "wall_beam_s": 0.2149,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "raydeoworld": {
+   "beam": {
+    "path": [],
+    "score": 0.67,
+    "separation": 1.9221472903399774,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.67
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.348569
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.231084
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.67
+     ],
+     [
+      "Folk, World, & Country",
+      0.15
+     ],
+     [
+      "Non-Music",
+      0.06
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.67
+   },
+   "wall_beam_s": 0.2252,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "amy": {
+   "beam": {
+    "path": [],
+    "score": 0.94,
+    "separation": 6.855654600401044,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.94
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.137113
+     },
+     {
+      "path": [
+       "Funk / Soul"
+      ],
+      "score": 0.128841
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.94
+     ],
+     [
+      "Funk / Soul",
+      0.02
+     ],
+     [
+      "Non-Music",
+      0.02
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.94
+   },
+   "wall_beam_s": 0.1408,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "thee oh sees": {
+   "beam": {
+    "path": [],
+    "score": 0.97,
+    "separation": 9.165638470473757,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.97
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.10583
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.096954
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.97
+     ],
+     [
+      "Rock",
+      0.02
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.97
+   },
+   "wall_beam_s": 0.1549,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "electronic horror": {
+   "beam": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.7237402849088891,
+    "separation": 1.6858544608470492,
+    "top3": [
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.72374
+     },
+     {
+      "path": [
+       "Electronic",
+       "Witch House"
+      ],
+      "score": 0.429302
+     },
+     {
+      "path": [
+       "Electronic",
+       "Dark Electro"
+      ],
+      "score": 0.32665
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.97
+     ],
+     [
+      "__NONE__",
+      0.02
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.7237402849088891
+   },
+   "wall_beam_s": 0.1546,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "nightdrive": {
+   "beam": {
+    "path": [],
+    "score": 0.88,
+    "separation": 4.033473386924129,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.88
+     },
+     {
+      "path": [
+       "Electronic",
+       "Synthwave"
+      ],
+      "score": 0.218174
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.168819
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.88
+     ],
+     [
+      "Electronic",
+      0.07
+     ],
+     [
+      "Non-Music",
+      0.03
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.88
+   },
+   "wall_beam_s": 0.1645,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "isle of eigg": {
+   "beam": {
+    "path": [],
+    "score": 0.97,
+    "separation": 7.396180661131328,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.97
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.131149
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.08544
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.97
+     ],
+     [
+      "Non-Music",
+      0.02
+     ],
+     [
+      "Folk, World, & Country",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.97
+   },
+   "wall_beam_s": 0.1852,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "urine": {
+   "beam": {
+    "path": [],
+    "score": 0.77,
+    "separation": 1.8443444433464187,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.77
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.417493
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Medical"
+      ],
+      "score": 0.137477
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.77
+     ],
+     [
+      "Non-Music",
+      0.21
+     ],
+     [
+      "Electronic",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.77
+   },
+   "wall_beam_s": 0.2069,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "santur": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 14.000714267493638,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Folk, World, & Country",
+       "Persian Classical"
+      ],
+      "score": 0.070711
+     },
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.066332
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Folk, World, & Country",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.2111,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "counting crows": {
+   "beam": {
+    "path": [],
+    "score": 0.96,
+    "separation": 6.35775531391221,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.96
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.150997
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.097468
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.96
+     ],
+     [
+      "Rock",
+      0.03
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.96
+   },
+   "wall_beam_s": 0.1379,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "nardcore": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Mathcore"
+    ],
+    "score": 0.37469987990390397,
+    "separation": 1.0392304845413265,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Mathcore"
+      ],
+      "score": 0.3747
+     },
+     {
+      "path": [
+       "Rock",
+       "Hardcore"
+      ],
+      "score": 0.360555
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.32249
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.52
+     ],
+     [
+      "Jazz",
+      0.26
+     ],
+     [
+      "Hip Hop",
+      0.09
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Mathcore"
+    ],
+    "score": 0.37469987990390397
+   },
+   "wall_beam_s": 0.1659,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "#dance": {
+   "beam": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.5357238094391549,
+    "separation": 1.365150674334655,
+    "top3": [
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.535724
+     },
+     {
+      "path": [
+       "Electronic",
+       "Dance-pop"
+      ],
+      "score": 0.392428
+     },
+     {
+      "path": [
+       "Electronic",
+       "House"
+      ],
+      "score": 0.374166
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.7
+     ],
+     [
+      "Pop",
+      0.14
+     ],
+     [
+      "__NONE__",
+      0.07
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.5357238094391549
+   },
+   "wall_beam_s": 0.1761,
+   "wall_greedy_after_beam_s": 0.0004
+  },
+  "sub pop records": {
+   "beam": {
+    "path": [],
+    "score": 0.98,
+    "separation": 9.849370589540275,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.98
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.099499
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.086603
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.98
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Rock",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.98
+   },
+   "wall_beam_s": 0.2514,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "lucenec": {
+   "beam": {
+    "path": [],
+    "score": 0.54,
+    "separation": 1.690805585929904,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.54
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.319374
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.318119
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.54
+     ],
+     [
+      "Electronic",
+      0.15
+     ],
+     [
+      "Non-Music",
+      0.11
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.54
+   },
+   "wall_beam_s": 0.1497,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "aedtpworld": {
+   "beam": {
+    "path": [
+     "Folk, World, & Country"
+    ],
+    "score": 0.6015812497078012,
+    "separation": 1.822973483963034,
+    "top3": [
+     {
+      "path": [
+       "Folk, World, & Country"
+      ],
+      "score": 0.601581
+     },
+     {
+      "path": [],
+      "score": 0.33
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.23516
+     }
+    ],
+    "root_top3": [
+     [
+      "Folk, World, & Country",
+      0.47
+     ],
+     [
+      "__NONE__",
+      0.33
+     ],
+     [
+      "Non-Music",
+      0.07
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Folk, World, & Country"
+    ],
+    "score": 0.6015812497078012
+   },
+   "wall_beam_s": 0.1816,
+   "wall_greedy_after_beam_s": 0.0005
+  },
+  "brutal deathgrind": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Grindcore"
+    ],
+    "score": 0.6382789358893179,
+    "separation": 1.0954451150103324,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Grindcore"
+      ],
+      "score": 0.638279
+     },
+     {
+      "path": [
+       "Rock",
+       "Brutal Death Metal"
+      ],
+      "score": 0.582666
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.406079
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.97
+     ],
+     [
+      "Non-Music",
+      0.02
+     ],
+     [
+      "__NONE__",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Grindcore"
+    ],
+    "score": 0.6382789358893179
+   },
+   "wall_beam_s": 0.2706,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "panart": {
+   "beam": {
+    "path": [],
+    "score": 0.82,
+    "separation": 3.742770809618635,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.82
+     },
+     {
+      "path": [
+       "Latin"
+      ],
+      "score": 0.219089
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.196977
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.82
+     ],
+     [
+      "Latin",
+      0.08
+     ],
+     [
+      "Non-Music",
+      0.04
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.82
+   },
+   "wall_beam_s": 0.3201,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "deutscher rap": {
+   "beam": {
+    "path": [
+     "Hip Hop"
+    ],
+    "score": 0.95,
+    "separation": 6.892024376045111,
+    "top3": [
+     {
+      "path": [
+       "Hip Hop"
+      ],
+      "score": 0.95
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Boom Bap"
+      ],
+      "score": 0.13784
+     },
+     {
+      "path": [
+       "Hip Hop",
+       "Hip Hop"
+      ],
+      "score": 0.13784
+     }
+    ],
+    "root_top3": [
+     [
+      "Hip Hop",
+      0.95
+     ],
+     [
+      "__NONE__",
+      0.05
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Hip Hop"
+    ],
+    "score": 0.95
+   },
+   "wall_beam_s": 0.2226,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "battle music": {
+   "beam": {
+    "path": [],
+    "score": 0.51,
+    "separation": 1.4846673998359339,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.51
+     },
+     {
+      "path": [
+       "Brass & Military"
+      ],
+      "score": 0.343511
+     },
+     {
+      "path": [
+       "Stage & Screen",
+       "Score"
+      ],
+      "score": 0.310805
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.51
+     ],
+     [
+      "Stage & Screen",
+      0.21
+     ],
+     [
+      "Brass & Military",
+      0.2
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.51
+   },
+   "wall_beam_s": 0.202,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "vomir": {
+   "beam": {
+    "path": [],
+    "score": 0.56,
+    "separation": 1.7457431218879393,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.56
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.32078
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.31225
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.56
+     ],
+     [
+      "Rock",
+      0.21
+     ],
+     [
+      "Non-Music",
+      0.13
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.56
+   },
+   "wall_beam_s": 0.2453,
+   "wall_greedy_after_beam_s": 0.0002
+  },
+  "leagueoflyons": {
+   "beam": {
+    "path": [],
+    "score": 0.82,
+    "separation": 4.262977008262298,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.82
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.192354
+     },
+     {
+      "path": [
+       "Jazz"
+      ],
+      "score": 0.161245
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.82
+     ],
+     [
+      "Non-Music",
+      0.05
+     ],
+     [
+      "Jazz",
+      0.04
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.82
+   },
+   "wall_beam_s": 0.2657,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "john wetton": {
+   "beam": {
+    "path": [],
+    "score": 0.97,
+    "separation": 8.197996270866609,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.97
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.118322
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.098995
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.97
+     ],
+     [
+      "Rock",
+      0.02
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.97
+   },
+   "wall_beam_s": 0.2627,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "blues/soul": {
+   "beam": {
+    "path": [
+     "Blues"
+    ],
+    "score": 0.6599242380758568,
+    "separation": 1.4044120436701608,
+    "top3": [
+     {
+      "path": [
+       "Blues"
+      ],
+      "score": 0.659924
+     },
+     {
+      "path": [
+       "Funk / Soul",
+       "Soul"
+      ],
+      "score": 0.469894
+     },
+     {
+      "path": [
+       "Blues",
+       "Rhythm & Blues"
+      ],
+      "score": 0.463033
+     }
+    ],
+    "root_top3": [
+     [
+      "Blues",
+      0.67
+     ],
+     [
+      "Funk / Soul",
+      0.32
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Blues"
+    ],
+    "score": 0.6599242380758568
+   },
+   "wall_beam_s": 0.3334,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "dance anthem": {
+   "beam": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.43474130238568315,
+    "separation": 1.138550085106622,
+    "top3": [
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.434741
+     },
+     {
+      "path": [
+       "Electronic",
+       "Eurodance"
+      ],
+      "score": 0.381838
+     },
+     {
+      "path": [],
+      "score": 0.32
+     }
+    ],
+    "root_top3": [
+     [
+      "Electronic",
+      0.54
+     ],
+     [
+      "__NONE__",
+      0.32
+     ],
+     [
+      "Pop",
+      0.11
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Electronic"
+    ],
+    "score": 0.43474130238568315
+   },
+   "wall_beam_s": 0.2608,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "robocop": {
+   "beam": {
+    "path": [],
+    "score": 0.62,
+    "separation": 2.0971812836243893,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.62
+     },
+     {
+      "path": [
+       "Stage & Screen",
+       "Soundtrack"
+      ],
+      "score": 0.295635
+     },
+     {
+      "path": [
+       "Stage & Screen"
+      ],
+      "score": 0.271293
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.62
+     ],
+     [
+      "Stage & Screen",
+      0.23
+     ],
+     [
+      "Non-Music",
+      0.11
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.62
+   },
+   "wall_beam_s": 0.1705,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "vinyl release": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 9.949874371066196,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.099499
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Technical"
+      ],
+      "score": 0.01
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.1858,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "indie lofi": {
+   "beam": {
+    "path": [
+     "Rock",
+     "Lo-Fi"
+    ],
+    "score": 0.6939740629158989,
+    "separation": 1.6694421334796354,
+    "top3": [
+     {
+      "path": [
+       "Rock",
+       "Lo-Fi"
+      ],
+      "score": 0.693974
+     },
+     {
+      "path": [
+       "Electronic",
+       "Lo-Fi"
+      ],
+      "score": 0.415692
+     },
+     {
+      "path": [
+       "Rock",
+       "Indie Rock"
+      ],
+      "score": 0.21166
+     }
+    ],
+    "root_top3": [
+     [
+      "Rock",
+      0.56
+     ],
+     [
+      "Electronic",
+      0.18
+     ],
+     [
+      "__NONE__",
+      0.09
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [
+     "Rock",
+     "Lo-Fi"
+    ],
+    "score": 0.6939740629158989
+   },
+   "wall_beam_s": 0.1708,
+   "wall_greedy_after_beam_s": 0.0003
+  },
+  "veedel kaztro": {
+   "beam": {
+    "path": [],
+    "score": 0.74,
+    "separation": 2.6000949650273344,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.74
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.284605
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.182209
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.74
+     ],
+     [
+      "Non-Music",
+      0.09
+     ],
+     [
+      "Electronic",
+      0.04
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.74
+   },
+   "wall_beam_s": 0.1647,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "blagoveshchensk": {
+   "beam": {
+    "path": [],
+    "score": 0.99,
+    "separation": 10.211070337962056,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.99
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.096954
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Field Recording"
+      ],
+      "score": 0.017321
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.99
+     ],
+     [
+      "Non-Music",
+      0.01
+     ],
+     [
+      "Blues",
+      0.0
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.99
+   },
+   "wall_beam_s": 0.1712,
+   "wall_greedy_after_beam_s": 0.0
+  },
+  "all hardware": {
+   "beam": {
+    "path": [],
+    "score": 0.83,
+    "separation": 3.0347805601275915,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.83
+     },
+     {
+      "path": [
+       "Electronic"
+      ],
+      "score": 0.273496
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.228473
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.83
+     ],
+     [
+      "Electronic",
+      0.11
+     ],
+     [
+      "Non-Music",
+      0.06
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.83
+   },
+   "wall_beam_s": 0.2799,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "chefboy tyree": {
+   "beam": {
+    "path": [],
+    "score": 0.81,
+    "separation": 2.9776192194799216,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.81
+     },
+     {
+      "path": [
+       "Hip Hop"
+      ],
+      "score": 0.272029
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.168523
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.81
+     ],
+     [
+      "Hip Hop",
+      0.1
+     ],
+     [
+      "Non-Music",
+      0.04
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.81
+   },
+   "wall_beam_s": 0.1529,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "jester on cover": {
+   "beam": {
+    "path": [],
+    "score": 0.92,
+    "separation": 4.694855340334425,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.92
+     },
+     {
+      "path": [
+       "Non-Music"
+      ],
+      "score": 0.195959
+     },
+     {
+      "path": [
+       "Non-Music",
+       "Comedy"
+      ],
+      "score": 0.131909
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.92
+     ],
+     [
+      "Non-Music",
+      0.06
+     ],
+     [
+      "Rock",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.92
+   },
+   "wall_beam_s": 0.2106,
+   "wall_greedy_after_beam_s": 0.0001
+  },
+  "guns n roses": {
+   "beam": {
+    "path": [],
+    "score": 0.96,
+    "separation": 7.473589863950621,
+    "top3": [
+     {
+      "path": [],
+      "score": 0.96
+     },
+     {
+      "path": [
+       "Rock",
+       "Hard Rock"
+      ],
+      "score": 0.128452
+     },
+     {
+      "path": [
+       "Rock"
+      ],
+      "score": 0.100995
+     }
+    ],
+    "root_top3": [
+     [
+      "__NONE__",
+      0.96
+     ],
+     [
+      "Rock",
+      0.03
+     ],
+     [
+      "Non-Music",
+      0.01
+     ]
+    ]
+   },
+   "greedy": {
+    "path": [],
+    "score": 0.96
+   },
+   "wall_beam_s": 0.1793,
+   "wall_greedy_after_beam_s": 0.0001
+  }
+ }
+}

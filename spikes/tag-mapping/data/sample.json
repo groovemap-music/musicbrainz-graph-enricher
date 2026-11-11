@@ -1,0 +1,1410 @@
+{
+ "seed": 569,
+ "strata": {
+  "head": "rank 1-1000",
+  "mid": "rank >1000 with >=20 uses",
+  "tail": "5-19 uses"
+ },
+ "rows": [
+  {
+   "tag": "black metal",
+   "uses": 56470,
+   "rank": 24,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "soul",
+   "uses": 46743,
+   "rank": 28,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "hard rock",
+   "uses": 43261,
+   "rank": 31,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "ebm",
+   "uses": 23765,
+   "rank": 61,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "shoegaze",
+   "uses": 23682,
+   "rank": 62,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "progressive rock",
+   "uses": 22344,
+   "rank": 66,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "dark wave",
+   "uses": 18847,
+   "rank": 77,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "punk rock",
+   "uses": 18791,
+   "rank": 78,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "hip-hop/rap",
+   "uses": 16530,
+   "rank": 86,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "jungle",
+   "uses": 14713,
+   "rank": 96,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "pop punk",
+   "uses": 14601,
+   "rank": 97,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "easy listening",
+   "uses": 14482,
+   "rank": 98,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "breaks",
+   "uses": 14321,
+   "rank": 99,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "modern classical",
+   "uses": 12539,
+   "rank": 113,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "post-hardcore",
+   "uses": 12403,
+   "rank": 114,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "americana",
+   "uses": 9193,
+   "rank": 140,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "bluegrass",
+   "uses": 8751,
+   "rank": 146,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "stoner metal",
+   "uses": 7373,
+   "rank": 167,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "jazz rock",
+   "uses": 6604,
+   "rank": 180,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "piano",
+   "uses": 6074,
+   "rank": 187,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "composer",
+   "uses": 5189,
+   "rank": 211,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "power electronics",
+   "uses": 4934,
+   "rank": 221,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "symphonic metal",
+   "uses": 4910,
+   "rank": 224,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "k-pop",
+   "uses": 4511,
+   "rank": 239,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "salsa",
+   "uses": 4011,
+   "rank": 261,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "latin jazz",
+   "uses": 3893,
+   "rank": 268,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "folk pop",
+   "uses": 3819,
+   "rank": 271,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "hard bop",
+   "uses": 3795,
+   "rank": 272,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "brutal death metal",
+   "uses": 3657,
+   "rank": 279,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "folk metal",
+   "uses": 3639,
+   "rank": 281,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "cool jazz",
+   "uses": 3107,
+   "rank": 320,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "vocal",
+   "uses": 2987,
+   "rank": 332,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "desert rock",
+   "uses": 2986,
+   "rank": 333,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "arena rock",
+   "uses": 2874,
+   "rank": 338,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "psychedelic pop",
+   "uses": 2868,
+   "rank": 340,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "toronto",
+   "uses": 2852,
+   "rank": 343,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "san francisco",
+   "uses": 2717,
+   "rank": 351,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "conscious hip hop",
+   "uses": 2621,
+   "rank": 360,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "groove metal",
+   "uses": 2596,
+   "rank": 363,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "melodic",
+   "uses": 2348,
+   "rank": 392,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "melodic black metal",
+   "uses": 2217,
+   "rank": 401,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "adult contemporary",
+   "uses": 2039,
+   "rank": 429,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "surf rock",
+   "uses": 1935,
+   "rank": 444,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "acid rock",
+   "uses": 1926,
+   "rank": 449,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "poetry",
+   "uses": 1876,
+   "rank": 456,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "futurepop",
+   "uses": 1827,
+   "rank": 465,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "mod",
+   "uses": 1632,
+   "rank": 501,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "oldies",
+   "uses": 1606,
+   "rank": 510,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "manchester",
+   "uses": 1603,
+   "rank": 511,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "singer",
+   "uses": 1538,
+   "rank": 528,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "experiemental",
+   "uses": 1497,
+   "rank": 537,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "merengue",
+   "uses": 1445,
+   "rank": 551,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "psybient",
+   "uses": 1440,
+   "rank": 552,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "jazz hop",
+   "uses": 1402,
+   "rank": 563,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "epic",
+   "uses": 1359,
+   "rank": 573,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "alternative dance",
+   "uses": 1333,
+   "rank": 580,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "belgium",
+   "uses": 1324,
+   "rank": 583,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "delta blues",
+   "uses": 1315,
+   "rank": 585,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "ambient pop",
+   "uses": 1296,
+   "rank": 589,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "nerdcore",
+   "uses": 1246,
+   "rank": 606,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "funk / soul",
+   "uses": 1171,
+   "rank": 628,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "post-internet",
+   "uses": 1156,
+   "rank": 635,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "funk metal",
+   "uses": 1128,
+   "rank": 647,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "space music",
+   "uses": 1110,
+   "rank": 654,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "death-doom metal",
+   "uses": 1033,
+   "rank": 677,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "amsterdam",
+   "uses": 1018,
+   "rank": 680,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "greek",
+   "uses": 1010,
+   "rank": 683,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "c64 remix",
+   "uses": 980,
+   "rank": 694,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "glam metal",
+   "uses": 906,
+   "rank": 725,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "neo-soul",
+   "uses": 879,
+   "rank": 738,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "ireland",
+   "uses": 864,
+   "rank": 747,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "video game soundtrack",
+   "uses": 859,
+   "rank": 753,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "filmi",
+   "uses": 780,
+   "rank": 804,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "jazz pop",
+   "uses": 764,
+   "rank": 817,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "singer songwriter",
+   "uses": 742,
+   "rank": 840,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "dance-punk",
+   "uses": 739,
+   "rank": 845,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "houston",
+   "uses": 724,
+   "rank": 858,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "analog",
+   "uses": 717,
+   "rank": 862,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "relax",
+   "uses": 697,
+   "rank": 879,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "edinburgh",
+   "uses": 697,
+   "rank": 880,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "female vocal",
+   "uses": 690,
+   "rank": 884,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "rome",
+   "uses": 685,
+   "rank": 888,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "jazzthing.de",
+   "uses": 659,
+   "rank": 917,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "alliteration",
+   "uses": 655,
+   "rank": 920,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "praise & worship",
+   "uses": 652,
+   "rank": 928,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "smooth soul",
+   "uses": 634,
+   "rank": 946,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "eclectic",
+   "uses": 633,
+   "rank": 950,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "crossover",
+   "uses": 606,
+   "rank": 980,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "leipzig",
+   "uses": 605,
+   "rank": 982,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "drum&bass",
+   "uses": 604,
+   "rank": 984,
+   "stratum": "head",
+   "stratum_size": 1000
+  },
+  {
+   "tag": "massachusetts",
+   "uses": 475,
+   "rank": 1163,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "italo",
+   "uses": 384,
+   "rank": 1334,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "future beat",
+   "uses": 384,
+   "rank": 1335,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "1980s",
+   "uses": 371,
+   "rank": 1373,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "louisville",
+   "uses": 352,
+   "rank": 1424,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "terrorcore",
+   "uses": 317,
+   "rank": 1530,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "naturewave",
+   "uses": 266,
+   "rank": 1697,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "hawaii",
+   "uses": 263,
+   "rank": 1710,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "raw punk",
+   "uses": 222,
+   "rank": 1890,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "hard",
+   "uses": 179,
+   "rank": 2157,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "post-whatever",
+   "uses": 149,
+   "rank": 2407,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "go-go",
+   "uses": 136,
+   "rank": 2550,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "anthem",
+   "uses": 110,
+   "rank": 2968,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "industrial black metal",
+   "uses": 96,
+   "rank": 3240,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "tropical rock",
+   "uses": 96,
+   "rank": 3246,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "horror metal",
+   "uses": 94,
+   "rank": 3293,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "romanian band",
+   "uses": 94,
+   "rank": 3287,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "contralto",
+   "uses": 90,
+   "rank": 3394,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "von records",
+   "uses": 86,
+   "rank": 3509,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "harpist",
+   "uses": 77,
+   "rank": 3760,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "westcoast",
+   "uses": 76,
+   "rank": 3816,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "folk black metal",
+   "uses": 76,
+   "rank": 3810,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "deutschpop",
+   "uses": 71,
+   "rank": 3981,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "french singer",
+   "uses": 70,
+   "rank": 4016,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "sound healing",
+   "uses": 67,
+   "rank": 4183,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "progressive deathcore",
+   "uses": 66,
+   "rank": 4210,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "beatbox",
+   "uses": 58,
+   "rank": 4614,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "stupid",
+   "uses": 58,
+   "rank": 4653,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "michel banabila",
+   "uses": 49,
+   "rank": 5162,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "dungeon rap",
+   "uses": 47,
+   "rank": 5288,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "contemporary reggae",
+   "uses": 44,
+   "rank": 5511,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "protest song",
+   "uses": 43,
+   "rank": 5617,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "heart",
+   "uses": 41,
+   "rank": 5788,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "emanuel brown",
+   "uses": 41,
+   "rank": 5851,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "royalty free tracks",
+   "uses": 38,
+   "rank": 6152,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "star trek",
+   "uses": 37,
+   "rank": 6195,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "reims",
+   "uses": 37,
+   "rank": 6257,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "bubblegrunge",
+   "uses": 37,
+   "rank": 6186,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "tv show",
+   "uses": 36,
+   "rank": 6340,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "melodic pop",
+   "uses": 35,
+   "rank": 6468,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "gold coast",
+   "uses": 35,
+   "rank": 6512,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "dance hall",
+   "uses": 34,
+   "rank": 6638,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "old school metal",
+   "uses": 33,
+   "rank": 6811,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "chiang rai",
+   "uses": 33,
+   "rank": 6850,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "illuminated paths",
+   "uses": 33,
+   "rank": 6828,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "musical theater",
+   "uses": 32,
+   "rank": 6879,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "ukgarage",
+   "uses": 32,
+   "rank": 6964,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "hariton zoe",
+   "uses": 31,
+   "rank": 7052,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "character: 鬼人正邪",
+   "uses": 30,
+   "rank": 7274,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "iconic",
+   "uses": 29,
+   "rank": 7397,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "beck",
+   "uses": 29,
+   "rank": 7348,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "lithuanian dream pop",
+   "uses": 28,
+   "rank": 7523,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "mobile",
+   "uses": 27,
+   "rank": 7876,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "fergana",
+   "uses": 27,
+   "rank": 7786,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "early",
+   "uses": 26,
+   "rank": 8062,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "no-wave",
+   "uses": 26,
+   "rank": 8040,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "6\" flexi-disc",
+   "uses": 25,
+   "rank": 8363,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "indie-rock / avantgarde",
+   "uses": 25,
+   "rank": 8322,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "musique concrète instrumentale",
+   "uses": 24,
+   "rank": 8458,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "runescape",
+   "uses": 24,
+   "rank": 8522,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "voice actor europa",
+   "uses": 23,
+   "rank": 8826,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "south portland",
+   "uses": 23,
+   "rank": 8880,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "dirt",
+   "uses": 23,
+   "rank": 8795,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "disco rap",
+   "uses": 23,
+   "rank": 8694,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "sub-bass",
+   "uses": 22,
+   "rank": 9211,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "シンセウェイブ",
+   "uses": 22,
+   "rank": 9105,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "#thril",
+   "uses": 22,
+   "rank": 9115,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "terry riley",
+   "uses": 21,
+   "rank": 9227,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "schubert",
+   "uses": 21,
+   "rank": 9518,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "starmania",
+   "uses": 20,
+   "rank": 9618,
+   "stratum": "mid",
+   "stratum_size": 8880
+  },
+  {
+   "tag": "tübingen",
+   "uses": 19,
+   "rank": 9932,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "tar",
+   "uses": 17,
+   "rank": 10982,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "country ballad",
+   "uses": 17,
+   "rank": 11178,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "independiente",
+   "uses": 17,
+   "rank": 10842,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "israeli indie",
+   "uses": 15,
+   "rank": 12249,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "chill music",
+   "uses": 15,
+   "rank": 11746,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "sugar",
+   "uses": 13,
+   "rank": 13326,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "j.r.r. tolkien",
+   "uses": 13,
+   "rank": 13391,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "raydeoworld",
+   "uses": 12,
+   "rank": 14191,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "thee oh sees",
+   "uses": 12,
+   "rank": 13997,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "isle of eigg",
+   "uses": 12,
+   "rank": 14413,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "electronic horror",
+   "uses": 12,
+   "rank": 14311,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "santur",
+   "uses": 12,
+   "rank": 13948,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "amy",
+   "uses": 11,
+   "rank": 15094,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "nightdrive",
+   "uses": 11,
+   "rank": 15372,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "urine",
+   "uses": 11,
+   "rank": 15612,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "sub pop records",
+   "uses": 11,
+   "rank": 15485,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "nardcore",
+   "uses": 11,
+   "rank": 14868,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "#dance",
+   "uses": 10,
+   "rank": 15963,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "brutal deathgrind",
+   "uses": 10,
+   "rank": 15930,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "counting crows",
+   "uses": 9,
+   "rank": 17506,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "aedtpworld",
+   "uses": 9,
+   "rank": 17122,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "panart",
+   "uses": 9,
+   "rank": 17652,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "lucenec",
+   "uses": 8,
+   "rank": 19661,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "blues/soul",
+   "uses": 7,
+   "rank": 23006,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "deutscher rap",
+   "uses": 7,
+   "rank": 22432,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "battle music",
+   "uses": 7,
+   "rank": 22116,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "leagueoflyons",
+   "uses": 7,
+   "rank": 21691,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "john wetton",
+   "uses": 7,
+   "rank": 20872,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "vomir",
+   "uses": 7,
+   "rank": 22502,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "dance anthem",
+   "uses": 6,
+   "rank": 25301,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "robocop",
+   "uses": 6,
+   "rank": 25333,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "vinyl release",
+   "uses": 6,
+   "rank": 25204,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "all hardware",
+   "uses": 6,
+   "rank": 26092,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "indie lofi",
+   "uses": 5,
+   "rank": 29094,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "blagoveshchensk",
+   "uses": 5,
+   "rank": 29195,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "veedel kaztro",
+   "uses": 5,
+   "rank": 30900,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "jester on cover",
+   "uses": 5,
+   "rank": 30993,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "chefboy tyree",
+   "uses": 5,
+   "rank": 27946,
+   "stratum": "tail",
+   "stratum_size": 21201
+  },
+  {
+   "tag": "guns n roses",
+   "uses": 5,
+   "rank": 28328,
+   "stratum": "tail",
+   "stratum_size": 21201
+  }
+ ]
+}

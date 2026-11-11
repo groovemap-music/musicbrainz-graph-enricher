@@ -1,0 +1,547 @@
+{
+ "model": "claude-opus-5-5",
+ "effort": "medium",
+ "options": 1292,
+ "list_sha": "0677e3d770f247de",
+ "wall_s": 104.99,
+ "stats": {
+  "hits": 0,
+  "misses": 200,
+  "invalid": 0,
+  "refusals": 0
+ },
+ "paths": {
+  "black metal": [
+   "Rock",
+   "Black Metal"
+  ],
+  "soul": [
+   "Funk / Soul",
+   "Soul"
+  ],
+  "hard rock": [
+   "Rock",
+   "Hard Rock"
+  ],
+  "ebm": [
+   "Electronic",
+   "EBM"
+  ],
+  "shoegaze": [
+   "Rock",
+   "Shoegaze"
+  ],
+  "progressive rock": [
+   "Rock",
+   "Prog Rock"
+  ],
+  "dark wave": [
+   "Electronic",
+   "Darkwave"
+  ],
+  "punk rock": [
+   "Rock",
+   "Punk"
+  ],
+  "hip-hop/rap": [
+   "Hip Hop",
+   "Hip Hop"
+  ],
+  "jungle": [
+   "Electronic",
+   "Jungle"
+  ],
+  "pop punk": [
+   "Rock",
+   "Pop Punk"
+  ],
+  "easy listening": [
+   "Jazz",
+   "Easy Listening"
+  ],
+  "breaks": [
+   "Electronic",
+   "Breaks"
+  ],
+  "modern classical": [
+   "Classical",
+   "Modern Classical"
+  ],
+  "post-hardcore": [
+   "Rock",
+   "Post-Hardcore"
+  ],
+  "americana": [
+   "Folk, World, & Country",
+   "Country"
+  ],
+  "bluegrass": [
+   "Folk, World, & Country",
+   "Bluegrass"
+  ],
+  "stoner metal": [
+   "Rock",
+   "Stoner Rock"
+  ],
+  "jazz rock": [
+   "Jazz",
+   "Jazz-Rock"
+  ],
+  "piano": [
+   "Classical",
+   "Piano"
+  ],
+  "composer": [],
+  "power electronics": [
+   "Electronic",
+   "Power Electronics"
+  ],
+  "symphonic metal": [
+   "Rock",
+   "Symphonic Metal"
+  ],
+  "k-pop": [
+   "Pop",
+   "K-pop"
+  ],
+  "salsa": [
+   "Latin",
+   "Salsa"
+  ],
+  "latin jazz": [
+   "Jazz",
+   "Latin Jazz"
+  ],
+  "folk pop": [
+   "Folk, World, & Country",
+   "Folk"
+  ],
+  "hard bop": [
+   "Jazz",
+   "Hard Bop"
+  ],
+  "brutal death metal": [
+   "Rock",
+   "Brutal Death Metal"
+  ],
+  "folk metal": [
+   "Rock",
+   "Folk Metal"
+  ],
+  "cool jazz": [
+   "Jazz",
+   "Cool Jazz"
+  ],
+  "vocal": [
+   "Pop",
+   "Vocal"
+  ],
+  "desert rock": [
+   "Rock",
+   "Stoner Rock"
+  ],
+  "arena rock": [
+   "Rock",
+   "Arena Rock"
+  ],
+  "psychedelic pop": [
+   "Pop",
+   "Psychedelic"
+  ],
+  "toronto": [],
+  "san francisco": [],
+  "conscious hip hop": [
+   "Hip Hop",
+   "Conscious"
+  ],
+  "groove metal": [
+   "Rock",
+   "Groove Metal"
+  ],
+  "melodic": [],
+  "melodic black metal": [
+   "Rock",
+   "Black Metal"
+  ],
+  "adult contemporary": [
+   "Pop",
+   "Soft Rock"
+  ],
+  "surf rock": [
+   "Rock",
+   "Surf"
+  ],
+  "acid rock": [
+   "Rock",
+   "Acid Rock"
+  ],
+  "poetry": [
+   "Non-Music",
+   "Poetry"
+  ],
+  "futurepop": [
+   "Electronic",
+   "Future Pop"
+  ],
+  "mod": [
+   "Rock",
+   "Mod"
+  ],
+  "oldies": [],
+  "manchester": [],
+  "singer": [],
+  "experiemental": [
+   "Electronic",
+   "Experimental"
+  ],
+  "merengue": [
+   "Latin",
+   "Merengue"
+  ],
+  "psybient": [
+   "Electronic",
+   "Ambient"
+  ],
+  "jazz hop": [
+   "Hip Hop",
+   "Jazzy Hip-Hop"
+  ],
+  "epic": [],
+  "alternative dance": [
+   "Electronic"
+  ],
+  "belgium": [],
+  "delta blues": [
+   "Blues",
+   "Delta Blues"
+  ],
+  "ambient pop": [
+   "Electronic",
+   "Ambient"
+  ],
+  "nerdcore": [
+   "Hip Hop"
+  ],
+  "funk / soul": [
+   "Funk / Soul"
+  ],
+  "post-internet": [
+   "Electronic"
+  ],
+  "funk metal": [
+   "Rock",
+   "Funk Metal"
+  ],
+  "space music": [
+   "Electronic",
+   "Ambient"
+  ],
+  "death-doom metal": [
+   "Rock",
+   "Doom Metal"
+  ],
+  "amsterdam": [],
+  "greek": [],
+  "c64 remix": [
+   "Electronic",
+   "Video Game Music"
+  ],
+  "glam metal": [
+   "Rock",
+   "Glam"
+  ],
+  "neo-soul": [
+   "Funk / Soul",
+   "Neo Soul"
+  ],
+  "ireland": [],
+  "video game soundtrack": [
+   "Stage & Screen",
+   "Video Game Music"
+  ],
+  "filmi": [
+   "Stage & Screen",
+   "Bollywood"
+  ],
+  "jazz pop": [
+   "Jazz"
+  ],
+  "singer songwriter": [
+   "Folk, World, & Country",
+   "Folk"
+  ],
+  "dance-punk": [
+   "Rock",
+   "Post-Punk"
+  ],
+  "houston": [],
+  "analog": [],
+  "relax": [],
+  "edinburgh": [],
+  "female vocal": [],
+  "rome": [],
+  "jazzthing.de": [],
+  "alliteration": [],
+  "praise & worship": [
+   "Pop",
+   "Religious"
+  ],
+  "smooth soul": [
+   "Funk / Soul",
+   "Soul"
+  ],
+  "eclectic": [],
+  "crossover": [
+   "Rock",
+   "Crossover thrash"
+  ],
+  "leipzig": [],
+  "drum&bass": [
+   "Electronic",
+   "Drum n Bass"
+  ],
+  "massachusetts": [],
+  "italo": [
+   "Electronic",
+   "Italo-Disco"
+  ],
+  "future beat": [
+   "Electronic",
+   "Future Bass"
+  ],
+  "1980s": [],
+  "louisville": [],
+  "terrorcore": [
+   "Electronic",
+   "Speedcore"
+  ],
+  "naturewave": [
+   "Electronic",
+   "Ambient"
+  ],
+  "hawaii": [],
+  "raw punk": [
+   "Rock",
+   "Punk"
+  ],
+  "hard": [],
+  "post-whatever": [],
+  "go-go": [
+   "Funk / Soul",
+   "Go-Go"
+  ],
+  "anthem": [],
+  "industrial black metal": [
+   "Rock",
+   "Black Metal"
+  ],
+  "tropical rock": [
+   "Rock"
+  ],
+  "horror metal": [
+   "Rock",
+   "Horror Rock"
+  ],
+  "romanian band": [],
+  "contralto": [],
+  "von records": [],
+  "harpist": [],
+  "westcoast": [
+   "Rock",
+   "AOR"
+  ],
+  "folk black metal": [
+   "Rock",
+   "Black Metal"
+  ],
+  "deutschpop": [
+   "Pop"
+  ],
+  "french singer": [],
+  "sound healing": [
+   "Electronic",
+   "Therapy"
+  ],
+  "progressive deathcore": [
+   "Rock",
+   "Deathcore"
+  ],
+  "beatbox": [
+   "Hip Hop",
+   "Beatbox"
+  ],
+  "stupid": [],
+  "michel banabila": [],
+  "dungeon rap": [
+   "Hip Hop",
+   "Memphis Rap"
+  ],
+  "contemporary reggae": [
+   "Reggae",
+   "Reggae"
+  ],
+  "protest song": [
+   "Folk, World, & Country",
+   "Political"
+  ],
+  "heart": [],
+  "emanuel brown": [],
+  "royalty free tracks": [],
+  "star trek": [],
+  "reims": [],
+  "bubblegrunge": [
+   "Rock",
+   "Post-Grunge"
+  ],
+  "tv show": [
+   "Stage & Screen",
+   "Soundtrack"
+  ],
+  "melodic pop": [
+   "Pop"
+  ],
+  "gold coast": [],
+  "dance hall": [
+   "Reggae",
+   "Dancehall"
+  ],
+  "old school metal": [
+   "Rock",
+   "Heavy Metal"
+  ],
+  "chiang rai": [],
+  "illuminated paths": [],
+  "musical theater": [
+   "Stage & Screen",
+   "Musical"
+  ],
+  "ukgarage": [
+   "Electronic",
+   "UK Garage"
+  ],
+  "hariton zoe": [],
+  "character: 鬼人正邪": [],
+  "iconic": [],
+  "beck": [],
+  "lithuanian dream pop": [
+   "Rock",
+   "Dream Pop"
+  ],
+  "mobile": [],
+  "fergana": [],
+  "early": [
+   "Classical",
+   "Early"
+  ],
+  "no-wave": [
+   "Rock",
+   "No Wave"
+  ],
+  "6\" flexi-disc": [],
+  "indie-rock / avantgarde": [
+   "Rock",
+   "Indie Rock"
+  ],
+  "musique concrète instrumentale": [
+   "Electronic",
+   "Musique Concrète"
+  ],
+  "runescape": [
+   "Stage & Screen",
+   "Video Game Music"
+  ],
+  "voice actor europa": [],
+  "south portland": [],
+  "dirt": [],
+  "disco rap": [
+   "Hip Hop"
+  ],
+  "sub-bass": [],
+  "シンセウェイブ": [
+   "Electronic",
+   "Synthwave"
+  ],
+  "#thril": [],
+  "terry riley": [],
+  "schubert": [],
+  "starmania": [],
+  "tübingen": [],
+  "tar": [],
+  "country ballad": [
+   "Folk, World, & Country",
+   "Country"
+  ],
+  "independiente": [
+   "Rock",
+   "Indie Rock"
+  ],
+  "israeli indie": [
+   "Rock",
+   "Indie Rock"
+  ],
+  "chill music": [
+   "Electronic",
+   "Downtempo"
+  ],
+  "sugar": [],
+  "j.r.r. tolkien": [],
+  "raydeoworld": [],
+  "thee oh sees": [],
+  "isle of eigg": [],
+  "electronic horror": [
+   "Electronic"
+  ],
+  "santur": [],
+  "amy": [],
+  "nightdrive": [
+   "Electronic",
+   "Synthwave"
+  ],
+  "urine": [],
+  "sub pop records": [],
+  "nardcore": [
+   "Rock",
+   "Hardcore"
+  ],
+  "#dance": [
+   "Electronic"
+  ],
+  "brutal deathgrind": [
+   "Rock",
+   "Brutal Death Metal"
+  ],
+  "counting crows": [],
+  "aedtpworld": [],
+  "panart": [],
+  "lucenec": [],
+  "blues/soul": [
+   "Blues"
+  ],
+  "deutscher rap": [
+   "Hip Hop",
+   "Hip Hop"
+  ],
+  "battle music": [
+   "Stage & Screen",
+   "Video Game Music"
+  ],
+  "leagueoflyons": [],
+  "john wetton": [],
+  "vomir": [],
+  "dance anthem": [
+   "Electronic"
+  ],
+  "robocop": [],
+  "vinyl release": [],
+  "all hardware": [],
+  "indie lofi": [
+   "Rock",
+   "Lo-Fi"
+  ],
+  "blagoveshchensk": [],
+  "veedel kaztro": [],
+  "jester on cover": [],
+  "chefboy tyree": [],
+  "guns n roses": []
+ }
+}

@@ -1,0 +1,95 @@
+{
+ "source": "MusicBrainz mbdump-derived.tar.bz2 (fullexport, CC0 for tag tables); see TIMESTAMP in write-up",
+ "scopes": [
+  "artist",
+  "label",
+  "release",
+  "release_group"
+ ],
+ "per_scope": {
+  "artist": {
+   "uses": 750197,
+   "distinct_tags": 62008
+  },
+  "label": {
+   "uses": 38477,
+   "distinct_tags": 9057
+  },
+  "release": {
+   "uses": 3475759,
+   "distinct_tags": 166466
+  },
+  "release_group": {
+   "uses": 4975857,
+   "distinct_tags": 39397
+  }
+ },
+ "distinct_tags_in_tag_table": 246340,
+ "distinct_tags_in_scope": 220592,
+ "uses_in_scope": 9240290,
+ "vote_weight_in_scope": 10677006,
+ "singleton_tags": 137590,
+ "tags_with_5plus_uses": 31081,
+ "tags_with_20plus_uses": 9880,
+ "use_coverage": {
+  "top_10": 0.2845,
+  "top_100": 0.6194,
+  "top_1000": 0.8652,
+  "top_5000": 0.9344,
+  "top_10000": 0.951,
+  "top_50000": 0.9779
+ },
+ "tags_needed": {
+  "tags_for_50pct_uses": 48,
+  "tags_for_80pct_uses": 432,
+  "tags_for_90pct_uses": 1887,
+  "tags_for_95pct_uses": 9551,
+  "tags_for_99pct_uses": 128190
+ },
+ "mb_genre_list_size": 2220,
+ "mb_genre_list_present_in_scope": 1887,
+ "buckets": {
+  "all": {
+   "tags": {
+    "mb_genre_list": 1887,
+    "other_unlisted": 215445,
+    "year_or_decade": 445,
+    "personal_or_meta": 2815
+   },
+   "uses": {
+    "mb_genre_list": 7105335,
+    "other_unlisted": 2083475,
+    "year_or_decade": 17799,
+    "personal_or_meta": 33681
+   }
+  },
+  "top_1000": {
+   "tags": {
+    "mb_genre_list": 537,
+    "other_unlisted": 447,
+    "year_or_decade": 3,
+    "personal_or_meta": 13
+   },
+   "uses": {
+    "mb_genre_list": 6973394,
+    "other_unlisted": 998342,
+    "year_or_decade": 7596,
+    "personal_or_meta": 15470
+   }
+  },
+  "top_10000": {
+   "tags": {
+    "mb_genre_list": 1322,
+    "other_unlisted": 8450,
+    "year_or_decade": 93,
+    "personal_or_meta": 135
+   },
+   "uses": {
+    "mb_genre_list": 7101947,
+    "other_unlisted": 1640328,
+    "year_or_decade": 16885,
+    "personal_or_meta": 27980
+   }
+  }
+ }
+}

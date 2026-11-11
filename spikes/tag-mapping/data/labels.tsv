@@ -1,0 +1,210 @@
+## labelled_by: drafted by agent (claude-opus-5-5) 2026-11-02 for bead gm-musicbrainz-graph-enricher-569; all 200 rows reviewed by the operator 2026-11-10 (see reviewer column).
+## Target tree: data/discogs_tree_20261101.json. Every accepted answer is validated against it by common.load_labels.
+## accepted: NONE | G:<genre> (genre only) | S:<style> (that style under every tree parent) | P:<genre>/<style>; ' | ' separates acceptable answers.
+## Rules: R1 tag names a Discogs genre -> genre only (plus a same-named style). R2 tag names or spells a Discogs style (typo, spacing, synonym, translation) -> that style.
+##   R3 tag is a sub-variant of a Discogs style (e.g. 'melodic black metal') -> the parent style(s). R4 genre-like but no Discogs style fits -> genre only plus the closest styles.
+##   R5 not a genre (place, nationality, year/decade, person/band/work, label, instrument, voice, mood, opinion, format, personal) -> NONE. Artist and composer names stay NONE even when they imply a genre.
+##   R6 reads both as a non-genre and as a genre -> NONE plus the genre reading(s).
+## Bias: a Claude model drafted this key and a person reviewed every row; results are graded against the reviewed answers.
+## Review: change 'accepted' (and 'confidence' to 'reviewed') and fill 'reviewer'; unsure rows are first.
+confidence	tag	uses	stratum	accepted	rule	reviewer
+reviewed	americana	9193	head	G:Folk, World, & Country | P:Folk, World, & Country/Country | S:Country Rock | P:Folk, World, & Country/Folk Rock	R4	Robert Wlodarczyk
+reviewed	piano	6074	head	G:Classical | P:Classical/Piano	R6	Robert Wlodarczyk
+reviewed	folk pop	3819	head	G:Pop | G:Folk, World, & Country | P:Folk, World, & Country/Folk	R4	Robert Wlodarczyk
+reviewed	vocal	2987	head	S:Vocal	R6	Robert Wlodarczyk
+reviewed	desert rock	2986	head	S:Stoner Rock | G:Rock	R3	Robert Wlodarczyk
+reviewed	psychedelic pop	2868	head	P:Pop/Psychedelic | G:Pop	R4	Robert Wlodarczyk
+reviewed	adult contemporary	2039	head	G:Pop | P:Pop/Soft Rock | P:Pop/Ballad	R4	Robert Wlodarczyk
+reviewed	oldies	1606	head	NONE	R5	Robert Wlodarczyk
+reviewed	psybient	1440	head	G:Electronic | P:Electronic/Ambient | P:Electronic/Psy-Trance | P:Electronic/Downtempo	R4	Robert Wlodarczyk
+reviewed	alternative dance	1333	head	G:Electronic | P:Electronic/Dance-pop | P:Electronic/Indie Pop | P:Rock/Alternative Rock	R4	Robert Wlodarczyk
+reviewed	ambient pop	1296	head	G:Pop | S:Dream Pop | P:Electronic/Ambient	R4	Robert Wlodarczyk
+reviewed	nerdcore	1246	head	G:Hip Hop	R4	Robert Wlodarczyk
+reviewed	post-internet	1156	head	NONE	R5	Robert Wlodarczyk
+reviewed	space music	1110	head	G:Electronic | P:Electronic/Ambient | P:Electronic/New Age | P:Electronic/Berlin-School	R4	Robert Wlodarczyk
+reviewed	c64 remix	980	head	S:Chiptune | G:Electronic | S:Video Game Music	R3	Robert Wlodarczyk
+reviewed	glam metal	906	head	S:Glam | P:Rock/Heavy Metal	R3	Robert Wlodarczyk
+reviewed	filmi	780	head	S:Soundtrack | G:Stage & Screen | P:Stage & Screen/Theme	R4	Robert Wlodarczyk
+reviewed	jazz pop	764	head	G:Jazz | G:Pop | P:Pop/Vocal | P:Jazz/Contemporary Jazz	R4	Robert Wlodarczyk
+reviewed	singer songwriter	742	head	G:Folk, World, & Country | P:Folk, World, & Country/Folk	R6	Robert Wlodarczyk
+reviewed	dance-punk	739	head	S:Post-Punk | S:Electroclash	R3	Robert Wlodarczyk
+reviewed	praise & worship	652	head	S:Gospel | P:Pop/Religious | P:Folk, World, & Country/Religious	R4	Robert Wlodarczyk
+reviewed	crossover	606	head	NONE | S:Crossover Thrash | S:Crossover thrash	R6	Robert Wlodarczyk
+reviewed	italo	384	mid	S:Italo-Disco | S:Italodance | S:Italo House	R3	Robert Wlodarczyk
+reviewed	future beat	384	mid	S:Future Bass | P:Electronic/Bass Music | G:Electronic	R4	Robert Wlodarczyk
+reviewed	terrorcore	317	mid	P:Electronic/Hardcore | S:Speedcore | S:Gabber | S:Horrorcore	R3	Robert Wlodarczyk
+reviewed	naturewave	266	mid	G:Electronic | P:Electronic/Ambient | P:Electronic/Vaporwave | P:Electronic/New Age	R4	Robert Wlodarczyk
+reviewed	post-whatever	149	mid	S:Deconstructed Club | P:Electronic/Deconstructed Club | P:Pop/Deconstructed Club	R5	Robert Wlodarczyk
+reviewed	tropical rock	96	mid	G:Rock | G:Latin	R4	Robert Wlodarczyk
+reviewed	horror metal	94	mid	P:Rock/Horror Rock | P:Rock/Heavy Metal | G:Rock	R3	Robert Wlodarczyk
+reviewed	westcoast	76	mid	G:Hip Hop | S:G-Funk | S:Gangsta | S:AOR	R6	Robert Wlodarczyk
+reviewed	deutschpop	71	mid	G:Pop | P:Pop/Europop | P:Pop/NDW	R4	Robert Wlodarczyk
+reviewed	french singer	70	mid	P:Pop/Chanson	R6	Robert Wlodarczyk
+reviewed	sound healing	67	mid	S:Therapy | S:New Age | P:Electronic/Ambient	R4	Robert Wlodarczyk
+reviewed	dungeon rap	47	mid	G:Hip Hop | S:Horrorcore | S:Memphis Rap | P:Hip Hop/Phonk	R4	Robert Wlodarczyk
+reviewed	protest song	43	mid	P:Folk, World, & Country/Political | P:Folk, World, & Country/Folk	R6	Robert Wlodarczyk
+reviewed	bubblegrunge	37	mid	P:Rock/Grunge | P:Rock/Alternative Rock | P:Rock/Post-Grunge	R3	Robert Wlodarczyk
+reviewed	tv show	36	mid	P:Stage & Screen/Theme | G:Stage & Screen	R6	Robert Wlodarczyk
+reviewed	melodic pop	35	mid	G:Pop	R4	Robert Wlodarczyk
+reviewed	old school metal	33	mid	P:Rock/Heavy Metal | G:Rock	R3	Robert Wlodarczyk
+reviewed	early	26	mid	P:Classical/Early	R6	Robert Wlodarczyk
+reviewed	musique concrète instrumentale	24	mid	S:Musique Concrète | P:Classical/Contemporary | P:Classical/Modern	R4	Robert Wlodarczyk
+reviewed	runescape	24	mid	S:Video Game Music	R6	Robert Wlodarczyk
+reviewed	disco rap	23	mid	G:Hip Hop | P:Hip Hop/Hip Hop	R4	Robert Wlodarczyk
+reviewed	sub-bass	22	mid	G:Electronic | S:Bass Music	R6	Robert Wlodarczyk
+reviewed	terry riley	21	mid	P:Classical/Minimalism | S:Minimalism	R5	Robert Wlodarczyk
+reviewed	schubert	21	mid	G:Classical | S:Classical | S:Romantic | P:Classical/Romantic	R5	Robert Wlodarczyk
+reviewed	starmania	20	mid	S:Rock Opera | P:Pop/Rock Opera	R5	Robert Wlodarczyk
+reviewed	chill music	15	tail	G:Electronic | P:Electronic/Downtempo	R6	Robert Wlodarczyk
+reviewed	electronic horror	12	tail	G:Electronic | P:Electronic/Dark Ambient | P:Electronic/Score	R4	Robert Wlodarczyk
+reviewed	nightdrive	11	tail	P:Electronic/Synthwave | NONE	R6	Robert Wlodarczyk
+reviewed	#dance	10	tail	G:Electronic	R6	Robert Wlodarczyk
+reviewed	battle music	7	tail	S:Video Game Music | G:Brass & Military | S:Program Music | P:Classical/Program Music	R5	Robert Wlodarczyk
+reviewed	vomir	7	tail	S:Harsh Noise Wall | P:Electronic/Harsh Noise Wall	R5	Robert Wlodarczyk
+reviewed	dance anthem	6	tail	G:Electronic	R6	Robert Wlodarczyk
+reviewed	soul	46743	head	S:Soul | G:Funk / Soul	R2	Robert Wlodarczyk
+reviewed	hip-hop/rap	16530	head	G:Hip Hop | P:Hip Hop/Hip Hop	R1	Robert Wlodarczyk
+reviewed	easy listening	14482	head	S:Easy Listening	R2	Robert Wlodarczyk
+reviewed	modern classical	12539	head	S:Modern Classical	R2	Robert Wlodarczyk
+reviewed	stoner metal	7373	head	S:Stoner Rock	R3	Robert Wlodarczyk
+reviewed	composer	5189	head	G:Classical | S:Classical	R5	Robert Wlodarczyk
+reviewed	melodic	2348	head	S:Melodic Death Metal | S:Melodic Hardcore | P:Rock/Melodic Death Metal | P:Rock/Melodic Hardcore	R5	Robert Wlodarczyk
+reviewed	melodic black metal	2217	head	S:Black Metal	R3	Robert Wlodarczyk
+reviewed	surf rock	1935	head	S:Surf	R2	Robert Wlodarczyk
+reviewed	poetry	1876	head	S:Poetry	R2	Robert Wlodarczyk
+reviewed	futurepop	1827	head	S:Future Pop	R2	Robert Wlodarczyk
+reviewed	mod	1632	head	S:Mod	R2	Robert Wlodarczyk
+reviewed	singer	1538	head	S:Easy Listening	R5	Robert Wlodarczyk
+reviewed	jazz hop	1402	head	S:Jazzy Hip-Hop	R2	Robert Wlodarczyk
+reviewed	epic	1359	head	NONE	R5	Robert Wlodarczyk
+reviewed	funk / soul	1171	head	G:Funk / Soul	R1	Robert Wlodarczyk
+reviewed	death-doom metal	1033	head	S:Doom Metal | S:Death Metal	R3	Robert Wlodarczyk
+reviewed	video game soundtrack	859	head	S:Video Game Music	R2	Robert Wlodarczyk
+reviewed	analog	717	head	NONE	R5	Robert Wlodarczyk
+reviewed	relax	697	head	S:Easy Listening	R5	Robert Wlodarczyk
+reviewed	smooth soul	634	head	S:Soul | S:Contemporary R&B | G:Funk / Soul	R3	Robert Wlodarczyk
+reviewed	eclectic	633	head	NONE	R5	Robert Wlodarczyk
+reviewed	raw punk	222	mid	S:Punk | S:Crust	R3	Robert Wlodarczyk
+reviewed	hard	179	mid	NONE	R5	Robert Wlodarczyk
+reviewed	go-go	136	mid	S:Go-Go	R2	Robert Wlodarczyk
+reviewed	anthem	110	mid	NONE	R5	Robert Wlodarczyk
+reviewed	industrial black metal	96	mid	S:Black Metal | S:Industrial Metal	R3	Robert Wlodarczyk
+reviewed	folk black metal	76	mid	S:Black Metal | S:Folk Metal	R3	Robert Wlodarczyk
+reviewed	progressive deathcore	66	mid	S:Deathcore	R3	Robert Wlodarczyk
+reviewed	beatbox	58	mid	S:Beatbox	R2	Robert Wlodarczyk
+reviewed	stupid	58	mid	NONE	R5	Robert Wlodarczyk
+reviewed	contemporary reggae	44	mid	G:Reggae | P:Reggae/Reggae | P:Reggae/Reggae-Pop	R4	Robert Wlodarczyk
+reviewed	heart	41	mid	NONE	R5	Robert Wlodarczyk
+reviewed	musical theater	32	mid	S:Musical	R2	Robert Wlodarczyk
+reviewed	iconic	29	mid	NONE	R5	Robert Wlodarczyk
+reviewed	lithuanian dream pop	28	mid	S:Dream Pop	R3	Robert Wlodarczyk
+reviewed	mobile	27	mid	NONE	R5	Robert Wlodarczyk
+reviewed	indie-rock / avantgarde	25	mid	S:Indie Rock | P:Rock/Avantgarde	R3	Robert Wlodarczyk
+reviewed	dirt	23	mid	NONE	R5	Robert Wlodarczyk
+reviewed	tar	17	tail	NONE	R5	Robert Wlodarczyk
+reviewed	country ballad	17	tail	P:Folk, World, & Country/Country	R3	Robert Wlodarczyk
+reviewed	independiente	17	tail	NONE	R5	Robert Wlodarczyk
+reviewed	israeli indie	15	tail	S:Indie Rock | S:Indie Pop	R3	Robert Wlodarczyk
+reviewed	sugar	13	tail	NONE	R5	Robert Wlodarczyk
+reviewed	santur	12	tail	NONE	R5	Robert Wlodarczyk
+reviewed	nardcore	11	tail	P:Rock/Hardcore | P:Rock/Punk	R3	Robert Wlodarczyk
+reviewed	brutal deathgrind	10	tail	P:Rock/Grindcore | P:Rock/Brutal Death Metal | P:Rock/Death Metal	R3	Robert Wlodarczyk
+reviewed	blues/soul	7	tail	G:Blues | G:Funk / Soul | S:Rhythm & Blues | S:Soul	R4	Robert Wlodarczyk
+reviewed	deutscher rap	7	tail	G:Hip Hop | P:Hip Hop/Hip Hop	R4	Robert Wlodarczyk
+reviewed	indie lofi	5	tail	S:Lo-Fi | S:Indie Rock | S:Indie Pop	R3	Robert Wlodarczyk
+reviewed	black metal	56470	head	S:Black Metal	R2	Robert Wlodarczyk
+reviewed	hard rock	43261	head	S:Hard Rock	R2	Robert Wlodarczyk
+reviewed	ebm	23765	head	S:EBM	R2	Robert Wlodarczyk
+reviewed	shoegaze	23682	head	S:Shoegaze	R2	Robert Wlodarczyk
+reviewed	progressive rock	22344	head	S:Prog Rock	R2	Robert Wlodarczyk
+reviewed	dark wave	18847	head	S:Darkwave	R2	Robert Wlodarczyk
+reviewed	punk rock	18791	head	S:Punk	R2	Robert Wlodarczyk
+reviewed	jungle	14713	head	S:Jungle	R2	Robert Wlodarczyk
+reviewed	pop punk	14601	head	S:Pop Punk	R2	Robert Wlodarczyk
+reviewed	breaks	14321	head	S:Breaks	R2	Robert Wlodarczyk
+reviewed	post-hardcore	12403	head	S:Post-Hardcore	R2	Robert Wlodarczyk
+reviewed	bluegrass	8751	head	S:Bluegrass	R2	Robert Wlodarczyk
+reviewed	jazz rock	6604	head	S:Jazz-Rock	R2	Robert Wlodarczyk
+reviewed	power electronics	4934	head	S:Power Electronics	R2	Robert Wlodarczyk
+reviewed	symphonic metal	4910	head	S:Symphonic Metal	R2	Robert Wlodarczyk
+reviewed	k-pop	4511	head	S:K-pop	R2	Robert Wlodarczyk
+reviewed	salsa	4011	head	S:Salsa	R2	Robert Wlodarczyk
+reviewed	latin jazz	3893	head	S:Latin Jazz	R2	Robert Wlodarczyk
+reviewed	hard bop	3795	head	S:Hard Bop	R2	Robert Wlodarczyk
+reviewed	brutal death metal	3657	head	S:Brutal Death Metal	R2	Robert Wlodarczyk
+reviewed	folk metal	3639	head	S:Folk Metal	R2	Robert Wlodarczyk
+reviewed	cool jazz	3107	head	S:Cool Jazz	R2	Robert Wlodarczyk
+reviewed	arena rock	2874	head	S:Arena Rock	R2	Robert Wlodarczyk
+reviewed	toronto	2852	head	NONE	R5	Robert Wlodarczyk
+reviewed	san francisco	2717	head	NONE	R5	Robert Wlodarczyk
+reviewed	conscious hip hop	2621	head	S:Conscious	R2	Robert Wlodarczyk
+reviewed	groove metal	2596	head	S:Groove Metal	R2	Robert Wlodarczyk
+reviewed	acid rock	1926	head	S:Acid Rock	R2	Robert Wlodarczyk
+reviewed	manchester	1603	head	NONE	R5	Robert Wlodarczyk
+reviewed	experiemental	1497	head	S:Experimental	R2	Robert Wlodarczyk
+reviewed	merengue	1445	head	S:Merengue	R2	Robert Wlodarczyk
+reviewed	belgium	1324	head	NONE	R5	Robert Wlodarczyk
+reviewed	delta blues	1315	head	S:Delta Blues	R2	Robert Wlodarczyk
+reviewed	funk metal	1128	head	S:Funk Metal	R2	Robert Wlodarczyk
+reviewed	amsterdam	1018	head	NONE	R5	Robert Wlodarczyk
+reviewed	greek	1010	head	NONE	R5	Robert Wlodarczyk
+reviewed	neo-soul	879	head	S:Neo Soul	R2	Robert Wlodarczyk
+reviewed	ireland	864	head	NONE	R5	Robert Wlodarczyk
+reviewed	houston	724	head	NONE	R5	Robert Wlodarczyk
+reviewed	edinburgh	697	head	NONE	R5	Robert Wlodarczyk
+reviewed	female vocal	690	head	NONE	R5	Robert Wlodarczyk
+reviewed	rome	685	head	NONE	R5	Robert Wlodarczyk
+reviewed	jazzthing.de	659	head	NONE	R5	Robert Wlodarczyk
+reviewed	alliteration	655	head	NONE	R5	Robert Wlodarczyk
+reviewed	leipzig	605	head	NONE	R5	Robert Wlodarczyk
+reviewed	drum&bass	604	head	S:Drum n Bass	R2	Robert Wlodarczyk
+reviewed	massachusetts	475	mid	NONE	R5	Robert Wlodarczyk
+reviewed	1980s	371	mid	NONE	R5	Robert Wlodarczyk
+reviewed	louisville	352	mid	NONE	R5	Robert Wlodarczyk
+reviewed	hawaii	263	mid	NONE	R5	Robert Wlodarczyk
+reviewed	romanian band	94	mid	NONE	R5	Robert Wlodarczyk
+reviewed	contralto	90	mid	NONE	R5	Robert Wlodarczyk
+reviewed	von records	86	mid	NONE	R5	Robert Wlodarczyk
+reviewed	harpist	77	mid	NONE	R5	Robert Wlodarczyk
+reviewed	michel banabila	49	mid	NONE	R5	Robert Wlodarczyk
+reviewed	emanuel brown	41	mid	NONE	R5	Robert Wlodarczyk
+reviewed	royalty free tracks	38	mid	NONE	R5	Robert Wlodarczyk
+reviewed	star trek	37	mid	P:Stage & Screen/Theme | G:Stage & Screen	R5	Robert Wlodarczyk
+reviewed	reims	37	mid	NONE	R5	Robert Wlodarczyk
+reviewed	gold coast	35	mid	NONE	R5	Robert Wlodarczyk
+reviewed	dance hall	34	mid	S:Dancehall	R2	Robert Wlodarczyk
+reviewed	chiang rai	33	mid	NONE	R5	Robert Wlodarczyk
+reviewed	illuminated paths	33	mid	NONE	R5	Robert Wlodarczyk
+reviewed	ukgarage	32	mid	S:UK Garage	R2	Robert Wlodarczyk
+reviewed	hariton zoe	31	mid	NONE	R5	Robert Wlodarczyk
+reviewed	character: 鬼人正邪	30	mid	NONE	R5	Robert Wlodarczyk
+reviewed	beck	29	mid	NONE	R5	Robert Wlodarczyk
+reviewed	fergana	27	mid	NONE	R5	Robert Wlodarczyk
+reviewed	no-wave	26	mid	S:No Wave	R2	Robert Wlodarczyk
+reviewed	6" flexi-disc	25	mid	NONE	R5	Robert Wlodarczyk
+reviewed	voice actor europa	23	mid	NONE	R5	Robert Wlodarczyk
+reviewed	south portland	23	mid	NONE	R5	Robert Wlodarczyk
+reviewed	シンセウェイブ	22	mid	S:Synthwave	R2	Robert Wlodarczyk
+reviewed	#thril	22	mid	NONE	R5	Robert Wlodarczyk
+reviewed	tübingen	19	tail	NONE	R5	Robert Wlodarczyk
+reviewed	j.r.r. tolkien	13	tail	NONE	R5	Robert Wlodarczyk
+reviewed	raydeoworld	12	tail	NONE	R5	Robert Wlodarczyk
+reviewed	thee oh sees	12	tail	NONE	R5	Robert Wlodarczyk
+reviewed	isle of eigg	12	tail	NONE	R5	Robert Wlodarczyk
+reviewed	amy	11	tail	NONE	R5	Robert Wlodarczyk
+reviewed	urine	11	tail	NONE	R5	Robert Wlodarczyk
+reviewed	sub pop records	11	tail	NONE	R5	Robert Wlodarczyk
+reviewed	counting crows	9	tail	NONE	R5	Robert Wlodarczyk
+reviewed	aedtpworld	9	tail	NONE	R5	Robert Wlodarczyk
+reviewed	panart	9	tail	NONE	R5	Robert Wlodarczyk
+reviewed	lucenec	8	tail	NONE	R5	Robert Wlodarczyk
+reviewed	leagueoflyons	7	tail	NONE	R5	Robert Wlodarczyk
+reviewed	john wetton	7	tail	NONE	R5	Robert Wlodarczyk
+reviewed	robocop	6	tail	NONE	R5	Robert Wlodarczyk
+reviewed	vinyl release	6	tail	NONE	R5	Robert Wlodarczyk
+reviewed	all hardware	6	tail	NONE	R5	Robert Wlodarczyk
+reviewed	blagoveshchensk	5	tail	NONE	R5	Robert Wlodarczyk
+reviewed	veedel kaztro	5	tail	NONE	R5	Robert Wlodarczyk
+reviewed	jester on cover	5	tail	NONE	R5	Robert Wlodarczyk
+reviewed	chefboy tyree	5	tail	NONE	R5	Robert Wlodarczyk
+reviewed	guns n roses	5	tail	NONE	R5	Robert Wlodarczyk
